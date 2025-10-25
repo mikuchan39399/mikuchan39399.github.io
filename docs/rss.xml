@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 25 Oct 2025 08:10:56 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>EDU176</title><link>https://mikuchan39399.github.io/post/EDU176.html</link><description># Codeforces Round EDU 176 赛后总结
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 25 Oct 2025 08:15:13 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>EDU176</title><link>https://mikuchan39399.github.io/post/EDU176.html</link><description># Codeforces Round EDU 176 赛后总结
 
 ---
 
@@ -286,7 +286,7 @@ int main()
 &gt; 一个较难的c题，神秘
 &gt; 我们可以注意到这里存在镜像情况，假如有十块木板
 
-- oooxxxxxxxx
+- oooxxxxxxx
 - xxxooooooo
 &gt; 他们的方案数完全相同，所以这里可以只考虑前半部分，枚举第一种颜色的使用数量：
 `for(int i = 1; i &lt;= n - i; i++)`
