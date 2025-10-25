@@ -27,6 +27,108 @@
 #### Final AC Code
 
 ```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, k; cin >> n >> k;
+    int o = (k & 1) ? k - 1 : k;
+    int j = !(k & 1) ? k - 1 : k;
+    int ret{0};
+    if(n & 1)
+    {
+        n -= j;
+        ret++;
+    }
+    ret += ((max(0, n) + o - 1) / o);
+    cout << ret << endl;
+}
+
+int main()
+{
+    fast_io();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
 ```
 
 
@@ -53,6 +155,133 @@
 #### Final AC Code
 
 ```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, k; cin >> n >> k;
+    VI a(n, 0);
+    int M = 0;
+    int index = 0;
+    priority_queue<int> heap;
+    for(int i = 0; i < n; i++)
+    {
+        cin >> a[i];
+        heap.push(a[i]);
+        if(a[i] > M)
+        {
+            M = a[i];
+            index = i;
+        }
+    }
+    
+    if(k == 1)
+    {
+        if(index == n - 1 || !index)
+        {
+            heap.pop();
+            cout << heap.top() + M << endl;
+            return;
+        }
+        cout << M + max(a[0], a[n - 1]) << endl;
+        return;
+    }
+    LL sum{0};
+    k++;
+    while(k--)
+    {
+        sum += heap.top();
+        heap.pop();
+    }
+    cout << sum << endl;
+
+}
+
+int main()
+{
+    fast_io();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
 ```
 
 
@@ -105,6 +334,119 @@ for(int i = 1; i <= n - i; i++)
 
 #### Final AC Code
 ```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, m; cin >> n >> m;
+    VI a(m + 1, 0);
+    VLL num(n + 1, 0);
+    for(int i = 1; i <= m; i++)
+    {
+        cin >> a[i];
+        num[a[i]]++;
+    }
+    for(int i = n - 1; i >= 1; i--)
+    {
+        num[i] += num[i + 1];
+    }
+
+    LL ans{0};
+    for(int i = 1; i <= n - i; i++)
+    {
+        LL x = num[i] - num[n - i];
+        LL y = num[n - i];
+        if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+        else ans += x * y + y * (y - 1);
+    }
+    cout << ans << endl;
+}
+
+int main()
+{
+    fast_io();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
 ```
 
 
@@ -116,7 +458,203 @@ D. Equalization
 > 给两个自然数x和y，可执行任意次操作：
 
 - 选择一个正整数k
-- 将
+- 将x或y其中一个右移k位
+- 成本为2^k
+- k不能重复使用
+> 计算让x等于y的最小总成本
+
+#### 思路
+> 看到k不能重复利用，有感觉这题贪心不太靠谱，自然就想到01背包
+> 所以两个自然数的二进制表示可以分割为公共前缀部分和剩余部分，例如
+
+- 101010010110
+- 1010110010
+> 公共前缀长度为5，前者剩余7，后者剩余5
+> 建模为在1 - k正整数序列中选取数字填满容量分别为7和5的背包，代价最小
+
+- 状态表示：`f[i][j][k]` 背包1填充i，背包2填充j，考虑0 - k的数字，代价最小值
+- 初始化：`f[0][0][any_k] = 0`，`memset(f, 0x3f, sizeof(f));`
+- 状态转移
+```cpp
+LL& t = f[i][j][k];
+t = f[i][j][k - 1];
+if(i >= k) t = min(t, f[i - k][j][k - 1] + (1ll << k));
+if(j >= k) t = min(t, f[i][j - k][k - 1] + (1ll << k));
+```
+- 填表顺序：正常从小到大三重循环
+- 答案获取 `f[][][30]`
+
+> 两个正整数上限为1e17，60位够用了，把两者都右移至0最多也就120左右次，k为30就够用了
+> 打完dp表之后，刨除一些简单的特判情况后，需要知道两个数的二进制公共前缀
+> 最少要把两个数的剩余长度右移之后，公共前缀也可以往右移动，还有两个数字已经移动至0之后还能任意移动至长度上限，在这所有情况中取一个最小值就是最终答案
+
+#### Final AC Code
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 65, M = 35, inf = 0x3f3f3f3f;
+const LL INF = 0x3f3f3f3f3f3f3f3f;
+LL f[N][N][M];
+
+
+void init(void)
+{
+    memset(f, 0x3f, sizeof(f));
+    for(int i = 0; i <= 60; i++)  
+    {
+        for(int j = 0; j <= 60; j++)
+        {
+            for(int k = 0; k <= 30; k++)
+            {
+                if(i + j == 0) f[i][j][k] = 0;
+                else if(k)
+                {
+                    LL& t = f[i][j][k];
+                    t = f[i][j][k - 1];
+                    if(i >= k) t = min(t, f[i - k][j][k - 1] + (1ll << k));
+                    if(j >= k) t = min(t, f[i][j - k][k - 1] + (1ll << k));
+                }
+            }
+        }
+        
+    }
+}
+
+void solve()
+{
+    LL x, y; cin >> x >> y;
+    if(x == y) 
+    {
+        cout << 0 << endl;
+        return;
+    }
+    int l1 = 0, l2 = 0;
+    if(x == 0 || y == 0)
+    {
+        l2 = 64 - __builtin_clzll(x + y);
+        cout << f[0][l2][30] << endl;
+        return;
+    }
+    VI a, b;
+    while(x)
+    {
+        a.push_back(x % 2);
+        x /= 2;
+    }
+    while(y)
+    {
+        b.push_back(y % 2);
+        y /= 2;
+    }
+    int si = -1;
+    for(int i = 0; i < a.size() && i < b.size(); i++)
+    {
+        if(a[a.size() - 1 - i] == b[b.size() - 1 - i]) si = i;
+        else break;
+    }
+    si++;
+    l1 = a.size() - si;
+    l2 = b.size() - si;
+    LL res = INF;
+    for(int i = 0; i < si; i++)
+    {
+        res = min(res, f[l1 + i][l2 + i][30]);
+    }
+    for(int i = a.size(); i <= 60; i++)
+    {
+        for(int j = b.size(); j <= 60; j++)
+        {
+            res = min(res, f[i][j][30]);
+        }
+    }
+    cout << res << endl;
+}
+
+int main()
+{
+    fast_io();
+    init();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
+```
 
 ---
 
@@ -139,6 +677,108 @@ D. Equalization
 #### Final AC Code
 
 ```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, k; cin >> n >> k;
+    int o = (k & 1) ? k - 1 : k;
+    int j = !(k & 1) ? k - 1 : k;
+    int ret{0};
+    if(n & 1)
+    {
+        n -= j;
+        ret++;
+    }
+    ret += ((max(0, n) + o - 1) / o);
+    cout << ret << endl;
+}
+
+int main()
+{
+    fast_io();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
 ```
 
 
@@ -165,6 +805,133 @@ D. Equalization
 #### Final AC Code
 
 ```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, k; cin >> n >> k;
+    VI a(n, 0);
+    int M = 0;
+    int index = 0;
+    priority_queue<int> heap;
+    for(int i = 0; i < n; i++)
+    {
+        cin >> a[i];
+        heap.push(a[i]);
+        if(a[i] > M)
+        {
+            M = a[i];
+            index = i;
+        }
+    }
+    
+    if(k == 1)
+    {
+        if(index == n - 1 || !index)
+        {
+            heap.pop();
+            cout << heap.top() + M << endl;
+            return;
+        }
+        cout << M + max(a[0], a[n - 1]) << endl;
+        return;
+    }
+    LL sum{0};
+    k++;
+    while(k--)
+    {
+        sum += heap.top();
+        heap.pop();
+    }
+    cout << sum << endl;
+
+}
+
+int main()
+{
+    fast_io();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
 ```
 
 
@@ -217,6 +984,119 @@ for(int i = 1; i <= n - i; i++)
 
 #### Final AC Code
 ```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, m; cin >> n >> m;
+    VI a(m + 1, 0);
+    VLL num(n + 1, 0);
+    for(int i = 1; i <= m; i++)
+    {
+        cin >> a[i];
+        num[a[i]]++;
+    }
+    for(int i = n - 1; i >= 1; i--)
+    {
+        num[i] += num[i + 1];
+    }
+
+    LL ans{0};
+    for(int i = 1; i <= n - i; i++)
+    {
+        LL x = num[i] - num[n - i];
+        LL y = num[n - i];
+        if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+        else ans += x * y + y * (y - 1);
+    }
+    cout << ans << endl;
+}
+
+int main()
+{
+    fast_io();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
 ```
 
 
@@ -228,7 +1108,203 @@ D. Equalization
 > 给两个自然数x和y，可执行任意次操作：
 
 - 选择一个正整数k
-- 将
+- 将x或y其中一个右移k位
+- 成本为2^k
+- k不能重复使用
+> 计算让x等于y的最小总成本
+
+#### 思路
+> 看到k不能重复利用，有感觉这题贪心不太靠谱，自然就想到01背包
+> 所以两个自然数的二进制表示可以分割为公共前缀部分和剩余部分，例如
+
+- 101010010110
+- 1010110010
+> 公共前缀长度为5，前者剩余7，后者剩余5
+> 建模为在1 - k正整数序列中选取数字填满容量分别为7和5的背包，代价最小
+
+- 状态表示：`f[i][j][k]` 背包1填充i，背包2填充j，考虑0 - k的数字，代价最小值
+- 初始化：`f[0][0][any_k] = 0`，`memset(f, 0x3f, sizeof(f));`
+- 状态转移
+```cpp
+LL& t = f[i][j][k];
+t = f[i][j][k - 1];
+if(i >= k) t = min(t, f[i - k][j][k - 1] + (1ll << k));
+if(j >= k) t = min(t, f[i][j - k][k - 1] + (1ll << k));
+```
+- 填表顺序：正常从小到大三重循环
+- 答案获取 `f[][][30]`
+
+> 两个正整数上限为1e17，60位够用了，把两者都右移至0最多也就120左右次，k为30就够用了
+> 打完dp表之后，刨除一些简单的特判情况后，需要知道两个数的二进制公共前缀
+> 最少要把两个数的剩余长度右移之后，公共前缀也可以往右移动，还有两个数字已经移动至0之后还能任意移动至长度上限，在这所有情况中取一个最小值就是最终答案
+
+#### Final AC Code
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cstring>
+#include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
+
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch < '0' || ch > '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch >= '0' && ch <= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x < 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x > 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair<int, int>
+#define PLL pair<LL, LL>
+#define TIII tuple<int, int, int>
+#define TLLL tuple <LL, LL, LL>
+#define VVI vector<vector<int>>
+#define VVLL vector<vector<LL>>
+#define VI vector<int>
+#define VLL vector<LL>
+#define VPII vector<pair<int, int>>
+#define VPLL vector<pair<LL, LL>>
+
+
+const int N = 65, M = 35, inf = 0x3f3f3f3f;
+const LL INF = 0x3f3f3f3f3f3f3f3f;
+LL f[N][N][M];
+
+
+void init(void)
+{
+    memset(f, 0x3f, sizeof(f));
+    for(int i = 0; i <= 60; i++)  
+    {
+        for(int j = 0; j <= 60; j++)
+        {
+            for(int k = 0; k <= 30; k++)
+            {
+                if(i + j == 0) f[i][j][k] = 0;
+                else if(k)
+                {
+                    LL& t = f[i][j][k];
+                    t = f[i][j][k - 1];
+                    if(i >= k) t = min(t, f[i - k][j][k - 1] + (1ll << k));
+                    if(j >= k) t = min(t, f[i][j - k][k - 1] + (1ll << k));
+                }
+            }
+        }
+        
+    }
+}
+
+void solve()
+{
+    LL x, y; cin >> x >> y;
+    if(x == y) 
+    {
+        cout << 0 << endl;
+        return;
+    }
+    int l1 = 0, l2 = 0;
+    if(x == 0 || y == 0)
+    {
+        l2 = 64 - __builtin_clzll(x + y);
+        cout << f[0][l2][30] << endl;
+        return;
+    }
+    VI a, b;
+    while(x)
+    {
+        a.push_back(x % 2);
+        x /= 2;
+    }
+    while(y)
+    {
+        b.push_back(y % 2);
+        y /= 2;
+    }
+    int si = -1;
+    for(int i = 0; i < a.size() && i < b.size(); i++)
+    {
+        if(a[a.size() - 1 - i] == b[b.size() - 1 - i]) si = i;
+        else break;
+    }
+    si++;
+    l1 = a.size() - si;
+    l2 = b.size() - si;
+    LL res = INF;
+    for(int i = 0; i < si; i++)
+    {
+        res = min(res, f[l1 + i][l2 + i][30]);
+    }
+    for(int i = a.size(); i <= 60; i++)
+    {
+        for(int j = b.size(); j <= 60; j++)
+        {
+            res = min(res, f[i][j][30]);
+        }
+    }
+    cout << res << endl;
+}
+
+int main()
+{
+    fast_io();
+    init();
+    int t = 1;
+    cin >> t;
+    while (t--)
+    {
+        solve();
+    }
+    return 0;
+}
+```
 
 ---
 
@@ -316,7 +1392,108 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>简单贪心，一直减去最大的数字就行，注意判断奇数偶数</p>
 </blockquote>
 <h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+{
+    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
+    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+}
+<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
+<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
+<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
+<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
+<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
+<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
+<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+
+<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
+<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+
+<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
+#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+
+
+<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">1e5</span> + <span class="pl-c1">10</span>;
+
+<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+{
+    <span class="pl-k">int</span> n, k; cin &gt;&gt; n &gt;&gt; k;
+    <span class="pl-k">int</span> o = (k &amp; <span class="pl-c1">1</span>) ? k - <span class="pl-c1">1</span> : k;
+    <span class="pl-k">int</span> j = !(k &amp; <span class="pl-c1">1</span>) ? k - <span class="pl-c1">1</span> : k;
+    <span class="pl-k">int</span> ret{<span class="pl-c1">0</span>};
+    <span class="pl-k">if</span>(n &amp; <span class="pl-c1">1</span>)
+    {
+        n -= j;
+        ret++;
+    }
+    ret += ((<span class="pl-c1">max</span>(<span class="pl-c1">0</span>, n) + o - <span class="pl-c1">1</span>) / o);
+    cout &lt;&lt; ret &lt;&lt; endl;
+}
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">fast_io</span>();
+    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    cin &gt;&gt; t;
+    <span class="pl-k">while</span> (t--)
+    {
+        <span class="pl-c1">solve</span>();
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <h3>B. Array Recoloring</h3>
 <p><a href="https://codeforces.com/contest/2075/problem/B" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
 <h4>题目大意</h4>
@@ -342,7 +1519,133 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>如果最大值落在边界上，第一步选在次大值的位置上，就能让第二步落在最大值上，输出两者之和</li>
 </ul>
 <h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+{
+    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
+    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+}
+<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
+<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
+<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
+<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
+<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
+<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
+<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+
+<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
+<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+
+<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
+#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+
+
+<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">1e5</span> + <span class="pl-c1">10</span>;
+
+<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+{
+    <span class="pl-k">int</span> n, k; cin &gt;&gt; n &gt;&gt; k;
+    VI <span class="pl-smi">a</span>(n, <span class="pl-c1">0</span>);
+    <span class="pl-k">int</span> M = <span class="pl-c1">0</span>;
+    <span class="pl-k">int</span> index = <span class="pl-c1">0</span>;
+    priority_queue&lt;<span class="pl-k">int</span>&gt; heap;
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++)
+    {
+        cin &gt;&gt; a[i];
+        heap.<span class="pl-c1">push</span>(a[i]);
+        <span class="pl-k">if</span>(a[i] &gt; M)
+        {
+            M = a[i];
+            index = i;
+        }
+    }
+    
+    <span class="pl-k">if</span>(k == <span class="pl-c1">1</span>)
+    {
+        <span class="pl-k">if</span>(index == n - <span class="pl-c1">1</span> || !index)
+        {
+            heap.<span class="pl-c1">pop</span>();
+            cout &lt;&lt; heap.<span class="pl-c1">top</span>() + M &lt;&lt; endl;
+            <span class="pl-k">return</span>;
+        }
+        cout &lt;&lt; M + <span class="pl-c1">max</span>(a[<span class="pl-c1">0</span>], a[n - <span class="pl-c1">1</span>]) &lt;&lt; endl;
+        <span class="pl-k">return</span>;
+    }
+    LL sum{<span class="pl-c1">0</span>};
+    k++;
+    <span class="pl-k">while</span>(k--)
+    {
+        sum += heap.<span class="pl-c1">top</span>();
+        heap.<span class="pl-c1">pop</span>();
+    }
+    cout &lt;&lt; sum &lt;&lt; endl;
+
+}
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">fast_io</span>();
+    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    cin &gt;&gt; t;
+    <span class="pl-k">while</span> (t--)
+    {
+        <span class="pl-c1">solve</span>();
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <h3>C. Two Colors</h3>
 <p><a href="https://codeforces.com/contest/2075/problem/C" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
 <h4>题目大意</h4>
@@ -392,7 +1695,119 @@ LL y = num[n - i];</pre></div>
     <span class="pl-k">else</span> ans += x * y + y * (y - <span class="pl-c1">1</span>);
 }</pre></div>
 <h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+{
+    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
+    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+}
+<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
+<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
+<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
+<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
+<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
+<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
+<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+
+<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
+<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+
+<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
+#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+
+
+<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">1e5</span> + <span class="pl-c1">10</span>;
+
+<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+{
+    <span class="pl-k">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;
+    VI <span class="pl-smi">a</span>(m + <span class="pl-c1">1</span>, <span class="pl-c1">0</span>);
+    VLL <span class="pl-smi">num</span>(n + <span class="pl-c1">1</span>, <span class="pl-c1">0</span>);
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= m; i++)
+    {
+        cin &gt;&gt; a[i];
+        num[a[i]]++;
+    }
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = n - <span class="pl-c1">1</span>; i &gt;= <span class="pl-c1">1</span>; i--)
+    {
+        num[i] += num[i + <span class="pl-c1">1</span>];
+    }
+
+    LL ans{<span class="pl-c1">0</span>};
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n - i; i++)
+    {
+        LL x = num[i] - num[n - i];
+        LL y = num[n - i];
+        <span class="pl-k">if</span>(i != n - i) ans += (x * y + y * (y - <span class="pl-c1">1</span>)) * <span class="pl-c1">2</span>;
+        <span class="pl-k">else</span> ans += x * y + y * (y - <span class="pl-c1">1</span>);
+    }
+    cout &lt;&lt; ans &lt;&lt; endl;
+}
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">fast_io</span>();
+    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    cin &gt;&gt; t;
+    <span class="pl-k">while</span> (t--)
+    {
+        <span class="pl-c1">solve</span>();
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <p>D. Equalization</p>
 <p><a href="https://codeforces.com/contest/2075/problem/D" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
 <h4>题目大意</h4>
@@ -401,8 +1816,209 @@ LL y = num[n - i];</pre></div>
 </blockquote>
 <ul>
 <li>选择一个正整数k</li>
-<li>将</li>
+<li>将x或y其中一个右移k位</li>
+<li>成本为2^k</li>
+<li>k不能重复使用</li>
 </ul>
+<blockquote>
+<p>计算让x等于y的最小总成本</p>
+</blockquote>
+<h4>思路</h4>
+<blockquote>
+<p>看到k不能重复利用，有感觉这题贪心不太靠谱，自然就想到01背包<br>
+所以两个自然数的二进制表示可以分割为公共前缀部分和剩余部分，例如</p>
+</blockquote>
+<ul>
+<li>101010010110</li>
+<li>1010110010</li>
+</ul>
+<blockquote>
+<p>公共前缀长度为5，前者剩余7，后者剩余5<br>
+建模为在1 - k正整数序列中选取数字填满容量分别为7和5的背包，代价最小</p>
+</blockquote>
+<ul>
+<li>状态表示：<code class="notranslate">f[i][j][k]</code> 背包1填充i，背包2填充j，考虑0 - k的数字，代价最小值</li>
+<li>初始化：<code class="notranslate">f[0][0][any_k] = 0</code>，<code class="notranslate">memset(f, 0x3f, sizeof(f));</code></li>
+<li>状态转移</li>
+</ul>
+<div class="highlight highlight-source-c++"><pre class="notranslate">LL&amp; t = f[i][j][k];
+t = f[i][j][k - <span class="pl-c1">1</span>];
+<span class="pl-k">if</span>(i &gt;= k) t = min(t, f[i - k][j][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));
+<span class="pl-k">if</span>(j &gt;= k) t = min(t, f[i][j - k][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));</pre></div>
+<ul>
+<li>填表顺序：正常从小到大三重循环</li>
+<li>答案获取 <code class="notranslate">f[][][30]</code></li>
+</ul>
+<blockquote>
+<p>两个正整数上限为1e17，60位够用了，把两者都右移至0最多也就120左右次，k为30就够用了<br>
+打完dp表之后，刨除一些简单的特判情况后，需要知道两个数的二进制公共前缀<br>
+最少要把两个数的剩余长度右移之后，公共前缀也可以往右移动，还有两个数字已经移动至0之后还能任意移动至长度上限，在这所有情况中取一个最小值就是最终答案</p>
+</blockquote>
+<h4>Final AC Code</h4>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
+<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+{
+    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
+    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+}
+<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
+<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
+<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
+<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
+<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+
+<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
+<span class="pl-c"><span class="pl-c">//</span> {</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
+<span class="pl-c"><span class="pl-c">//</span>     {</span>
+<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
+<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
+<span class="pl-c"><span class="pl-c">//</span>     }</span>
+<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
+<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
+<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
+<span class="pl-c"><span class="pl-c">//</span> }</span>
+
+<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
+<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
+<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+
+<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
+#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
+#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+
+
+<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">65</span>, M = <span class="pl-c1">35</span>, inf = <span class="pl-c1">0x3f3f3f3f</span>;
+<span class="pl-k">const</span> LL INF = <span class="pl-c1">0x3f3f3f3f3f3f3f3f</span>;
+LL f[N][N][M];
+
+
+<span class="pl-k">void</span> <span class="pl-en">init</span>(<span class="pl-k">void</span>)
+{
+    <span class="pl-c1">memset</span>(f, <span class="pl-c1">0x3f</span>, <span class="pl-k">sizeof</span>(f));
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt;= <span class="pl-c1">60</span>; i++)  
+    {
+        <span class="pl-k">for</span>(<span class="pl-k">int</span> j = <span class="pl-c1">0</span>; j &lt;= <span class="pl-c1">60</span>; j++)
+        {
+            <span class="pl-k">for</span>(<span class="pl-k">int</span> k = <span class="pl-c1">0</span>; k &lt;= <span class="pl-c1">30</span>; k++)
+            {
+                <span class="pl-k">if</span>(i + j == <span class="pl-c1">0</span>) f[i][j][k] = <span class="pl-c1">0</span>;
+                <span class="pl-k">else</span> <span class="pl-k">if</span>(k)
+                {
+                    LL&amp; t = f[i][j][k];
+                    t = f[i][j][k - <span class="pl-c1">1</span>];
+                    <span class="pl-k">if</span>(i &gt;= k) t = <span class="pl-c1">min</span>(t, f[i - k][j][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));
+                    <span class="pl-k">if</span>(j &gt;= k) t = <span class="pl-c1">min</span>(t, f[i][j - k][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));
+                }
+            }
+        }
+        
+    }
+}
+
+<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+{
+    LL x, y; cin &gt;&gt; x &gt;&gt; y;
+    <span class="pl-k">if</span>(x == y) 
+    {
+        cout &lt;&lt; <span class="pl-c1">0</span> &lt;&lt; endl;
+        <span class="pl-k">return</span>;
+    }
+    <span class="pl-k">int</span> l1 = <span class="pl-c1">0</span>, l2 = <span class="pl-c1">0</span>;
+    <span class="pl-k">if</span>(x == <span class="pl-c1">0</span> || y == <span class="pl-c1">0</span>)
+    {
+        l2 = <span class="pl-c1">64</span> - <span class="pl-c1">__builtin_clzll</span>(x + y);
+        cout &lt;&lt; f[<span class="pl-c1">0</span>][l2][<span class="pl-c1">30</span>] &lt;&lt; endl;
+        <span class="pl-k">return</span>;
+    }
+    VI a, b;
+    <span class="pl-k">while</span>(x)
+    {
+        a.<span class="pl-c1">push_back</span>(x % <span class="pl-c1">2</span>);
+        x /= <span class="pl-c1">2</span>;
+    }
+    <span class="pl-k">while</span>(y)
+    {
+        b.<span class="pl-c1">push_back</span>(y % <span class="pl-c1">2</span>);
+        y /= <span class="pl-c1">2</span>;
+    }
+    <span class="pl-k">int</span> si = -<span class="pl-c1">1</span>;
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; a.<span class="pl-c1">size</span>() &amp;&amp; i &lt; b.<span class="pl-c1">size</span>(); i++)
+    {
+        <span class="pl-k">if</span>(a[a.<span class="pl-c1">size</span>() - <span class="pl-c1">1</span> - i] == b[b.<span class="pl-c1">size</span>() - <span class="pl-c1">1</span> - i]) si = i;
+        <span class="pl-k">else</span> <span class="pl-k">break</span>;
+    }
+    si++;
+    l1 = a.<span class="pl-c1">size</span>() - si;
+    l2 = b.<span class="pl-c1">size</span>() - si;
+    LL res = INF;
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; si; i++)
+    {
+        res = <span class="pl-c1">min</span>(res, f[l1 + i][l2 + i][<span class="pl-c1">30</span>]);
+    }
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = a.<span class="pl-c1">size</span>(); i &lt;= <span class="pl-c1">60</span>; i++)
+    {
+        <span class="pl-k">for</span>(<span class="pl-k">int</span> j = b.<span class="pl-c1">size</span>(); j &lt;= <span class="pl-c1">60</span>; j++)
+        {
+            res = <span class="pl-c1">min</span>(res, f[i][j][<span class="pl-c1">30</span>]);
+        }
+    }
+    cout &lt;&lt; res &lt;&lt; endl;
+}
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">fast_io</span>();
+    <span class="pl-c1">init</span>();
+    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    cin &gt;&gt; t;
+    <span class="pl-k">while</span> (t--)
+    {
+        <span class="pl-c1">solve</span>();
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <hr></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
