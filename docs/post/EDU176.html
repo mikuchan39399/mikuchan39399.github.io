@@ -29,10 +29,94 @@
 ```cpp
 ```
 
----
 
 ### B. Array Recoloring
 
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/B)
+
+#### 题目大意
+> 给一个长度为n的整数数组a，分两步为整个数组染色
+
+1. 选择k个元素染色
+2. 选择任意一个与染色元素相邻的未染色元素并染色，直到所有元素都被染色
+> 整个过程的成本为第一步元素和与第二步最后被染色的元素之和
+> 求成本最大值
+
+#### 思路
+> 我们的目标是通过这两步选出整个数组的前k + 1大元素
+> 如果第一步能选两个元素及以上，则可以至少让两个元素选在前k大元素的左右边界位置，这样一定能控制第二步落在我们需要的元素上
+> 反正第一步只能选一个元素的话，第二步只能落在数组边界位置，这里特判一下
+
+- 如果最大值没有落在边界上，则输出最大值与数组两端较大值的和
+- 如果最大值落在边界上，第一步选在次大值的位置上，就能让第二步落在最大值上，输出两者之和
+
+#### Final AC Code
+
+```cpp
+```
+
+
+### C. Two Colors
+
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/C)
+
+#### 题目大意
+> 给一排数量为n的木板，用m种颜料为整排木板染色，颜料数量有限制，整排木板只能恰好用两种颜色染色，并且两种颜色区间必须连续
+> 求方案总数
+
+#### 思路
+> 一个较难的c题，神秘
+> 我们可以注意到这里存在镜像情况，假如有十块木板
+
+- oooxxxxxxxx
+- xxxooooooo
+> 他们的方案数完全相同，所以这里可以只考虑前半部分，枚举第一种颜色的使用数量：
+`for(int i = 1; i <= n - i; i++)`
+>当两种颜色使用数量相同时不用翻倍
+> 所以在这个枚举语境下，我们需要快速得知有多少种颜料满足我的使用需求，这里可以用个差分计算对于每种需求有几种颜料满足我的条件
+```cpp
+for(int i = 1; i <= m; i++)
+{
+    cin >> a[i];
+    num[a[i]]++;
+}
+
+for(int i = n - 1; i >= 1; i--)
+{
+    num[i] += num[i + 1];
+}
+```
+> 每次读入一种颜料的数量就表示0~a[i]范围内的需求满足数量++
+> 因为这里控制了变量，第一种颜色需求数量不大于第二种颜色需求数量，所以可以把满足较少数量但够不着较大数量的拆出来
+```cpp
+LL x = num[i] - num[n - i];
+LL y = num[n - i];
+```
+> 方案数量就可以这么计算，x和y中各选一个，也可以全在y里选，也就是在y里选两个颜色的排列
+```cpp
+for(int i = 1; i <= n - i; i++)
+{
+    LL x = num[i] - num[n - i];
+    LL y = num[n - i];
+    if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+    else ans += x * y + y * (y - 1);
+}
+```
+
+#### Final AC Code
+```cpp
+```
+
+
+D. Equalization
+
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/D)
+
+#### 题目大意
+> 给两个自然数x和y，可执行任意次操作：
+
+- 选择一个正整数k
+- 将
 
 ---
 
@@ -57,10 +141,94 @@
 ```cpp
 ```
 
----
 
 ### B. Array Recoloring
 
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/B)
+
+#### 题目大意
+> 给一个长度为n的整数数组a，分两步为整个数组染色
+
+1. 选择k个元素染色
+2. 选择任意一个与染色元素相邻的未染色元素并染色，直到所有元素都被染色
+> 整个过程的成本为第一步元素和与第二步最后被染色的元素之和
+> 求成本最大值
+
+#### 思路
+> 我们的目标是通过这两步选出整个数组的前k + 1大元素
+> 如果第一步能选两个元素及以上，则可以至少让两个元素选在前k大元素的左右边界位置，这样一定能控制第二步落在我们需要的元素上
+> 反正第一步只能选一个元素的话，第二步只能落在数组边界位置，这里特判一下
+
+- 如果最大值没有落在边界上，则输出最大值与数组两端较大值的和
+- 如果最大值落在边界上，第一步选在次大值的位置上，就能让第二步落在最大值上，输出两者之和
+
+#### Final AC Code
+
+```cpp
+```
+
+
+### C. Two Colors
+
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/C)
+
+#### 题目大意
+> 给一排数量为n的木板，用m种颜料为整排木板染色，颜料数量有限制，整排木板只能恰好用两种颜色染色，并且两种颜色区间必须连续
+> 求方案总数
+
+#### 思路
+> 一个较难的c题，神秘
+> 我们可以注意到这里存在镜像情况，假如有十块木板
+
+- oooxxxxxxxx
+- xxxooooooo
+> 他们的方案数完全相同，所以这里可以只考虑前半部分，枚举第一种颜色的使用数量：
+`for(int i = 1; i <= n - i; i++)`
+>当两种颜色使用数量相同时不用翻倍
+> 所以在这个枚举语境下，我们需要快速得知有多少种颜料满足我的使用需求，这里可以用个差分计算对于每种需求有几种颜料满足我的条件
+```cpp
+for(int i = 1; i <= m; i++)
+{
+    cin >> a[i];
+    num[a[i]]++;
+}
+
+for(int i = n - 1; i >= 1; i--)
+{
+    num[i] += num[i + 1];
+}
+```
+> 每次读入一种颜料的数量就表示0~a[i]范围内的需求满足数量++
+> 因为这里控制了变量，第一种颜色需求数量不大于第二种颜色需求数量，所以可以把满足较少数量但够不着较大数量的拆出来
+```cpp
+LL x = num[i] - num[n - i];
+LL y = num[n - i];
+```
+> 方案数量就可以这么计算，x和y中各选一个，也可以全在y里选，也就是在y里选两个颜色的排列
+```cpp
+for(int i = 1; i <= n - i; i++)
+{
+    LL x = num[i] - num[n - i];
+    LL y = num[n - i];
+    if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+    else ans += x * y + y * (y - 1);
+}
+```
+
+#### Final AC Code
+```cpp
+```
+
+
+D. Equalization
+
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/D)
+
+#### 题目大意
+> 给两个自然数x和y，可执行任意次操作：
+
+- 选择一个正整数k
+- 将
 
 ---
 
@@ -149,8 +317,92 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </blockquote>
 <h4>Final AC Code</h4>
 <div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div>
-<hr>
 <h3>B. Array Recoloring</h3>
+<p><a href="https://codeforces.com/contest/2075/problem/B" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
+<h4>题目大意</h4>
+<blockquote>
+<p>给一个长度为n的整数数组a，分两步为整个数组染色</p>
+</blockquote>
+<ol>
+<li>选择k个元素染色</li>
+<li>选择任意一个与染色元素相邻的未染色元素并染色，直到所有元素都被染色</li>
+</ol>
+<blockquote>
+<p>整个过程的成本为第一步元素和与第二步最后被染色的元素之和<br>
+求成本最大值</p>
+</blockquote>
+<h4>思路</h4>
+<blockquote>
+<p>我们的目标是通过这两步选出整个数组的前k + 1大元素<br>
+如果第一步能选两个元素及以上，则可以至少让两个元素选在前k大元素的左右边界位置，这样一定能控制第二步落在我们需要的元素上<br>
+反正第一步只能选一个元素的话，第二步只能落在数组边界位置，这里特判一下</p>
+</blockquote>
+<ul>
+<li>如果最大值没有落在边界上，则输出最大值与数组两端较大值的和</li>
+<li>如果最大值落在边界上，第一步选在次大值的位置上，就能让第二步落在最大值上，输出两者之和</li>
+</ul>
+<h4>Final AC Code</h4>
+<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div>
+<h3>C. Two Colors</h3>
+<p><a href="https://codeforces.com/contest/2075/problem/C" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
+<h4>题目大意</h4>
+<blockquote>
+<p>给一排数量为n的木板，用m种颜料为整排木板染色，颜料数量有限制，整排木板只能恰好用两种颜色染色，并且两种颜色区间必须连续<br>
+求方案总数</p>
+</blockquote>
+<h4>思路</h4>
+<blockquote>
+<p>一个较难的c题，神秘<br>
+我们可以注意到这里存在镜像情况，假如有十块木板</p>
+</blockquote>
+<ul>
+<li>oooxxxxxxxx</li>
+<li>xxxooooooo</li>
+</ul>
+<blockquote>
+<p>他们的方案数完全相同，所以这里可以只考虑前半部分，枚举第一种颜色的使用数量：<br>
+<code class="notranslate">for(int i = 1; i &lt;= n - i; i++)</code><br>
+当两种颜色使用数量相同时不用翻倍<br>
+所以在这个枚举语境下，我们需要快速得知有多少种颜料满足我的使用需求，这里可以用个差分计算对于每种需求有几种颜料满足我的条件</p>
+</blockquote>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= m; i++)
+{
+    cin &gt;&gt; a[i];
+    num[a[i]]++;
+}
+
+<span class="pl-k">for</span>(<span class="pl-k">int</span> i = n - <span class="pl-c1">1</span>; i &gt;= <span class="pl-c1">1</span>; i--)
+{
+    num[i] += num[i + <span class="pl-c1">1</span>];
+}</pre></div>
+<blockquote>
+<p>每次读入一种颜料的数量就表示0~a[i]范围内的需求满足数量++<br>
+因为这里控制了变量，第一种颜色需求数量不大于第二种颜色需求数量，所以可以把满足较少数量但够不着较大数量的拆出来</p>
+</blockquote>
+<div class="highlight highlight-source-c++"><pre class="notranslate">LL x = num[i] - num[n - i];
+LL y = num[n - i];</pre></div>
+<blockquote>
+<p>方案数量就可以这么计算，x和y中各选一个，也可以全在y里选，也就是在y里选两个颜色的排列</p>
+</blockquote>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n - i; i++)
+{
+    LL x = num[i] - num[n - i];
+    LL y = num[n - i];
+    <span class="pl-k">if</span>(i != n - i) ans += (x * y + y * (y - <span class="pl-c1">1</span>)) * <span class="pl-c1">2</span>;
+    <span class="pl-k">else</span> ans += x * y + y * (y - <span class="pl-c1">1</span>);
+}</pre></div>
+<h4>Final AC Code</h4>
+<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div>
+<p>D. Equalization</p>
+<p><a href="https://codeforces.com/contest/2075/problem/D" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
+<h4>题目大意</h4>
+<blockquote>
+<p>给两个自然数x和y，可执行任意次操作：</p>
+</blockquote>
+<ul>
+<li>选择一个正整数k</li>
+<li>将</li>
+</ul>
 <hr></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 

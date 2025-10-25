@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 25 Oct 2025 05:36:50 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>EDU176</title><link>https://mikuchan39399.github.io/post/EDU176.html</link><description># Codeforces Round EDU 176 赛后总结
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 25 Oct 2025 06:30:37 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>EDU176</title><link>https://mikuchan39399.github.io/post/EDU176.html</link><description># Codeforces Round EDU 176 赛后总结
 
 ---
 
@@ -18,10 +18,94 @@
 ```cpp
 ```
 
----
 
 ### B. Array Recoloring
 
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/B)
+
+#### 题目大意
+&gt; 给一个长度为n的整数数组a，分两步为整个数组染色
+
+1. 选择k个元素染色
+2. 选择任意一个与染色元素相邻的未染色元素并染色，直到所有元素都被染色
+&gt; 整个过程的成本为第一步元素和与第二步最后被染色的元素之和
+&gt; 求成本最大值
+
+#### 思路
+&gt; 我们的目标是通过这两步选出整个数组的前k + 1大元素
+&gt; 如果第一步能选两个元素及以上，则可以至少让两个元素选在前k大元素的左右边界位置，这样一定能控制第二步落在我们需要的元素上
+&gt; 反正第一步只能选一个元素的话，第二步只能落在数组边界位置，这里特判一下
+
+- 如果最大值没有落在边界上，则输出最大值与数组两端较大值的和
+- 如果最大值落在边界上，第一步选在次大值的位置上，就能让第二步落在最大值上，输出两者之和
+
+#### Final AC Code
+
+```cpp
+```
+
+
+### C. Two Colors
+
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/C)
+
+#### 题目大意
+&gt; 给一排数量为n的木板，用m种颜料为整排木板染色，颜料数量有限制，整排木板只能恰好用两种颜色染色，并且两种颜色区间必须连续
+&gt; 求方案总数
+
+#### 思路
+&gt; 一个较难的c题，神秘
+&gt; 我们可以注意到这里存在镜像情况，假如有十块木板
+
+- oooxxxxxxxx
+- xxxooooooo
+&gt; 他们的方案数完全相同，所以这里可以只考虑前半部分，枚举第一种颜色的使用数量：
+`for(int i = 1; i &lt;= n - i; i++)`
+&gt;当两种颜色使用数量相同时不用翻倍
+&gt; 所以在这个枚举语境下，我们需要快速得知有多少种颜料满足我的使用需求，这里可以用个差分计算对于每种需求有几种颜料满足我的条件
+```cpp
+for(int i = 1; i &lt;= m; i++)
+{
+    cin &gt;&gt; a[i];
+    num[a[i]]++;
+}
+
+for(int i = n - 1; i &gt;= 1; i--)
+{
+    num[i] += num[i + 1];
+}
+```
+&gt; 每次读入一种颜料的数量就表示0~a[i]范围内的需求满足数量++
+&gt; 因为这里控制了变量，第一种颜色需求数量不大于第二种颜色需求数量，所以可以把满足较少数量但够不着较大数量的拆出来
+```cpp
+LL x = num[i] - num[n - i];
+LL y = num[n - i];
+```
+&gt; 方案数量就可以这么计算，x和y中各选一个，也可以全在y里选，也就是在y里选两个颜色的排列
+```cpp
+for(int i = 1; i &lt;= n - i; i++)
+{
+    LL x = num[i] - num[n - i];
+    LL y = num[n - i];
+    if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+    else ans += x * y + y * (y - 1);
+}
+```
+
+#### Final AC Code
+```cpp
+```
+
+
+D. Equalization
+
+[**点击这里传送到题目**](https://codeforces.com/contest/2075/problem/D)
+
+#### 题目大意
+&gt; 给两个自然数x和y，可执行任意次操作：
+
+- 选择一个正整数k
+- 将
 
 ---
 
