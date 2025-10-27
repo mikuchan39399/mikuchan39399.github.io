@@ -1,8 +1,41 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Mon, 27 Oct 2025 10:05:00 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>欧拉路径与欧拉回路</title><link>https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</link><description>---
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Mon, 27 Oct 2025 13:50:14 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>欧拉路径与欧拉回路</title><link>https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</link><description>---
 
+### 基本概念
+&gt; 欧拉路径是指图中每条边恰好经过一次的路径
+&gt; 欧拉回路是指途中每条边恰好经过一次的回路
+&gt;也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同
+这里有一些名词：
 
----。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</guid><pubDate>Mon, 27 Oct 2025 10:04:24 +0000</pubDate></item><item><title>EDU176</title><link>https://mikuchan39399.github.io/post/EDU176.html</link><description># Codeforces Round EDU 176 赛后总结
+- 欧拉图指存在欧拉回路的图
+- 半欧拉图指存在欧拉路径但不存在欧拉回路的图
+
+### 判定条件
+**对于无向图**
+
+1. 存在欧拉回路的充要条件
+    a. 所有边联通
+    b. 所有顶点度数都为偶数
+2. 存在欧拉路径的充要条件
+    a. 所有边联通
+    b. **所有顶点度数都为偶数或者恰好有两个顶点度数为奇数**
+        如果所有顶点度数都为偶数，此时任何点都能作为起点
+        反之两个度数为奇数的顶点将成为起点和终点
+
+**对于有向图**
+
+1. 存在欧拉回路的充要条件
+    a. 所有的边联通
+    b. 每个顶点的入度出度相等
+2. 存在欧拉路径的充要条件
+    a. 所有边联通
+    b. **每个顶点的入度出度相同或者入度大1和出度大1的点各存在一个**
+    对于非欧拉回路情况时，起点为出度大1的点，终点为出度大1的点
+
+### Hierholzer 算法
+&gt; Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题
+**算法流程**
+选择起始点 s ，然后 dfs。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</guid><pubDate>Mon, 27 Oct 2025 10:04:24 +0000</pubDate></item><item><title>EDU176</title><link>https://mikuchan39399.github.io/post/EDU176.html</link><description># Codeforces Round EDU 176 赛后总结
 
 ---
 

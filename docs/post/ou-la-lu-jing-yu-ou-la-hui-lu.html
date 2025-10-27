@@ -12,18 +12,84 @@
     </script>
 <meta name="description" content="---
 
+### 基本概念
+> 欧拉路径是指图中每条边恰好经过一次的路径
+> 欧拉回路是指途中每条边恰好经过一次的回路
+>也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同
+这里有一些名词：
 
----。">
+- 欧拉图指存在欧拉回路的图
+- 半欧拉图指存在欧拉路径但不存在欧拉回路的图
+
+### 判定条件
+**对于无向图**
+
+1. 存在欧拉回路的充要条件
+    a. 所有边联通
+    b. 所有顶点度数都为偶数
+2. 存在欧拉路径的充要条件
+    a. 所有边联通
+    b. **所有顶点度数都为偶数或者恰好有两个顶点度数为奇数**
+        如果所有顶点度数都为偶数，此时任何点都能作为起点
+        反之两个度数为奇数的顶点将成为起点和终点
+
+**对于有向图**
+
+1. 存在欧拉回路的充要条件
+    a. 所有的边联通
+    b. 每个顶点的入度出度相等
+2. 存在欧拉路径的充要条件
+    a. 所有边联通
+    b. **每个顶点的入度出度相同或者入度大1和出度大1的点各存在一个**
+    对于非欧拉回路情况时，起点为出度大1的点，终点为出度大1的点
+
+### Hierholzer 算法
+> Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题
+**算法流程**
+选择起始点 s ，然后 dfs。">
 <meta property="og:title" content="欧拉路径与欧拉回路">
 <meta property="og:description" content="---
 
+### 基本概念
+> 欧拉路径是指图中每条边恰好经过一次的路径
+> 欧拉回路是指途中每条边恰好经过一次的回路
+>也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同
+这里有一些名词：
 
----。">
+- 欧拉图指存在欧拉回路的图
+- 半欧拉图指存在欧拉路径但不存在欧拉回路的图
+
+### 判定条件
+**对于无向图**
+
+1. 存在欧拉回路的充要条件
+    a. 所有边联通
+    b. 所有顶点度数都为偶数
+2. 存在欧拉路径的充要条件
+    a. 所有边联通
+    b. **所有顶点度数都为偶数或者恰好有两个顶点度数为奇数**
+        如果所有顶点度数都为偶数，此时任何点都能作为起点
+        反之两个度数为奇数的顶点将成为起点和终点
+
+**对于有向图**
+
+1. 存在欧拉回路的充要条件
+    a. 所有的边联通
+    b. 每个顶点的入度出度相等
+2. 存在欧拉路径的充要条件
+    a. 所有边联通
+    b. **每个顶点的入度出度相同或者入度大1和出度大1的点各存在一个**
+    对于非欧拉回路情况时，起点为出度大1的点，终点为出度大1的点
+
+### Hierholzer 算法
+> Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题
+**算法流程**
+选择起始点 s ，然后 dfs。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>欧拉路径与欧拉回路</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
 </head>
@@ -47,7 +113,17 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     body {padding: 8px;}
     .postTitle{font-size:24px;}
 }
-
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
 </style>
 
 
@@ -80,6 +156,66 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
     <div id="content">
 <div class="markdown-body" id="postBody"><hr>
+<h3>基本概念</h3>
+<blockquote>
+<p>欧拉路径是指图中每条边恰好经过一次的路径<br>
+欧拉回路是指途中每条边恰好经过一次的回路<br>
+也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同<br>
+这里有一些名词：</p>
+</blockquote>
+<ul>
+<li>欧拉图指存在欧拉回路的图</li>
+<li>半欧拉图指存在欧拉路径但不存在欧拉回路的图</li>
+</ul>
+<h3>判定条件</h3>
+<p><strong>对于无向图</strong></p>
+<ol>
+<li>存在欧拉回路的充要条件<br>
+a. 所有边联通<br>
+b. 所有顶点度数都为偶数</li>
+<li>存在欧拉路径的充要条件<br>
+a. 所有边联通<br>
+b. <strong>所有顶点度数都为偶数或者恰好有两个顶点度数为奇数</strong><br>
+如果所有顶点度数都为偶数，此时任何点都能作为起点<br>
+反之两个度数为奇数的顶点将成为起点和终点</li>
+</ol>
+<p><strong>对于有向图</strong></p>
+<ol>
+<li>存在欧拉回路的充要条件<br>
+a. 所有的边联通<br>
+b. 每个顶点的入度出度相等</li>
+<li>存在欧拉路径的充要条件<br>
+a. 所有边联通<br>
+b. <strong>每个顶点的入度出度相同或者入度大1和出度大1的点各存在一个</strong><br>
+对于非欧拉回路情况时，起点为出度大1的点，终点为出度大1的点</li>
+</ol>
+<h3>Hierholzer 算法</h3>
+<blockquote>
+<p>Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题<br>
+<strong>算法流程</strong><br>
+选择起始点 s ，然后 dfs。当递归到顶点 x 时：<br>
+• 遍历 x 的出边 (x → y) ：<br>
+◦ 删掉 (x → y) ；（如果是⽆向图，需要删正反两条边）<br>
+◦ 递归进 y ，做同样操作；<br>
+◦ 从 y 回溯，递归下⼀条边时，将边 (x → y) 加⼊答案数组；（如果结果要的是边的路线）<br>
+• 所有 x 的边都遍历完毕之后，将 x 顶点加⼊答案数组。（如果结果要的是顶点的路线）<br>
+最终将答案数组逆序，就是欧拉路径。<br>
+如果需要按照字典序输出欧拉路径，仅需在遍历所有出边的时候，按照顶点编号从⼩到⼤遍历即可</p>
+</blockquote>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">dfs</span>(<span class="pl-k">int</span> x) <span class="pl-c"><span class="pl-c">//</span>伪代码，需要注意的是最好用vector存图</span>
+{
+  <span class="pl-k">for</span>(<span class="pl-k">auto</span> y : edges[x]) <span class="pl-c"><span class="pl-c">//</span> 遍历所有出边</span>
+  {
+    <span class="pl-k">delete</span>(x-&gt;<span class="pl-smi">y</span>); <span class="pl-c"><span class="pl-c">//</span> 删除这条边</span>
+    <span class="pl-c1">dfs</span>(y); <span class="pl-c"><span class="pl-c">//</span> 进⼊下⼀个节点</span>
+    <span class="pl-c"><span class="pl-c">//</span> 如果要的是边的路线</span>
+    ret.<span class="pl-c1">push</span>(x-&gt;<span class="pl-smi">y</span>);
+  }
+ret.<span class="pl-c1">push</span>(x); <span class="pl-c"><span class="pl-c">//</span> 加⼊到结果中</span>
+}</pre></div>
+<p><a href="https://github.com/mikuchan39399/HNIST-ACM-2024/tree/main/algorithms/%E5%9B%BE%E8%AE%BA/%E6%AC%A7%E6%8B%89%E8%B7%AF%E5%BE%84%E4%B8%8E%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF">模板链接</a></p>
+<h3>例题</h3>
+<p><a href="">例题源码链接</a></p>
 <hr></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
@@ -105,7 +241,7 @@ if(""!=""){
 </script></div>
 </body>
 <script>
-var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
 var utterancesLoad=0;
 
 let themeSettings={
@@ -178,7 +314,70 @@ function iFrameLoading(){
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
 
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
 
 </script>
 
