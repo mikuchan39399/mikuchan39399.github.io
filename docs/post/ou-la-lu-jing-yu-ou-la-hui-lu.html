@@ -13,8 +13,8 @@
 <meta name="description" content="---
 
 ### 基本概念
-> 欧拉路径是指图中每条边恰好经过一次的路径
-> 欧拉回路是指途中每条边恰好经过一次的回路
+> **欧拉路径是指图中每条边恰好经过一次的路径**
+> **欧拉回路是指途中每条边恰好经过一次的回路**
 >也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同
 这里有一些名词：
 
@@ -45,14 +45,14 @@
 
 ### Hierholzer 算法
 > Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题
-**算法流程**
+**算法流程：**
 选择起始点 s ，然后 dfs。">
 <meta property="og:title" content="欧拉路径与欧拉回路">
 <meta property="og:description" content="---
 
 ### 基本概念
-> 欧拉路径是指图中每条边恰好经过一次的路径
-> 欧拉回路是指途中每条边恰好经过一次的回路
+> **欧拉路径是指图中每条边恰好经过一次的路径**
+> **欧拉回路是指途中每条边恰好经过一次的回路**
 >也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同
 这里有一些名词：
 
@@ -83,7 +83,7 @@
 
 ### Hierholzer 算法
 > Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题
-**算法流程**
+**算法流程：**
 选择起始点 s ，然后 dfs。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html">
@@ -158,8 +158,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="markdown-body" id="postBody"><hr>
 <h3>基本概念</h3>
 <blockquote>
-<p>欧拉路径是指图中每条边恰好经过一次的路径<br>
-欧拉回路是指途中每条边恰好经过一次的回路<br>
+<p><strong>欧拉路径是指图中每条边恰好经过一次的路径</strong><br>
+<strong>欧拉回路是指途中每条边恰好经过一次的回路</strong><br>
 也就是说欧拉回路是一种特殊的欧拉路径，起点和终点必须相同<br>
 这里有一些名词：</p>
 </blockquote>
@@ -192,7 +192,7 @@ b. <strong>每个顶点的入度出度相同或者入度大1和出度大1的点�
 <h3>Hierholzer 算法</h3>
 <blockquote>
 <p>Hierholzer 算法，⼜称逐步插⼊回路法求解，用于求解该问题<br>
-<strong>算法流程</strong><br>
+<strong>算法流程：</strong><br>
 选择起始点 s ，然后 dfs。当递归到顶点 x 时：<br>
 • 遍历 x 的出边 (x → y) ：<br>
 ◦ 删掉 (x → y) ；（如果是⽆向图，需要删正反两条边）<br>
@@ -200,18 +200,20 @@ b. <strong>每个顶点的入度出度相同或者入度大1和出度大1的点�
 ◦ 从 y 回溯，递归下⼀条边时，将边 (x → y) 加⼊答案数组；（如果结果要的是边的路线）<br>
 • 所有 x 的边都遍历完毕之后，将 x 顶点加⼊答案数组。（如果结果要的是顶点的路线）<br>
 最终将答案数组逆序，就是欧拉路径。<br>
-如果需要按照字典序输出欧拉路径，仅需在遍历所有出边的时候，按照顶点编号从⼩到⼤遍历即可</p>
+如果需要按照字典序输出欧拉路径，仅需在遍历所有出边的时候，按照顶点编号从⼩到⼤遍历即可<br>
+<strong>这里最好用vector邻接表存图，这样从大到小排序并且用尾删就能实现O(1)的复杂度</strong></p>
 </blockquote>
-<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">dfs</span>(<span class="pl-k">int</span> x) <span class="pl-c"><span class="pl-c">//</span>伪代码，需要注意的是最好用vector存图</span>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">dfs</span>(<span class="pl-k">int</span> u) 
 {
-  <span class="pl-k">for</span>(<span class="pl-k">auto</span> y : edges[x]) <span class="pl-c"><span class="pl-c">//</span> 遍历所有出边</span>
+  <span class="pl-k">while</span> (edges[u] is <span class="pl-k">not</span> empty) 
   {
-    <span class="pl-k">delete</span>(x-&gt;<span class="pl-smi">y</span>); <span class="pl-c"><span class="pl-c">//</span> 删除这条边</span>
-    <span class="pl-c1">dfs</span>(y); <span class="pl-c"><span class="pl-c">//</span> 进⼊下⼀个节点</span>
-    <span class="pl-c"><span class="pl-c">//</span> 如果要的是边的路线</span>
-    ret.<span class="pl-c1">push</span>(x-&gt;<span class="pl-smi">y</span>);
+    <span class="pl-c1">let</span> (v, edge_id) be the last edge in edges[u];
+    remove <span class="pl-c1">this</span> edge from edges[u]; <span class="pl-c"><span class="pl-c">//</span> 对应 pop_back()</span>
+    <span class="pl-c"><span class="pl-c">//</span> 如果是无向图，标记边为已访问，而不是真的删除另外一条边</span>
+    <span class="pl-c1">dfs</span>(v);
+    path.<span class="pl-c1">push</span>(edge_id); <span class="pl-c"><span class="pl-c">//</span> 根据需要记录边或点</span>
   }
-ret.<span class="pl-c1">push</span>(x); <span class="pl-c"><span class="pl-c">//</span> 加⼊到结果中</span>
+   path.<span class="pl-c1">push</span>(u)
 }</pre></div>
 <p><a href="https://github.com/mikuchan39399/HNIST-ACM-2024/tree/main/algorithms/%E5%9B%BE%E8%AE%BA/%E6%AC%A7%E6%8B%89%E8%B7%AF%E5%BE%84%E4%B8%8E%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF">模板链接</a></p>
 <h3>例题</h3>
