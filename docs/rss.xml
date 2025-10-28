@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Tue, 28 Oct 2025 04:36:57 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>欧拉路径与欧拉回路</title><link>https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</link><description>---
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Tue, 28 Oct 2025 12:04:59 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>欧拉路径与欧拉回路</title><link>https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</link><description>---
 
 ### 基本概念
 &gt; **欧拉路径是指图中每条边恰好经过一次的路径**
@@ -14,7 +14,7 @@
 **对于无向图**
 
 1. 存在欧拉回路的充要条件
-    a. 所有边联通
+    a. 所有边联通（**所有度不为0的顶点构成一个连通分量**）
     b. 所有顶点度数都为偶数
 2. 存在欧拉路径的充要条件
     a. 所有边联通
@@ -25,7 +25,7 @@
 **对于有向图**
 
 1. 存在欧拉回路的充要条件
-    a. 所有的边联通
+    a. 所有边联通（**所有入度+出度不为0的顶点构成一个弱连通分量**）
     b. 每个顶点的入度出度相等
 2. 存在欧拉路径的充要条件
     a. 所有边联通

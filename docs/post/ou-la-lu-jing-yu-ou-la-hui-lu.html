@@ -25,7 +25,7 @@
 **对于无向图**
 
 1. 存在欧拉回路的充要条件
-    a. 所有边联通
+    a. 所有边联通（**所有度不为0的顶点构成一个连通分量**）
     b. 所有顶点度数都为偶数
 2. 存在欧拉路径的充要条件
     a. 所有边联通
@@ -36,7 +36,7 @@
 **对于有向图**
 
 1. 存在欧拉回路的充要条件
-    a. 所有的边联通
+    a. 所有边联通（**所有入度+出度不为0的顶点构成一个弱连通分量**）
     b. 每个顶点的入度出度相等
 2. 存在欧拉路径的充要条件
     a. 所有边联通
@@ -63,7 +63,7 @@
 **对于无向图**
 
 1. 存在欧拉回路的充要条件
-    a. 所有边联通
+    a. 所有边联通（**所有度不为0的顶点构成一个连通分量**）
     b. 所有顶点度数都为偶数
 2. 存在欧拉路径的充要条件
     a. 所有边联通
@@ -74,7 +74,7 @@
 **对于有向图**
 
 1. 存在欧拉回路的充要条件
-    a. 所有的边联通
+    a. 所有边联通（**所有入度+出度不为0的顶点构成一个弱连通分量**）
     b. 每个顶点的入度出度相等
 2. 存在欧拉路径的充要条件
     a. 所有边联通
@@ -171,7 +171,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p><strong>对于无向图</strong></p>
 <ol>
 <li>存在欧拉回路的充要条件<br>
-a. 所有边联通<br>
+a. 所有边联通（<strong>所有度不为0的顶点构成一个连通分量</strong>）<br>
 b. 所有顶点度数都为偶数</li>
 <li>存在欧拉路径的充要条件<br>
 a. 所有边联通<br>
@@ -182,7 +182,7 @@ b. <strong>所有顶点度数都为偶数或者恰好有两个顶点度数为奇
 <p><strong>对于有向图</strong></p>
 <ol>
 <li>存在欧拉回路的充要条件<br>
-a. 所有的边联通<br>
+a. 所有边联通（<strong>所有入度+出度不为0的顶点构成一个弱连通分量</strong>）<br>
 b. 每个顶点的入度出度相等</li>
 <li>存在欧拉路径的充要条件<br>
 a. 所有边联通<br>
@@ -205,19 +205,20 @@ b. <strong>每个顶点的入度出度相同或者入度大1和出度大1的点�
 </blockquote>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">dfs</span>(<span class="pl-k">int</span> u) 
 {
-  <span class="pl-k">while</span> (edges[u] is <span class="pl-k">not</span> empty) 
-  {
-    <span class="pl-c1">let</span> (v, edge_id) be the last edge in edges[u];
-    remove <span class="pl-c1">this</span> edge from edges[u]; <span class="pl-c"><span class="pl-c">//</span> 对应 pop_back()</span>
-    <span class="pl-c"><span class="pl-c">//</span> 如果是无向图，标记边为已访问，而不是真的删除另外一条边</span>
-    <span class="pl-c1">dfs</span>(v);
-    path.<span class="pl-c1">push</span>(edge_id); <span class="pl-c"><span class="pl-c">//</span> 根据需要记录边或点</span>
-  }
-   path.<span class="pl-c1">push</span>(u)
+    <span class="pl-k">while</span> (edges[u] is <span class="pl-k">not</span> empty) 
+    {
+      <span class="pl-c1">let</span> (v, edge_id) be the last edge in edges[u];
+      remove <span class="pl-c1">this</span> edge from edges[u]; 
+      <span class="pl-c"><span class="pl-c">//</span> 如果是无向图，标记边为已访问，而不是真的删除另外一条边</span>
+      <span class="pl-c1">dfs</span>(v);
+      path.<span class="pl-c1">push</span>(edge_id); <span class="pl-c"><span class="pl-c">//</span> 根据需要记录边或点</span>
+    }
+   path.<span class="pl-c1">push</span>(u) <span class="pl-c"><span class="pl-c">//</span>记录点</span>
 }</pre></div>
 <p><a href="https://github.com/mikuchan39399/HNIST-ACM-2024/tree/main/algorithms/%E5%9B%BE%E8%AE%BA/%E6%AC%A7%E6%8B%89%E8%B7%AF%E5%BE%84%E4%B8%8E%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF">模板链接</a></p>
 <h3>例题</h3>
-<p><a href="">例题源码链接</a></p>
+<p><a href="https://github.com/mikuchan39399/HNIST-ACM-2024/tree/main/algorithms/%E5%9B%BE%E8%AE%BA/%E6%AC%A7%E6%8B%89%E8%B7%AF%E5%BE%84%E4%B8%8E%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF/%E4%BE%8B%E9%A2%98">例题源码链接</a></p>
+<h4></h4>
 <hr></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
