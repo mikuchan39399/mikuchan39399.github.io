@@ -10,9 +10,11 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="">
+<meta name="description" content="### 引入
+> 在处理数组区间问题时，我们有两个强大的基础工具：前缀和与差分。">
 <meta property="og:title" content="基础线段树">
-<meta property="og:description" content="">
+<meta property="og:description" content="### 引入
+> 在处理数组区间问题时，我们有两个强大的基础工具：前缀和与差分。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/ji-chu-xian-duan-shu.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -73,7 +75,21 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"></div>
+<div class="markdown-body" id="postBody"><h3>引入</h3>
+<blockquote>
+<p>在处理数组区间问题时，我们有两个强大的基础工具：前缀和与差分。</p>
+</blockquote>
+<p>面对静态数组的区间求和，前缀和是当之无愧的王者。它通过 O(N) 预处理，能实现 O(1) 的闪电查询。但它的王朝建立在“数据不变”的基石之上。一旦引入单点修改，为了维护前缀和数组，每次修改都需要 O(N) 的代价，这在频繁更新的场景下是不可接受的。</p>
+<p>另一边，当我们面临区间批量修改时，差分数组则大放异彩。它能以 O(1) 的惊人效率完成区间增减。然而，它的软肋也同样明显：当我们需要查询某个点或区间的具体值时，必须通过 O(N) 的计算来还原数据，这使得查询成为了性能瓶颈。</p>
+<p>我们陷入了一个两难的境地：</p>
+<ul>
+<li>前缀和：查询快，修改慢。</li>
+<li>差分数组：修改快，查询慢。</li>
+</ul>
+<blockquote>
+<p>难道就没有一种数据结构，能在这两者之间取得完美的平衡吗？</p>
+</blockquote>
+<p>当然有。为了打破这种“鱼与熊掌不可兼得”的僵局，我们需要请出今天的主角——线段树。它是一种优雅的树形结构，能够将修改和查询的时间复杂度都优化到 O(log N) 级别，成为处理动态区间问题的全能选手。</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
