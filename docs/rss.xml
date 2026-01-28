@@ -1,5 +1,63 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Thu, 06 Nov 2025 12:06:06 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>基础线段树</title><link>https://mikuchan39399.github.io/post/ji-chu-xian-duan-shu.html</link><description>### 引入
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Wed, 28 Jan 2026 15:47:54 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux进程</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng.html</link><description>
+## 进程
+### 基本概念
+在操作系统学科中, 进程被视作一个程序被加载进内存的执行实例
+在Linux内核中, 进程被视作承担分配系统资源调配的同一单位, 且 进程之间存在隔离性
+
+#### PCB
+PCB, 又叫做进程控制块, 在操作系统学科中是描述进程的信息集合体
+在Linux内核中, PCB被落地为具体的 task_struct 结构体
+Linux中的进程 相当于 被加载进内存的 task_struct 与具体的代码和数据
+
+#### 组织进程
+Linux中以双链表的形式组织管理着 task_struct 以管理进程, 而不用关心具体的代码数据
+其中, Linux采用侵入式数据结构的设计来让 task_struct 灵活的被挂载进多个数据结构中
+例如双链表, task_struct 中有一个结点 list_head 用于双链表的链接
+```cpp
+struct list_head 
+{
+    struct list_head *next;
+    struct list_head *prev;
+};
+
+//PCB
+struct task_struct 
+{
+    // ... 其他属性 ...
+    struct list_head tasks; // 嵌入的双链表节点
+    // ... 其他属性 ...
+};
+```
+这样 task_struct 就能通过这个结点找到其他 task_struct 内部的 list_node.
+根据C语言的指针运算, 就能通过下面这个偏移量方法用内部指针找到整个 task_struct 的起始指针来访问进程的所有信息
+```cpp
+struct task_struct *p = (struct task_struct *) ( 
+    (char *)ptr - (unsigned long) &amp;((struct task_struct *)0)-&gt;tasks 
+);
+```
+由此可见, 侵入式数据结构的设计能让 task_struct 不需要复制自身就能方便地插入进很多数据结构, 只要为其添加新的节点即可, 是很优秀的设计
+### 基本操作
+#### 查看进程
+要查看系统目前的进程信息, 可以用ls 命令查询/proc/(具体的进程pid)来查看
+```bash
+# 列出进程相关的属性文件
+ls /proc/3939
+
+# 查看进程的详细状态信息
+cat /proc/3939/status
+```
+虽然其中并不存在具体的文件存入磁盘, 只是内核以文件的形式动态地呈现进程信息给用户, 但这体现了Linux一切皆文件的特性
+当然大多数进程信息同样也可以用 top 和 ps 这些用户级工具来获取
+#### 创建进程-fork系统接口
+fork是Linux的unistd.h所包含的系统接口, 调用后以运行程序的进程为父进程产生一个独立的子进程
+若fork成功, 父进程的fork返回值为子进程的pid, 子进程的fork返回值为0
+若fork失败, 不产生子进程, fork返回值为-1
+所以可以用分支语句根据返回值来区分父子进程
+
+#### 进程工作目录
+Linux 中每个进程都有一个当前工作目录（cwd），被作为进程信息的一部分存储在PCB里，具体是fs_struct指针
+子进程的cwd默认继承父进程，而由命令行工具bash所创建的进程的父进程全都是bash自己。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-jin-cheng.html</guid><pubDate>Wed, 28 Jan 2026 09:36:27 +0000</pubDate></item><item><title>基础线段树</title><link>https://mikuchan39399.github.io/post/ji-chu-xian-duan-shu.html</link><description>### 引入
 &gt; 在处理数组区间问题时，我们有两个强大的基础工具：前缀和与差分。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/ji-chu-xian-duan-shu.html</guid><pubDate>Tue, 04 Nov 2025 06:47:25 +0000</pubDate></item><item><title>欧拉路径与欧拉回路</title><link>https://mikuchan39399.github.io/post/ou-la-lu-jing-yu-ou-la-hui-lu.html</link><description>---
 
 ### 基本概念
