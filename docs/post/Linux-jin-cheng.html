@@ -381,7 +381,7 @@ PRI 为默认的一个定值, NI 的 取值范围是 -20 &lt;= NI &lt;= 19<br>
 <h3>进程调度</h3>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>Linux中的运行队列就是就绪队列，调度队列为一个抽象概念无直接对应结构体</p>
 </div>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/60436f56-fc25-412d-99c7-74c0d60ad2f3"><img width="554" height="684" alt="Image" src="https://github.com/user-attachments/assets/60436f56-fc25-412d-99c7-74c0d60ad2f3" style="max-width: 100%; height: auto; max-height: 684px;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/8f5e5bf5-8a2a-4c3c-815a-7baa23d6617f"><img width="760" height="651" alt="Image" src="https://github.com/user-attachments/assets/8f5e5bf5-8a2a-4c3c-815a-7baa23d6617f" style="max-width: 100%; height: auto; max-height: 651px;"></a></p>
 <p>上图中可以看到，一个 rq 结构体里存在着两套队列，一套活跃队列，一套过期队列<br>
 其中还有 active* 指针指向活跃队列结点，expired* 指针指向过期队列结点<br>
 bitmap是位图，利用二进制特性反映队列的盈余状况，无需遍历队列数组<br>

@@ -149,8 +149,8 @@ PRI 为默认的一个定值, NI 的 取值范围是 -20 <= NI <= 19
 ### 进程调度
 > [!NOTE]
 > Linux中的运行队列就是就绪队列，调度队列为一个抽象概念无直接对应结构体
-<img width="554" height="684" alt="Image" src="https://github.com/user-attachments/assets/60436f56-fc25-412d-99c7-74c0d60ad2f3" />
 
+<img width="760" height="651" alt="Image" src="https://github.com/user-attachments/assets/8f5e5bf5-8a2a-4c3c-815a-7baa23d6617f" />
 
 上图中可以看到，一个 rq 结构体里存在着两套队列，一套活跃队列，一套过期队列
 其中还有 active* 指针指向活跃队列结点，expired* 指针指向过期队列结点
