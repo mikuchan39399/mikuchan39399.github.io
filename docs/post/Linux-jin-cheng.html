@@ -47,6 +47,8 @@ struct task_struct *p = (struct task_struct *) (
     (char *)ptr - (unsigned long) &((struct task_struct *)0)->tasks 
 );
 ```
+> 在Linux内核中这行代码叫container_of 宏
+
 由此可见, 侵入式数据结构的设计能让 task_struct 不需要复制自身就能方便地插入进很多数据结构, 只要为其添加新的节点即可, 是很优秀的设计
 ### 基本操作
 #### 查看进程
@@ -107,6 +109,8 @@ struct task_struct *p = (struct task_struct *) (
     (char *)ptr - (unsigned long) &((struct task_struct *)0)->tasks 
 );
 ```
+> 在Linux内核中这行代码叫container_of 宏
+
 由此可见, 侵入式数据结构的设计能让 task_struct 不需要复制自身就能方便地插入进很多数据结构, 只要为其添加新的节点即可, 是很优秀的设计
 ### 基本操作
 #### 查看进程
@@ -229,6 +233,9 @@ Linux中的进程 相当于 被加载进内存的 task_struct 与具体的代码
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">struct</span> <span class="pl-en">task_struct</span> *p = (<span class="pl-k">struct</span> <span class="pl-en">task_struct</span> *) ( 
     (<span class="pl-k">char</span> *)ptr - (<span class="pl-k">unsigned</span> <span class="pl-k">long</span>) &amp;((<span class="pl-k">struct</span> <span class="pl-en">task_struct</span> *)<span class="pl-c1">0</span>)-&gt;tasks 
 );</pre></div>
+<blockquote>
+<p>在Linux内核中这行代码叫container_of 宏</p>
+</blockquote>
 <p>由此可见, 侵入式数据结构的设计能让 task_struct 不需要复制自身就能方便地插入进很多数据结构, 只要为其添加新的节点即可, 是很优秀的设计</p>
 <h3>基本操作</h3>
 <h4>查看进程</h4>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Wed, 28 Jan 2026 15:47:54 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux进程</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng.html</link><description>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Thu, 29 Jan 2026 02:43:27 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux进程</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng.html</link><description>
 ## 进程
 ### 基本概念
 在操作系统学科中, 进程被视作一个程序被加载进内存的执行实例
@@ -36,6 +36,8 @@ struct task_struct *p = (struct task_struct *) (
     (char *)ptr - (unsigned long) &amp;((struct task_struct *)0)-&gt;tasks 
 );
 ```
+&gt; 在Linux内核中这行代码叫container_of 宏
+
 由此可见, 侵入式数据结构的设计能让 task_struct 不需要复制自身就能方便地插入进很多数据结构, 只要为其添加新的节点即可, 是很优秀的设计
 ### 基本操作
 #### 查看进程
