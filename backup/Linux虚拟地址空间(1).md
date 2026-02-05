@@ -117,7 +117,71 @@ int main()
 ```
 
 <img width="748" height="585" alt="Image" src="https://github.com/user-attachments/assets/5f8c726b-73be-4b56-9592-7a3ae6855f90" />
+
 如果C语言中的地址代表物理地址的话，物理地址相同的变量就不可能拥有不一样的两个值对吧
 证明操作系统绝对是对硬件上的内存做了抽象的，这层抽象在 OS 学科里就被叫做虚拟地址空间
 在Linux中被称作进程虚拟地址空间
-### 
+### mm_struct
+```cpp
+1    struct mm_struct
+2    {
+3        /*...*/
+4        struct vm_area_struct *mmap;        /* 指向虚拟区间(VMA)链表 */
+5        struct rb_root mm_rb;               /* red_black树 */
+6        unsigned long task_size;            /*具有该结构体的进程的虚拟地址空间的大小*/
+7        /*...*/
+8        // 代码段、数据段、堆栈段、参数段及环境段的起始和结束地址。
+9        unsigned long start_code, end_code, start_data, end_data;
+10       unsigned long start_brk, brk, start_stack;
+11       unsigned long arg_start, arg_end, env_start, env_end;
+12       /*...*/
+13   }
+```
+操作系统会给每个进程画饼，意思是每个进程都能看到全局的虚拟地址空间，但是进程间怎么配合使用肯定由操作系统来宏观调控
+在 task_struct 中存在一个结构体指针 mm_struct*，指向对应进程唯一的内存描述符
+```cpp
+struct task_struct
+{
+/*...*/
+struct mm_struct       *mm; //对于普通的用户进程来说该字段指向他的虚拟地址空间的用户空间部分，对于内核线程来说这部分为NULL。
+struct mm_struct       *active_mm; // 该字段是内核线程使⽤的。当该进程是内核线程时，它的mm字段为NULL，表⽰没有内存地址空间，
+可也并不是真正的没有，这是因为所有进程关于内核的映射都是一样的，内核线程可以使用任意进程的地址空间。
+/*...*/
+}
+```
+ 和进程控制块一样，成套的内存描述符也需要被管理
+ 当虚拟区较少时采取单链表，由mmap指针指向这个链表
+ 当虚拟区间多时采取红⿊树进⾏管理，由mm_rb指向这棵树
+#### 虚拟内存区域 VMA
+Linux 使用 vm_area_struct 结构体来表示一个独立的虚拟内存区域，它们就存在于 mm_struct 中
+一个 mm_struct 中拥有多个 vm_area_struct ，用来表示内部机制与功能都不尽相同的各个虚拟内存区
+```cpp
+1    struct vm_area_struct {
+2        unsigned long vm_start; //虚存区起始
+3        unsigned long vm_end;   //虚存区结束
+4        struct vm_area_struct *vm_next, *vm_prev;   //前后指针
+5        struct rb_node vm_rb;   //红黑树中的位置
+6        unsigned long rb_subtree_gap;
+7        struct mm_struct *vm_mm;    //所属的 mm_struct
+8        pgprot_t vm_page_prot;
+9        unsigned long vm_flags;     //标志位
+10       struct {
+11           struct rb_node rb;
+12           unsigned long rb_subtree_last;
+13       } shared;
+14       struct list_head anon_vma_chain;
+15       struct anon_vma *anon_vma;
+16       const struct vm_operations_struct *vm_ops;  //vma对应的实际操作
+17       unsigned long vm_pgoff;     //文件映射偏移量
+18       struct file * vm_file;      //映射的文件
+19       void * vm_private_data;     //私有数据
+20       atomic_long_t swap_readahead_info;
+21   #ifndef CONFIG_MMU
+22       struct vm_region *vm_region;        /* NOMMU mapping region */
+23   #endif
+24   #ifdef CONFIG_NUMA
+25       struct mempolicy *vm_policy;        /* NUMA policy
+```
+前面刚说的对于 mm_struct 进行管理的方式就是通过 vm_area_struct 中的前后指针与 vm_rb 进行细颗粒度管理的 
+
+
