@@ -1,5 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 31 Jan 2026 10:57:46 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux虚拟地址空间(1)</title><link>https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html</link><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html</guid><pubDate>Sat, 31 Jan 2026 10:57:17 +0000</pubDate></item><item><title>Linux进程</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng.html</link><description>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Thu, 05 Feb 2026 03:47:42 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux虚拟地址空间(1)</title><link>https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html</link><description>## 回顾 C 语言程序地址空间
+&gt; 从低地址开始，到高地址……
+&gt; 首先，我们来看三个最基本的静态区域！
+#### 1. 正文代码区
+该区域对应于编译后的机器指令
+- 它存放着：
+   - 机器代码：也就是 CPU 执行的二进制指令，高级语言中所写的 if-else / while / for 与函数调用等逻辑，编译后都在这里
+   - 只读常量：存放 字符串字面量 以及 const 修饰的 全局变量
+- 特点：
+   - 只读
+   - 共享：一个程序创建子进程的话，父子进程之间共享这段代码段，节省内存
+   - 位置：位于程序地址空间最底层
+```cpp
+// --- 正文代码区 ---
+const int g_const = 100;
+char *str = 'Hello';
+```
+#### 2. 初始化数据区
+这个区域存放着
+ 。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html</guid><pubDate>Sat, 31 Jan 2026 10:57:17 +0000</pubDate></item><item><title>Linux进程</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng.html</link><description>
 ## 进程
 ### 基本概念
 在操作系统学科中, 进程被视作一个程序被加载进内存的执行实例
