@@ -13,44 +13,84 @@
 <meta name="description" content="## 回顾 C 语言程序地址空间
 > 从低地址开始，到高地址……
 > 首先，我们来看三个最基本的静态区域！
-#### 1. 正文代码区
+#### 1. 正文代码区 (.text / .rodata)
 该区域对应于编译后的机器指令
 - 它存放着：
    - 机器代码：也就是 CPU 执行的二进制指令，高级语言中所写的 if-else / while / for 与函数调用等逻辑，编译后都在这里
    - 只读常量：存放 字符串字面量 以及 const 修饰的 全局变量
 - 特点：
-   - 只读
+   - 只读：防止程序运行修改指令
    - 共享：一个程序创建子进程的话，父子进程之间共享这段代码段，节省内存
    - 位置：位于程序地址空间最底层
 ```cpp
-// --- 正文代码区 ---
+// --- (.text / .rodata) ---
 const int g_const = 100;
 char *str = 'Hello';
 ```
-#### 2. 初始化数据区
-这个区域存放着
- 。">
+> 在具体的操作系统中，.test 通常专门存放机器代码，.rodata 专门存放只读常量
+
+#### 2. 初始化数据区 (.data)
+这个区域存放的是程序启动时就已经确定数值的变量
+- 它存放着：
+   - 显式初始化为非零值的 全局变量
+   - 显式初始化为非零值的 static 修饰的静态变量
+- 特点：
+   - 读写：程序运行过程中允许对此区域进行读取修改
+   - 占用文件空间：这些变量初始值存在于可执行文件 (exe / elf)，程序运行时将它们从磁盘拷贝至内存
+
+```cpp
+// --- (.data) ---
+int g_var = 10;
+static int s_var = 20;
+```
+ #### 3. 未初始化数据区 (.bss)
+这个区域的名字来源于汇编语言时代的 'Block Started by Symbol'
+- 它存放着：
+   - 显式初始化为零值 或 没有初始化的 全局变量
+   - 显式初始化为零值 或 没有初始化的 static 修饰的 静态变量
+- 特点：
+   - 自动清零： 操作系统在加载程序时，会将这块内存全部置为 0。">
 <meta property="og:title" content="Linux虚拟地址空间(1)">
 <meta property="og:description" content="## 回顾 C 语言程序地址空间
 > 从低地址开始，到高地址……
 > 首先，我们来看三个最基本的静态区域！
-#### 1. 正文代码区
+#### 1. 正文代码区 (.text / .rodata)
 该区域对应于编译后的机器指令
 - 它存放着：
    - 机器代码：也就是 CPU 执行的二进制指令，高级语言中所写的 if-else / while / for 与函数调用等逻辑，编译后都在这里
    - 只读常量：存放 字符串字面量 以及 const 修饰的 全局变量
 - 特点：
-   - 只读
+   - 只读：防止程序运行修改指令
    - 共享：一个程序创建子进程的话，父子进程之间共享这段代码段，节省内存
    - 位置：位于程序地址空间最底层
 ```cpp
-// --- 正文代码区 ---
+// --- (.text / .rodata) ---
 const int g_const = 100;
 char *str = 'Hello';
 ```
-#### 2. 初始化数据区
-这个区域存放着
- 。">
+> 在具体的操作系统中，.test 通常专门存放机器代码，.rodata 专门存放只读常量
+
+#### 2. 初始化数据区 (.data)
+这个区域存放的是程序启动时就已经确定数值的变量
+- 它存放着：
+   - 显式初始化为非零值的 全局变量
+   - 显式初始化为非零值的 static 修饰的静态变量
+- 特点：
+   - 读写：程序运行过程中允许对此区域进行读取修改
+   - 占用文件空间：这些变量初始值存在于可执行文件 (exe / elf)，程序运行时将它们从磁盘拷贝至内存
+
+```cpp
+// --- (.data) ---
+int g_var = 10;
+static int s_var = 20;
+```
+ #### 3. 未初始化数据区 (.bss)
+这个区域的名字来源于汇编语言时代的 'Block Started by Symbol'
+- 它存放着：
+   - 显式初始化为零值 或 没有初始化的 全局变量
+   - 显式初始化为零值 或 没有初始化的 static 修饰的 静态变量
+- 特点：
+   - 自动清零： 操作系统在加载程序时，会将这块内存全部置为 0。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -126,7 +166,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>从低地址开始，到高地址……<br>
 首先，我们来看三个最基本的静态区域！</p>
 </blockquote>
-<h4>1. 正文代码区</h4>
+<h4>1. 正文代码区 (.text / .rodata)</h4>
 <p>该区域对应于编译后的机器指令</p>
 <ul>
 <li>它存放着：
@@ -137,17 +177,61 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 <li>特点：
 <ul>
-<li>只读</li>
+<li>只读：防止程序运行修改指令</li>
 <li>共享：一个程序创建子进程的话，父子进程之间共享这段代码段，节省内存</li>
 <li>位置：位于程序地址空间最底层</li>
 </ul>
 </li>
 </ul>
-<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- 正文代码区 ---</span>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.text / .rodata) ---</span>
 <span class="pl-k">const</span> <span class="pl-k">int</span> g_const = <span class="pl-c1">100</span>;
 <span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>;</pre></div>
-<h4>2. 初始化数据区</h4>
-<p>这个区域存放着</p></div>
+<blockquote>
+<p>在具体的操作系统中，.test 通常专门存放机器代码，.rodata 专门存放只读常量</p>
+</blockquote>
+<h4>2. 初始化数据区 (.data)</h4>
+<p>这个区域存放的是程序启动时就已经确定数值的变量</p>
+<ul>
+<li>它存放着：
+<ul>
+<li>显式初始化为非零值的 全局变量</li>
+<li>显式初始化为非零值的 static 修饰的静态变量</li>
+</ul>
+</li>
+<li>特点：
+<ul>
+<li>读写：程序运行过程中允许对此区域进行读取修改</li>
+<li>占用文件空间：这些变量初始值存在于可执行文件 (exe / elf)，程序运行时将它们从磁盘拷贝至内存</li>
+</ul>
+</li>
+</ul>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.data) ---</span>
+<span class="pl-k">int</span> g_var = <span class="pl-c1">10</span>;
+<span class="pl-k">static</span> <span class="pl-k">int</span> s_var = <span class="pl-c1">20</span>;</pre></div>
+<h4>3. 未初始化数据区 (.bss)</h4>
+<p>这个区域的名字来源于汇编语言时代的 "Block Started by Symbol"</p>
+<ul>
+<li>它存放着：
+<ul>
+<li>显式初始化为零值 或 没有初始化的 全局变量</li>
+<li>显式初始化为零值 或 没有初始化的 static 修饰的 静态变量</li>
+</ul>
+</li>
+<li>特点：
+<ul>
+<li>自动清零： 操作系统在加载程序时，会将这块内存全部置为 0。这也是为什么全局变量不赋值默认是 0。</li>
+<li>不占文件空间： 这是它存在的最大意义。比如我定义了一个 int arr[10000]; 的全局数组且没赋值，可执行文件不会因此变大 40KB。可执行文件只需要记录“这里需要预留 40KB 的空间”这个信息即可。</li>
+</ul>
+</li>
+</ul>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.bss) ---</span>
+<span class="pl-k">int</span> g_bss;
+<span class="pl-k">int</span> g_zero = <span class="pl-c1">0</span>; 
+<span class="pl-k">static</span> <span class="pl-k">int</span> s_bss;</pre></div>
+<blockquote>
+<p>接下来是与用户关联较大的...</p>
+</blockquote>
+<h4>堆栈区</h4></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
