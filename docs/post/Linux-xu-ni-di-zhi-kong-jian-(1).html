@@ -26,30 +26,8 @@
 // --- (.text / .rodata) ---
 const int g_const = 100;
 char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中
-```
-> 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
-
-### 2. 初始化数据区 (.data)
-这个区域存放的是程序启动时就已经确定数值的变量
-- 它存放着：
-   - 显式初始化为非零值的 全局变量
-   - 显式初始化为非零值的 static 修饰的静态变量
-- 特点：
-   - 读写：程序运行过程中允许对此区域进行读取修改
-   - 占用文件空间：这些变量初始值存在于可执行文件 (exe / elf)，程序运行时将它们从磁盘拷贝至内存
-
-```cpp
-// --- (.data) ---
-int g_var = 10;
-static int s_var = 20;
-```
- ### 3. 未初始化数据区 (.bss)
-这个区域的名字来源于汇编语言时代的 'Block Started by Symbol'
-- 它存放着：
-   - 显式初始化为零值 或 没有初始化的 全局变量
-   - 显式初始化为零值 或 没有初始化的 static 修饰的 静态变量
-- 特点：
-   - 自动清零： 操作系统在加载程序时，会将这块内存全部置为 0。">
+char arr[] = 'Hello'; // 'Hello' 也是字面量，但把 arr[ ] 看作变量，会在变量对应的内存区内开辟一块数组空间拷贝进去
+// 此时修改 arr[0] 是合法的，修改 str[0] 会 段错误。">
 <meta property="og:title" content="Linux虚拟地址空间(1)">
 <meta property="og:description" content="## 回顾 C 语言程序地址空间
 > 从低地址开始，到高地址……
@@ -67,30 +45,8 @@ static int s_var = 20;
 // --- (.text / .rodata) ---
 const int g_const = 100;
 char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中
-```
-> 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
-
-### 2. 初始化数据区 (.data)
-这个区域存放的是程序启动时就已经确定数值的变量
-- 它存放着：
-   - 显式初始化为非零值的 全局变量
-   - 显式初始化为非零值的 static 修饰的静态变量
-- 特点：
-   - 读写：程序运行过程中允许对此区域进行读取修改
-   - 占用文件空间：这些变量初始值存在于可执行文件 (exe / elf)，程序运行时将它们从磁盘拷贝至内存
-
-```cpp
-// --- (.data) ---
-int g_var = 10;
-static int s_var = 20;
-```
- ### 3. 未初始化数据区 (.bss)
-这个区域的名字来源于汇编语言时代的 'Block Started by Symbol'
-- 它存放着：
-   - 显式初始化为零值 或 没有初始化的 全局变量
-   - 显式初始化为零值 或 没有初始化的 static 修饰的 静态变量
-- 特点：
-   - 自动清零： 操作系统在加载程序时，会将这块内存全部置为 0。">
+char arr[] = 'Hello'; // 'Hello' 也是字面量，但把 arr[ ] 看作变量，会在变量对应的内存区内开辟一块数组空间拷贝进去
+// 此时修改 arr[0] 是合法的，修改 str[0] 会 段错误。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -185,7 +141,9 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </ul>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.text / .rodata) ---</span>
 <span class="pl-k">const</span> <span class="pl-k">int</span> g_const = <span class="pl-c1">100</span>;
-<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span>实际上，字符串字面量"Hello"存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中</span></pre></div>
+<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span>实际上，字符串字面量"Hello"存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中</span>
+<span class="pl-k">char</span> arr[] = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span> "Hello" 也是字面量，但把 arr[ ] 看作变量，会在变量对应的内存区内开辟一块数组空间拷贝进去</span>
+<span class="pl-c"><span class="pl-c">//</span> 此时修改 arr[0] 是合法的，修改 str[0] 会 段错误。</span></pre></div>
 <blockquote>
 <p>在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量</p>
 </blockquote>
@@ -276,7 +234,48 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <blockquote>
 <p>有句话告诉我们，操作系统是对于计算机硬件的最底层抽象，学习 C语言时接触的这些地址与指针，真的是计算机物理上确确实实的地址吗......当然不是~</p>
 </blockquote>
-<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div></div>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>sys/types.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unistd.h<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">int</span> gval = <span class="pl-c1">0</span>;
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">pid_t</span> id = <span class="pl-c1">fork</span>();
+    <span class="pl-k">if</span>(id &lt; <span class="pl-c1">0</span>)
+    {
+        <span class="pl-c1">perror</span>(<span class="pl-s"><span class="pl-pds">"</span>fork<span class="pl-pds">"</span></span>);
+        <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    }
+    <span class="pl-k">else</span> <span class="pl-k">if</span>(id == <span class="pl-c1">0</span>) <span class="pl-c"><span class="pl-c">//</span>child</span>
+    {
+        <span class="pl-c1">pid_t</span> pid = <span class="pl-c1">getpid</span>();
+        <span class="pl-c1">pid_t</span> ppid = <span class="pl-c1">getppid</span>();
+        <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
+        {
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>子进程, pid: %d, ppid: %d, gval: %d, &amp;gval: %p<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, pid, ppid, gval, &amp;gval);
+            <span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>);
+            gval++;
+        }
+    }
+    <span class="pl-k">else</span> <span class="pl-c"><span class="pl-c">//</span>fa</span>
+    {
+        <span class="pl-c1">pid_t</span> pid = <span class="pl-c1">getpid</span>();
+        <span class="pl-c1">pid_t</span> ppid = <span class="pl-c1">getppid</span>();
+        <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
+        {
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>父进程, pid: %d, ppid: %d, gval: %d, &amp;gval: %p<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, pid, ppid, gval, &amp;gval);
+            <span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>);
+        }
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/5f8c726b-73be-4b56-9592-7a3ae6855f90"><img width="748" height="585" alt="Image" src="https://github.com/user-attachments/assets/5f8c726b-73be-4b56-9592-7a3ae6855f90" style="max-width: 100%; height: auto; max-height: 585px;"></a></p>
+如果C语言中的地址代表物理地址的话，物理地址相同的变量就不可能拥有不一样的两个值对吧
+证明操作系统绝对是对硬件上的内存做了抽象的，这层抽象在 OS 学科里就被叫做虚拟地址空间
+在Linux中被称作进程虚拟地址空间
+### </div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

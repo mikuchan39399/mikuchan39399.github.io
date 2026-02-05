@@ -14,6 +14,8 @@
 // --- (.text / .rodata) ---
 const int g_const = 100;
 char *str = "Hello"; //实际上，字符串字面量"Hello"存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中
+char arr[] = "Hello"; // "Hello" 也是字面量，但把 arr[ ] 看作变量，会在变量对应的内存区内开辟一块数组空间拷贝进去
+// 此时修改 arr[0] 是合法的，修改 str[0] 会 段错误。
 ```
 > 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
 
@@ -75,5 +77,47 @@ static int s_bss;
 ### 引入虚拟地址空间
 > 有句话告诉我们，操作系统是对于计算机硬件的最底层抽象，学习 C语言时接触的这些地址与指针，真的是计算机物理上确确实实的地址吗......当然不是~
 ```cpp
+#include <iostream>
+#include <sys/types.h>
+#include <unistd.h>
 
+int gval = 0;
+
+int main()
+{
+    pid_t id = fork();
+    if(id < 0)
+    {
+        perror("fork");
+        return 1;
+    }
+    else if(id == 0) //child
+    {
+        pid_t pid = getpid();
+        pid_t ppid = getppid();
+        while(1)
+        {
+            printf("子进程, pid: %d, ppid: %d, gval: %d, &gval: %p\n", pid, ppid, gval, &gval);
+            sleep(1);
+            gval++;
+        }
+    }
+    else //fa
+    {
+        pid_t pid = getpid();
+        pid_t ppid = getppid();
+        while(1)
+        {
+            printf("父进程, pid: %d, ppid: %d, gval: %d, &gval: %p\n", pid, ppid, gval, &gval);
+            sleep(1);
+        }
+    }
+    return 0;
+}
 ```
+
+<img width="748" height="585" alt="Image" src="https://github.com/user-attachments/assets/5f8c726b-73be-4b56-9592-7a3ae6855f90" />
+如果C语言中的地址代表物理地址的话，物理地址相同的变量就不可能拥有不一样的两个值对吧
+证明操作系统绝对是对硬件上的内存做了抽象的，这层抽象在 OS 学科里就被叫做虚拟地址空间
+在Linux中被称作进程虚拟地址空间
+### 
