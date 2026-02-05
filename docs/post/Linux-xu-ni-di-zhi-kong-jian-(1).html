@@ -25,7 +25,7 @@
 ```cpp
 // --- (.text / .rodata) ---
 const int g_const = 100;
-char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 ptr 作为普通变量存在于其他区域中
+char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中
 ```
 > 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
 
@@ -66,7 +66,7 @@ static int s_var = 20;
 ```cpp
 // --- (.text / .rodata) ---
 const int g_const = 100;
-char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 ptr 作为普通变量存在于其他区域中
+char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中
 ```
 > 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
 
@@ -185,7 +185,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </ul>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.text / .rodata) ---</span>
 <span class="pl-k">const</span> <span class="pl-k">int</span> g_const = <span class="pl-c1">100</span>;
-<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span>实际上，字符串字面量"Hello"存在于.rodata中，指针变量 ptr 作为普通变量存在于其他区域中</span></pre></div>
+<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span>实际上，字符串字面量"Hello"存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中</span></pre></div>
 <blockquote>
 <p>在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量</p>
 </blockquote>
@@ -236,14 +236,14 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 严谨讨论时最好把他们两个区分开<br>
 堆区从堆栈区低位开始延展至高位，栈区从堆栈区高位开始延展至低位</p>
 <h4>栈区与函数栈帧</h4>
-<p>当一个函数被调用时，操作系统会在栈区为这个函数分配一块连续的内存空间，这块空间就叫函数栈帧<br>
+<p>当一个函数被调用时，程序通过移动栈指针 (编译器生成的指令 + CPU 改变栈指针) 在栈上划出一段空间，形成函数栈帧（OS 提供栈映射与保护）<br>
 事实上，栈区就是由一个个函数栈帧堆叠而成的<br>
 它是一个复杂的结构体，</p>
 <ul>
 <li>包含：
 <ul>
 <li>函数中定义的局部变量 (不包括静态变量)</li>
-<li>调用函数时传入的参数</li>
+<li>调用函数时传入的参数 (这个也有可能在寄存器之间传递不放进栈帧)</li>
 <li>返回地址：函数调用完毕之后程序应当跳转到哪里继续执行</li>
 <li>旧的栈底指针 EBP / RBP：用于找到<strong>在栈区弹出该栈帧时应该回到的上一个栈帧</strong>的底部位置</li>
 <li>保存的寄存器：函数执行过程中需要用到寄存器，为了不覆盖调用者的数据，需要先把寄存器里的(属于调用者)的旧值存在栈帧里，用完了再恢复</li>
@@ -263,18 +263,20 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 <li>特点：
 <ul>
-<li>操作系统全权交由用户管理，不使用 free 等接口释放内存的话会导致内存泄露</li>
+<li>由程序员显式申请/释放，不使用 free 等接口释放内存的话会导致内存泄露</li>
 <li>空间相较与栈区会大很多</li>
 </ul>
 </li>
 </ul>
 <blockquote>
-<p>堆区和栈区两面包夹芝士中间还有一块空白区，被称作共享区，用于加载动态库(.so / .dll) 或进行文件映射</p>
+<p>堆区和栈区两面包夹芝士中间还有一块空白区，被称作共享区 (mmap 映射区)，用于加载动态库(.so / .dll) 或进行文件映射<br>
+栈区的更高位还有一块用户空间专门用于存放启动程序时传入的命令行参数与环境变量，再往上就是留给内核的部分了</p>
 </blockquote>
 <h3>引入虚拟地址空间</h3>
 <blockquote>
 <p>有句话告诉我们，操作系统是对于计算机硬件的最底层抽象，学习 C语言时接触的这些地址与指针，真的是计算机物理上确确实实的地址吗......当然不是~</p>
-</blockquote></div>
+</blockquote>
+<div class="highlight highlight-source-c++"><pre class="notranslate"></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
