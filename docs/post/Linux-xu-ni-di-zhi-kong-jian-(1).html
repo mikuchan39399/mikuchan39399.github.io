@@ -194,7 +194,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 严谨讨论时最好把他们两个区分开<br>
 堆区从堆栈区低位开始延展至高位，栈区从堆栈区高位开始延展至低位</p>
 <h4>栈区与函数栈帧</h4>
-<p>当一个函数被调用时，程序通过移动栈指针 (编译器生成的指令 + CPU 改变栈指针) 在栈上划出一段空间，形成函数栈帧（OS 提供栈映射与保护）<br>
+<p>当一个函数被调用时，编译器生成的指令让 CPU 移动栈指针，从而在栈上划出一段空间，形成函数栈帧（OS 提供栈映射与保护）<br>
 事实上，栈区就是由一个个函数栈帧堆叠而成的<br>
 它是一个复杂的结构体，</p>
 <ul>
@@ -366,8 +366,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>让进程视角实现了内存的有序</li>
 </ul>
 <blockquote>
-<p>那么，为什么同一个虚拟地址能对应不同的物理地址呢，能做到这一点的核心结构被称作页表 (MMU)，它实现了虚拟地址与物理地址之间的映射机制，在不远的将来我们会遇到它的......</p>
-</blockquote></div>
+<p>为什么同一个虚拟地址，在不同进程里能指向不同的物理内存？<br>
+答案是：每个进程都有自己的页表。<br>
+页表就像一本"地址翻译字典"，CPU 通过它把虚拟地址翻译成物理地址。不同进程的字典不一样，所以同一个虚拟地址0x601040 在进程A里翻译成物理地址 0x12345000，在进程B里翻译成 0x67890000。</p>
+</blockquote>
+<p>具体怎么翻译的？我们下一篇见。</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
