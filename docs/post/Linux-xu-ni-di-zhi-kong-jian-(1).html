@@ -13,7 +13,7 @@
 <meta name="description" content="## 回顾 C 语言程序地址空间
 > 从低地址开始，到高地址……
 > 首先，我们来看三个最基本的静态区域！
-#### 1. 正文代码区 (.text / .rodata)
+### 1. 正文代码区 (.text / .rodata)
 该区域对应于编译后的机器指令
 - 它存放着：
    - 机器代码：也就是 CPU 执行的二进制指令，高级语言中所写的 if-else / while / for 与函数调用等逻辑，编译后都在这里
@@ -25,11 +25,11 @@
 ```cpp
 // --- (.text / .rodata) ---
 const int g_const = 100;
-char *str = 'Hello';
+char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 ptr 作为普通变量存在于其他区域中
 ```
-> 在具体的操作系统中，.test 通常专门存放机器代码，.rodata 专门存放只读常量
+> 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
 
-#### 2. 初始化数据区 (.data)
+### 2. 初始化数据区 (.data)
 这个区域存放的是程序启动时就已经确定数值的变量
 - 它存放着：
    - 显式初始化为非零值的 全局变量
@@ -43,7 +43,7 @@ char *str = 'Hello';
 int g_var = 10;
 static int s_var = 20;
 ```
- #### 3. 未初始化数据区 (.bss)
+ ### 3. 未初始化数据区 (.bss)
 这个区域的名字来源于汇编语言时代的 'Block Started by Symbol'
 - 它存放着：
    - 显式初始化为零值 或 没有初始化的 全局变量
@@ -54,7 +54,7 @@ static int s_var = 20;
 <meta property="og:description" content="## 回顾 C 语言程序地址空间
 > 从低地址开始，到高地址……
 > 首先，我们来看三个最基本的静态区域！
-#### 1. 正文代码区 (.text / .rodata)
+### 1. 正文代码区 (.text / .rodata)
 该区域对应于编译后的机器指令
 - 它存放着：
    - 机器代码：也就是 CPU 执行的二进制指令，高级语言中所写的 if-else / while / for 与函数调用等逻辑，编译后都在这里
@@ -66,11 +66,11 @@ static int s_var = 20;
 ```cpp
 // --- (.text / .rodata) ---
 const int g_const = 100;
-char *str = 'Hello';
+char *str = 'Hello'; //实际上，字符串字面量'Hello'存在于.rodata中，指针变量 ptr 作为普通变量存在于其他区域中
 ```
-> 在具体的操作系统中，.test 通常专门存放机器代码，.rodata 专门存放只读常量
+> 在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量
 
-#### 2. 初始化数据区 (.data)
+### 2. 初始化数据区 (.data)
 这个区域存放的是程序启动时就已经确定数值的变量
 - 它存放着：
    - 显式初始化为非零值的 全局变量
@@ -84,7 +84,7 @@ char *str = 'Hello';
 int g_var = 10;
 static int s_var = 20;
 ```
- #### 3. 未初始化数据区 (.bss)
+ ### 3. 未初始化数据区 (.bss)
 这个区域的名字来源于汇编语言时代的 'Block Started by Symbol'
 - 它存放着：
    - 显式初始化为零值 或 没有初始化的 全局变量
@@ -166,7 +166,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>从低地址开始，到高地址……<br>
 首先，我们来看三个最基本的静态区域！</p>
 </blockquote>
-<h4>1. 正文代码区 (.text / .rodata)</h4>
+<h3>1. 正文代码区 (.text / .rodata)</h3>
 <p>该区域对应于编译后的机器指令</p>
 <ul>
 <li>它存放着：
@@ -185,11 +185,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </ul>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.text / .rodata) ---</span>
 <span class="pl-k">const</span> <span class="pl-k">int</span> g_const = <span class="pl-c1">100</span>;
-<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>;</pre></div>
+<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span>实际上，字符串字面量"Hello"存在于.rodata中，指针变量 ptr 作为普通变量存在于其他区域中</span></pre></div>
 <blockquote>
-<p>在具体的操作系统中，.test 通常专门存放机器代码，.rodata 专门存放只读常量</p>
+<p>在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量</p>
 </blockquote>
-<h4>2. 初始化数据区 (.data)</h4>
+<h3>2. 初始化数据区 (.data)</h3>
 <p>这个区域存放的是程序启动时就已经确定数值的变量</p>
 <ul>
 <li>它存放着：
@@ -208,7 +208,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.data) ---</span>
 <span class="pl-k">int</span> g_var = <span class="pl-c1">10</span>;
 <span class="pl-k">static</span> <span class="pl-k">int</span> s_var = <span class="pl-c1">20</span>;</pre></div>
-<h4>3. 未初始化数据区 (.bss)</h4>
+<h3>3. 未初始化数据区 (.bss)</h3>
 <p>这个区域的名字来源于汇编语言时代的 "Block Started by Symbol"</p>
 <ul>
 <li>它存放着：
@@ -231,7 +231,50 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <blockquote>
 <p>接下来是与用户关联较大的...</p>
 </blockquote>
-<h4>堆栈区</h4></div>
+<h3>堆栈</h3>
+<p>堆区与栈区相对而生，口头上提到堆栈区时没有特别说明的话默认指栈区<br>
+严谨讨论时最好把他们两个区分开<br>
+堆区从堆栈区低位开始延展至高位，栈区从堆栈区高位开始延展至低位</p>
+<h4>栈区与函数栈帧</h4>
+<p>当一个函数被调用时，操作系统会在栈区为这个函数分配一块连续的内存空间，这块空间就叫函数栈帧<br>
+事实上，栈区就是由一个个函数栈帧堆叠而成的<br>
+它是一个复杂的结构体，</p>
+<ul>
+<li>包含：
+<ul>
+<li>函数中定义的局部变量 (不包括静态变量)</li>
+<li>调用函数时传入的参数</li>
+<li>返回地址：函数调用完毕之后程序应当跳转到哪里继续执行</li>
+<li>旧的栈底指针 EBP / RBP：用于找到<strong>在栈区弹出该栈帧时应该回到的上一个栈帧</strong>的底部位置</li>
+<li>保存的寄存器：函数执行过程中需要用到寄存器，为了不覆盖调用者的数据，需要先把寄存器里的(属于调用者)的旧值存在栈帧里，用完了再恢复</li>
+</ul>
+<blockquote>
+<p>一般操作系统会给栈区规定好一个较小的空间大小，例如8MB，栈区超过这个范围则会栈溢出</p>
+</blockquote>
+</li>
+</ul>
+<h4>堆区与用户内存管理</h4>
+<p>堆区，</p>
+<ul>
+<li>它存放：
+<ul>
+<li>程序员使用高级语言的各种接口向操作系统申请的内存，例如 C 的malloc和 C++ 的 new</li>
+</ul>
+</li>
+<li>特点：
+<ul>
+<li>操作系统全权交由用户管理，不使用 free 等接口释放内存的话会导致内存泄露</li>
+<li>空间相较与栈区会大很多</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>堆区和栈区两面包夹芝士中间还有一块空白区，被称作共享区，用于加载动态库(.so / .dll) 或进行文件映射</p>
+</blockquote>
+<h3>引入虚拟地址空间</h3>
+<blockquote>
+<p>有句话告诉我们，操作系统是对于计算机硬件的最底层抽象，学习 C语言时接触的这些地址与指针，真的是计算机物理上确确实实的地址吗......当然不是~</p>
+</blockquote></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
