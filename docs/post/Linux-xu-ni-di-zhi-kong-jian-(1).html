@@ -330,7 +330,12 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-c1">23</span>   #endif
 <span class="pl-c1">24</span>   #ifdef CONFIG_NUMA
 <span class="pl-c1">25</span>       <span class="pl-k">struct</span> <span class="pl-en">mempolicy</span> *vm_policy;        <span class="pl-c"><span class="pl-c">/*</span> NUMA policy</span></pre></div>
-<p>前面刚说的对于 mm_struct 进行管理的方式就是通过 vm_area_struct 中的前后指针与 vm_rb 进行细颗粒度管理的</p></div>
+<p>这里讲几个比较核心的~</p>
+<ul>
+<li>vm_next / vm_prev / vm_rb : 前面刚说的对于 mm_struct 进行管理的方式就是通过 vm_area_struct 中的前后指针与 vm_rb 进行细颗粒度管理的</li>
+<li>vm_start / vm_end 这里划定了虚拟内存区在虚拟地址下的区域范围</li>
+<li>vm_page_prot 定义了虚拟内存区的权限，这就能解释为什么上文中的虚拟内存区存在对应的权限了，这是内核级别的权限而非语法应用层面</li>
+</ul></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

@@ -182,6 +182,10 @@ Linux 使用 vm_area_struct 结构体来表示一个独立的虚拟内存区域�
 24   #ifdef CONFIG_NUMA
 25       struct mempolicy *vm_policy;        /* NUMA policy
 ```
-前面刚说的对于 mm_struct 进行管理的方式就是通过 vm_area_struct 中的前后指针与 vm_rb 进行细颗粒度管理的 
+这里讲几个比较核心的~
+- vm_next / vm_prev / vm_rb : 前面刚说的对于 mm_struct 进行管理的方式就是通过 vm_area_struct 中的前后指针与 vm_rb 进行细颗粒度管理的
+- vm_start / vm_end 这里划定了虚拟内存区在虚拟地址下的区域范围
+- vm_page_prot 定义了虚拟内存区的权限，这就能解释为什么上文中的虚拟内存区存在对应的权限了，这是内核级别的权限而非语法应用层面
+
 
 
