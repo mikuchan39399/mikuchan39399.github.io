@@ -253,7 +253,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 低地址
 
 </code></pre>
-<h3>引入虚拟地址空间</h3>
+<h2>引入虚拟地址空间</h2>
 <blockquote>
 <p>有句话告诉我们，操作系统是对于计算机硬件的最底层抽象，学习 C语言时接触的这些地址与指针，真的是计算机物理上确确实实的地址吗......当然不是~</p>
 </blockquote>
@@ -325,7 +325,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>和进程控制块一样，成套的内存描述符也需要被管理<br>
 当虚拟区较少时采取单链表，由mmap指针指向这个链表<br>
 当虚拟区间多时采取红⿊树进⾏管理，由mm_rb指向这棵树</p>
-<h4>虚拟内存区域 VMA</h4>
+<h3>虚拟内存区域 VMA</h3>
 <p>Linux 使用 vm_area_struct 结构体来表示一个独立的虚拟内存区域，它们就存在于 mm_struct 中<br>
 一个 mm_struct 中拥有多个 vm_area_struct ，用来表示内部机制与功能都不尽相同的各个虚拟内存区</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c1">1</span>    <span class="pl-k">struct</span> <span class="pl-en">vm_area_struct</span> {
