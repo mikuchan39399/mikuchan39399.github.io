@@ -94,6 +94,7 @@ status 是一个三十二位无符号整数位图
 而进程程序替换可以让子进程的 代码，数据，堆栈通通换成另一个程序，让子进程出去单干，只有PCB相关内容不变，pid之类
 Bash 等命令行工具 shell 就是利用这个实现的
 ### exec  函数族
+这六个Linux的库函数通通都是对 execve 系统调用的封装
 ```cpp
 #include <unistd.h>
 
@@ -108,7 +109,7 @@ int execve(const char *path, char *const argv[], char *const envp[]);
 - v (vector): 参数用数组（指针数组）
 - p (path): 自动在环境变量 PATH 里找可执行文件（不用写 /bin/ls，直接写 ls）
 - e (env): 自己维护环境变量数组传给新进程（如果不传，默认继承父进程的）
-> 这六个Linux的库函数通通都是对 execve 系统调用的封装
-
+> [!NOTE]
+> 子进程调用这些函数后没法返回，因为已经被其他可执行程序夺舍了，所以能在这些函数后写上卫语句来检查错误与异常
 ## Demo Shell
 To Do

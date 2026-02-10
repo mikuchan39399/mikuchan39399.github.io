@@ -210,6 +210,7 @@ WCOREDUMP(status) 判断是否生成 Core Dump 文件，常常被用于调试段
 而进程程序替换可以让子进程的 代码，数据，堆栈通通换成另一个程序，让子进程出去单干，只有PCB相关内容不变，pid之类<br>
 Bash 等命令行工具 shell 就是利用这个实现的</p>
 <h3>exec  函数族</h3>
+<p>这六个Linux的库函数通通都是对 execve 系统调用的封装</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unistd.h<span class="pl-pds">&gt;</span></span>
 
 <span class="pl-k">int</span> <span class="pl-en">execl</span>(<span class="pl-k">const</span> <span class="pl-k">char</span> *path, <span class="pl-k">const</span> <span class="pl-k">char</span> *arg, ...);
@@ -224,9 +225,8 @@ Bash 等命令行工具 shell 就是利用这个实现的</p>
 <li>p (path): 自动在环境变量 PATH 里找可执行文件（不用写 /bin/ls，直接写 ls）</li>
 <li>e (env): 自己维护环境变量数组传给新进程（如果不传，默认继承父进程的）</li>
 </ul>
-<blockquote>
-<p>这六个Linux的库函数通通都是对 execve 系统调用的封装</p>
-</blockquote>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>子进程调用这些函数后没法返回，因为已经被其他可执行程序夺舍了，所以能在这些函数后写上卫语句来检查错误与异常</p>
+</div>
 <h2>Demo Shell</h2>
 <p>To Do</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
