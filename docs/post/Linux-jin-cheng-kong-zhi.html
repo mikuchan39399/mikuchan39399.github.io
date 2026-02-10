@@ -12,25 +12,13 @@
     </script>
 <meta name="description" content="## 进程创建
 在Linux中，fork() 函数用于创建新进程，调用函数的进程为父进程，新进程则为他的子进程
-它存在于 unist.h 头文件中(Linux 独有)
-
-### fork 返回值
-
-## 进程终止
-## 进程等待
-## 进程程序替换
-## Demo Shell。">
+它存在于 unist.h 头文件中(POSIX 标准)
+当一个进程执行 fork 后，系统会分配新的PCB，将父进程部分数据结构内容拷贝给子进程，并添加子进程至系统进程列表中。">
 <meta property="og:title" content="Linux进程控制">
 <meta property="og:description" content="## 进程创建
 在Linux中，fork() 函数用于创建新进程，调用函数的进程为父进程，新进程则为他的子进程
-它存在于 unist.h 头文件中(Linux 独有)
-
-### fork 返回值
-
-## 进程终止
-## 进程等待
-## 进程程序替换
-## Demo Shell。">
+它存在于 unist.h 头文件中(POSIX 标准)
+当一个进程执行 fork 后，系统会分配新的PCB，将父进程部分数据结构内容拷贝给子进程，并添加子进程至系统进程列表中。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-jin-cheng-kong-zhi.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -93,8 +81,19 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><h2>进程创建</h2>
 <p>在Linux中，fork() 函数用于创建新进程，调用函数的进程为父进程，新进程则为他的子进程<br>
-它存在于 unist.h 头文件中(Linux 独有)</p>
+它存在于 unist.h 头文件中(POSIX 标准)<br>
+当一个进程执行 fork 后，系统会分配新的PCB，将父进程部分数据结构内容拷贝给子进程，并添加子进程至系统进程列表中。</p>
 <h3>fork 返回值</h3>
+<ul>
+<li>父进程：子进程的 pid</li>
+<li>子进程：0</li>
+<li>出错：-1 , 且子进程不会被创建<br>
+调用 fork 后，父进程与子进程的二进制代码相同，他们准备退出 fork 函数时，<strong>两个独立的执行流为返回值返回了不同的值并各自独立</strong>，这也是为什么一个 fork 函数的返回值会有两个不同的值，。</li>
+</ul>
+<h3>写时拷贝</h3>
+<p>子进程刚被创建出来时，虚拟地址空间完全继承于父进程，所以子进程与父进程所有数据的虚拟地址相同且指向同一物理内存<br>
+直到其中某个进程中的数据被写入时，此时两进程的数据必须被区分开了，这时候物理内存才会另开辟一份并且往里拷贝一份一摸一样的数据，再修改那个被写入的进程的虚拟地址在页表中映射向新的物理内存，这就叫写时拷贝。<br>
+写时拷贝体现了进程管理与物理内存解耦合的优越性，提高了内存分配的效率，避免上层频繁常见进程带来的无意义性能消耗</p>
 <h2>进程终止</h2>
 <h2>进程等待</h2>
 <h2>进程程序替换</h2>
