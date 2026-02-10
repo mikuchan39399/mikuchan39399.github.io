@@ -43,7 +43,7 @@
 #### wait
 ```cpp
 #include <sys/types.h>
-#incldue <sys/wait.h>
+#include <sys/wait.h>
 
 pid_t wait(int* status)
 ```
@@ -58,7 +58,7 @@ pid_t wait(int* status)
 #### waitpid
 ```cpp
 #include <sys/types.h>
-#incldue <sys/wait.h>
+#include <sys/wait.h>
 
 pid_t waitpid(pid_t pid, int *status, int options)
 ```
@@ -90,5 +90,25 @@ status 是一个三十二位无符号整数位图
 > WCOREDUMP(status) 判断是否生成 Core Dump 文件，常常被用于调试段错误
 
 ## 进程程序替换
+上文提到了写时拷贝，之前的笔记里也提到了正文代码区中的机器码指令父子进程共享
+而进程程序替换可以让子进程的 代码，数据，堆栈通通换成另一个程序，让子进程出去单干，只有PCB相关内容不变，pid之类
+Bash 等命令行工具 shell 就是利用这个实现的
+### exec  函数族
+```cpp
+#include <unistd.h>
+
+int execl(const char *path, const char *arg, ...);
+int execlp(const char *file, const char *arg, ...);
+int execle(const char *path, const char *arg, ...,char *const envp[]);
+int execv(const char *path, char *const argv[]);
+int execvp(const char *file, char *const argv[]);
+int execve(const char *path, char *const argv[], char *const envp[]);
+```
+- l (list): 参数用列表，需要一个个列出来，最后以 NULL 结尾
+- v (vector): 参数用数组（指针数组）
+- p (path): 自动在环境变量 PATH 里找可执行文件（不用写 /bin/ls，直接写 ls）
+- e (env): 自己维护环境变量数组传给新进程（如果不传，默认继承父进程的）
+> 这六个Linux的库函数通通都是对 execve 系统调用的封装
 
 ## Demo Shell
+To Do
