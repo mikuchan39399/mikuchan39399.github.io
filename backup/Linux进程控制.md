@@ -60,7 +60,7 @@ pid_t wait(int* status)
 #include <sys/types.h>
 #incldue <sys/wait.h>
 
-pid_ t waitpid(pid_t pid, int *status, int options)
+pid_t waitpid(pid_t pid, int *status, int options)
 ```
 - 返回值：
    - 成功：返回被等待进程 pid
@@ -76,5 +76,19 @@ pid_ t waitpid(pid_t pid, int *status, int options)
 > 当使用 wait 且无子进程 或 使用 waitpid 却无对应 pid 进程存在时，wait/waitpid 会直接失败
 > 当一个子进程已经退出后再调用 wait/waitpid 时，它们会立即返回并执行相应回收操作
 
+#### 子进程 status
+若在 wait/waitpid 中启用此输出型参数，父进程就可以从其中提取出子进程退出的信息
+status 是一个三十二位无符号整数位图
+- 正常退出：后十六位弃用，前八位为 0， 中间 8 ~ 15 比特位为进程退出码
+- 异常终止：后二十四位弃用，0 ~ 6位为信号，第八位为 Core Dump 标志位
+> [!NOTE]
+> 最好不要写自己写位运算来判断，这里有现成的标准宏运算可以直接拿来用
+> WIFEXITED(status) 用于判断子进程是否正常退出
+> WEXITSTATUS(status) 提取 status 中子进程的退出码，只有子进程正常退出这个宏才有意义
+> WIFSIGNALED(status) 用于判断子进程是否因异常而被系统信号所杀
+> WTERMSIG(status) 提取杀死子进程的信号编号
+> WCOREDUMP(status) 判断是否生成 Core Dump 文件，常常被用于调试段错误
+
 ## 进程程序替换
+
 ## Demo Shell

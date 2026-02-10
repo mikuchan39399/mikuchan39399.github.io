@@ -166,7 +166,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>sys/types.h<span class="pl-pds">&gt;</span></span>
 #incldue &lt;sys/wait.h&gt;
 
-pid_ t <span class="pl-en">waitpid</span>(<span class="pl-c1">pid_t</span> pid, <span class="pl-k">int</span> *status, <span class="pl-k">int</span> options)</pre></div>
+<span class="pl-c1">pid_t</span> <span class="pl-en">waitpid</span>(<span class="pl-c1">pid_t</span> pid, <span class="pl-k">int</span> *status, <span class="pl-k">int</span> options)</pre></div>
 <ul>
 <li>返回值：
 <ul>
@@ -190,6 +190,20 @@ pid_ t <span class="pl-en">waitpid</span>(<span class="pl-c1">pid_t</span> pid, 
 </ul>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>当使用 wait 且无子进程 或 使用 waitpid 却无对应 pid 进程存在时，wait/waitpid 会直接失败<br>
 当一个子进程已经退出后再调用 wait/waitpid 时，它们会立即返回并执行相应回收操作</p>
+</div>
+<h4>子进程 status</h4>
+<p>若在 wait/waitpid 中启用此输出型参数，父进程就可以从其中提取出子进程退出的信息<br>
+status 是一个三十二位无符号整数位图</p>
+<ul>
+<li>正常退出：后十六位弃用，前八位为 0， 中间 8 ~ 15 比特位为进程退出码</li>
+<li>异常终止：后二十四位弃用，0 ~ 6位为信号，第八位为 Core Dump 标志位</li>
+</ul>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>最好不要写自己写位运算来判断，这里有现成的标准宏运算可以直接拿来用<br>
+WIFEXITED(status) 用于判断子进程是否正常退出<br>
+WEXITSTATUS(status) 提取 status 中子进程的退出码，只有子进程正常退出这个宏才有意义<br>
+WIFSIGNALED(status) 用于判断子进程是否因异常而被系统信号所杀<br>
+WTERMSIG(status) 提取杀死子进程的信号编号<br>
+WCOREDUMP(status) 判断是否生成 Core Dump 文件，常常被用于调试段错误</p>
 </div>
 <h2>进程程序替换</h2>
 <h2>Demo Shell</h2></div>
