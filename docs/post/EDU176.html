@@ -1313,7 +1313,7 @@ int main()
 <meta property="og:url" content="https://mikuchan39399.github.io/post/EDU176.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>EDU176</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -1337,17 +1337,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     body {padding: 8px;}
     .postTitle{font-size:24px;}
 }
-.copy-feedback {
-    display: none;
-    position: absolute;
-    top: 10px;
-    right: 50px;
-    color: var(--color-fg-on-emphasis);
-    background-color: var(--color-fg-muted);
-    border-radius: 3px;
-    padding: 5px 8px;
-    font-size: 12px;
-}
+
 </style>
 
 
@@ -1392,108 +1382,109 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>简单贪心，一直减去最大的数字就行，注意判断奇数偶数</p>
 </blockquote>
 <h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;unordered_set&gt;
+#include &lt;stack&gt;
+#include &lt;queue&gt;
+#include &lt;deque&gt;
+#include &lt;cmath&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;list&gt;
 
-<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
-<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
 {
-    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
-    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
-    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
 }
-<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
-<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
-<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
-<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
+//     while (ch &lt; '0' || ch &gt; '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
+//     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
 
-<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
-<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
-<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
-<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
-<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x &lt; 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x &gt; 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
 
-<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
-<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
-<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
-#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+// 一些常用的宏定义
+#define PII pair&lt;int, int&gt;
+#define PLL pair&lt;LL, LL&gt;
+#define TIII tuple&lt;int, int, int&gt;
+#define TLLL tuple &lt;LL, LL, LL&gt;
+#define VVI vector&lt;vector&lt;int&gt;&gt;
+#define VVLL vector&lt;vector&lt;LL&gt;&gt;
+#define VI vector&lt;int&gt;
+#define VLL vector&lt;LL&gt;
+#define VPII vector&lt;pair&lt;int, int&gt;&gt;
+#define VPLL vector&lt;pair&lt;LL, LL&gt;&gt;
 
 
-<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">1e5</span> + <span class="pl-c1">10</span>;
+const int N = 1e5 + 10;
 
-<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+void solve()
 {
-    <span class="pl-k">int</span> n, k; cin &gt;&gt; n &gt;&gt; k;
-    <span class="pl-k">int</span> o = (k &amp; <span class="pl-c1">1</span>) ? k - <span class="pl-c1">1</span> : k;
-    <span class="pl-k">int</span> j = !(k &amp; <span class="pl-c1">1</span>) ? k - <span class="pl-c1">1</span> : k;
-    <span class="pl-k">int</span> ret{<span class="pl-c1">0</span>};
-    <span class="pl-k">if</span>(n &amp; <span class="pl-c1">1</span>)
+    int n, k; cin &gt;&gt; n &gt;&gt; k;
+    int o = (k &amp; 1) ? k - 1 : k;
+    int j = !(k &amp; 1) ? k - 1 : k;
+    int ret{0};
+    if(n &amp; 1)
     {
         n -= j;
         ret++;
     }
-    ret += ((<span class="pl-c1">max</span>(<span class="pl-c1">0</span>, n) + o - <span class="pl-c1">1</span>) / o);
+    ret += ((max(0, n) + o - 1) / o);
     cout &lt;&lt; ret &lt;&lt; endl;
 }
 
-<span class="pl-k">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-c1">fast_io</span>();
-    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    fast_io();
+    int t = 1;
     cin &gt;&gt; t;
-    <span class="pl-k">while</span> (t--)
+    while (t--)
     {
-        <span class="pl-c1">solve</span>();
+        solve();
     }
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    return 0;
+}
+</code></pre>
 <h3>B. Array Recoloring</h3>
 <p><a href="https://codeforces.com/contest/2075/problem/B" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
 <h4>题目大意</h4>
@@ -1519,133 +1510,134 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>如果最大值落在边界上，第一步选在次大值的位置上，就能让第二步落在最大值上，输出两者之和</li>
 </ul>
 <h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;unordered_set&gt;
+#include &lt;stack&gt;
+#include &lt;queue&gt;
+#include &lt;deque&gt;
+#include &lt;cmath&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;list&gt;
 
-<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
-<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
 {
-    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
-    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
-    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
 }
-<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
-<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
-<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
-<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
+//     while (ch &lt; '0' || ch &gt; '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
+//     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
 
-<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
-<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
-<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
-<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
-<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x &lt; 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x &gt; 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
 
-<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
-<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
-<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
-#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+// 一些常用的宏定义
+#define PII pair&lt;int, int&gt;
+#define PLL pair&lt;LL, LL&gt;
+#define TIII tuple&lt;int, int, int&gt;
+#define TLLL tuple &lt;LL, LL, LL&gt;
+#define VVI vector&lt;vector&lt;int&gt;&gt;
+#define VVLL vector&lt;vector&lt;LL&gt;&gt;
+#define VI vector&lt;int&gt;
+#define VLL vector&lt;LL&gt;
+#define VPII vector&lt;pair&lt;int, int&gt;&gt;
+#define VPLL vector&lt;pair&lt;LL, LL&gt;&gt;
 
 
-<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">1e5</span> + <span class="pl-c1">10</span>;
+const int N = 1e5 + 10;
 
-<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+void solve()
 {
-    <span class="pl-k">int</span> n, k; cin &gt;&gt; n &gt;&gt; k;
-    VI <span class="pl-smi">a</span>(n, <span class="pl-c1">0</span>);
-    <span class="pl-k">int</span> M = <span class="pl-c1">0</span>;
-    <span class="pl-k">int</span> index = <span class="pl-c1">0</span>;
-    priority_queue&lt;<span class="pl-k">int</span>&gt; heap;
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++)
+    int n, k; cin &gt;&gt; n &gt;&gt; k;
+    VI a(n, 0);
+    int M = 0;
+    int index = 0;
+    priority_queue&lt;int&gt; heap;
+    for(int i = 0; i &lt; n; i++)
     {
         cin &gt;&gt; a[i];
-        heap.<span class="pl-c1">push</span>(a[i]);
-        <span class="pl-k">if</span>(a[i] &gt; M)
+        heap.push(a[i]);
+        if(a[i] &gt; M)
         {
             M = a[i];
             index = i;
         }
     }
     
-    <span class="pl-k">if</span>(k == <span class="pl-c1">1</span>)
+    if(k == 1)
     {
-        <span class="pl-k">if</span>(index == n - <span class="pl-c1">1</span> || !index)
+        if(index == n - 1 || !index)
         {
-            heap.<span class="pl-c1">pop</span>();
-            cout &lt;&lt; heap.<span class="pl-c1">top</span>() + M &lt;&lt; endl;
-            <span class="pl-k">return</span>;
+            heap.pop();
+            cout &lt;&lt; heap.top() + M &lt;&lt; endl;
+            return;
         }
-        cout &lt;&lt; M + <span class="pl-c1">max</span>(a[<span class="pl-c1">0</span>], a[n - <span class="pl-c1">1</span>]) &lt;&lt; endl;
-        <span class="pl-k">return</span>;
+        cout &lt;&lt; M + max(a[0], a[n - 1]) &lt;&lt; endl;
+        return;
     }
-    LL sum{<span class="pl-c1">0</span>};
+    LL sum{0};
     k++;
-    <span class="pl-k">while</span>(k--)
+    while(k--)
     {
-        sum += heap.<span class="pl-c1">top</span>();
-        heap.<span class="pl-c1">pop</span>();
+        sum += heap.top();
+        heap.pop();
     }
     cout &lt;&lt; sum &lt;&lt; endl;
 
 }
 
-<span class="pl-k">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-c1">fast_io</span>();
-    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    fast_io();
+    int t = 1;
     cin &gt;&gt; t;
-    <span class="pl-k">while</span> (t--)
+    while (t--)
     {
-        <span class="pl-c1">solve</span>();
+        solve();
     }
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    return 0;
+}
+</code></pre>
 <h3>C. Two Colors</h3>
 <p><a href="https://codeforces.com/contest/2075/problem/C" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
 <h4>题目大意</h4>
@@ -1668,146 +1660,150 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 当两种颜色使用数量相同时不用翻倍<br>
 所以在这个枚举语境下，我们需要快速得知有多少种颜料满足我的使用需求，这里可以用个差分计算对于每种需求有几种颜料满足我的条件</p>
 </blockquote>
-<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= m; i++)
+<pre lang="cpp" class="notranslate"><code class="notranslate">for(int i = 1; i &lt;= m; i++)
 {
     cin &gt;&gt; a[i];
     num[a[i]]++;
 }
 
-<span class="pl-k">for</span>(<span class="pl-k">int</span> i = n - <span class="pl-c1">1</span>; i &gt;= <span class="pl-c1">1</span>; i--)
+for(int i = n - 1; i &gt;= 1; i--)
 {
-    num[i] += num[i + <span class="pl-c1">1</span>];
-}</pre></div>
+    num[i] += num[i + 1];
+}
+</code></pre>
 <blockquote>
 <p>每次读入一种颜料的数量就表示0~a[i]范围内的需求满足数量++<br>
 因为这里控制了变量，第一种颜色需求数量不大于第二种颜色需求数量，所以可以把满足较少数量但够不着较大数量的拆出来</p>
 </blockquote>
-<div class="highlight highlight-source-c++"><pre class="notranslate">LL x = num[i] - num[n - i];
-LL y = num[n - i];</pre></div>
+<pre lang="cpp" class="notranslate"><code class="notranslate">LL x = num[i] - num[n - i];
+LL y = num[n - i];
+</code></pre>
 <blockquote>
 <p>方案数量就可以这么计算，x和y中各选一个，也可以全在y里选，也就是在y里选两个颜色的排列</p>
 </blockquote>
-<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n - i; i++)
+<pre lang="cpp" class="notranslate"><code class="notranslate">for(int i = 1; i &lt;= n - i; i++)
 {
     LL x = num[i] - num[n - i];
     LL y = num[n - i];
-    <span class="pl-k">if</span>(i != n - i) ans += (x * y + y * (y - <span class="pl-c1">1</span>)) * <span class="pl-c1">2</span>;
-    <span class="pl-k">else</span> ans += x * y + y * (y - <span class="pl-c1">1</span>);
-}</pre></div>
-<h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
-
-<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
-<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
-{
-    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
-    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
-    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+    else ans += x * y + y * (y - 1);
 }
-<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
-<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
-<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+</code></pre>
+<h4>Final AC Code</h4>
+<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;unordered_set&gt;
+#include &lt;stack&gt;
+#include &lt;queue&gt;
+#include &lt;deque&gt;
+#include &lt;cmath&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;list&gt;
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
-<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
-
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
-
-<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
-<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
-<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
-<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
-<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
-
-<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
-<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
-
-<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
-#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
-
-
-<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">1e5</span> + <span class="pl-c1">10</span>;
-
-<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
 {
-    <span class="pl-k">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;
-    VI <span class="pl-smi">a</span>(m + <span class="pl-c1">1</span>, <span class="pl-c1">0</span>);
-    VLL <span class="pl-smi">num</span>(n + <span class="pl-c1">1</span>, <span class="pl-c1">0</span>);
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= m; i++)
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
+
+//     while (ch &lt; '0' || ch &gt; '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
+
+//     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
+
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x &lt; 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x &gt; 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+// 一些常用的宏定义
+#define PII pair&lt;int, int&gt;
+#define PLL pair&lt;LL, LL&gt;
+#define TIII tuple&lt;int, int, int&gt;
+#define TLLL tuple &lt;LL, LL, LL&gt;
+#define VVI vector&lt;vector&lt;int&gt;&gt;
+#define VVLL vector&lt;vector&lt;LL&gt;&gt;
+#define VI vector&lt;int&gt;
+#define VLL vector&lt;LL&gt;
+#define VPII vector&lt;pair&lt;int, int&gt;&gt;
+#define VPLL vector&lt;pair&lt;LL, LL&gt;&gt;
+
+
+const int N = 1e5 + 10;
+
+void solve()
+{
+    int n, m; cin &gt;&gt; n &gt;&gt; m;
+    VI a(m + 1, 0);
+    VLL num(n + 1, 0);
+    for(int i = 1; i &lt;= m; i++)
     {
         cin &gt;&gt; a[i];
         num[a[i]]++;
     }
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = n - <span class="pl-c1">1</span>; i &gt;= <span class="pl-c1">1</span>; i--)
+    for(int i = n - 1; i &gt;= 1; i--)
     {
-        num[i] += num[i + <span class="pl-c1">1</span>];
+        num[i] += num[i + 1];
     }
 
-    LL ans{<span class="pl-c1">0</span>};
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n - i; i++)
+    LL ans{0};
+    for(int i = 1; i &lt;= n - i; i++)
     {
         LL x = num[i] - num[n - i];
         LL y = num[n - i];
-        <span class="pl-k">if</span>(i != n - i) ans += (x * y + y * (y - <span class="pl-c1">1</span>)) * <span class="pl-c1">2</span>;
-        <span class="pl-k">else</span> ans += x * y + y * (y - <span class="pl-c1">1</span>);
+        if(i != n - i) ans += (x * y + y * (y - 1)) * 2;
+        else ans += x * y + y * (y - 1);
     }
     cout &lt;&lt; ans &lt;&lt; endl;
 }
 
-<span class="pl-k">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-c1">fast_io</span>();
-    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    fast_io();
+    int t = 1;
     cin &gt;&gt; t;
-    <span class="pl-k">while</span> (t--)
+    while (t--)
     {
-        <span class="pl-c1">solve</span>();
+        solve();
     }
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    return 0;
+}
+</code></pre>
 <p>D. Equalization</p>
 <p><a href="https://codeforces.com/contest/2075/problem/D" rel="nofollow"><strong>点击这里传送到题目</strong></a></p>
 <h4>题目大意</h4>
@@ -1841,10 +1837,11 @@ LL y = num[n - i];</pre></div>
 <li>初始化：<code class="notranslate">f[0][0][any_k] = 0</code>，<code class="notranslate">memset(f, 0x3f, sizeof(f));</code></li>
 <li>状态转移</li>
 </ul>
-<div class="highlight highlight-source-c++"><pre class="notranslate">LL&amp; t = f[i][j][k];
-t = f[i][j][k - <span class="pl-c1">1</span>];
-<span class="pl-k">if</span>(i &gt;= k) t = min(t, f[i - k][j][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));
-<span class="pl-k">if</span>(j &gt;= k) t = min(t, f[i][j - k][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));</pre></div>
+<pre lang="cpp" class="notranslate"><code class="notranslate">LL&amp; t = f[i][j][k];
+t = f[i][j][k - 1];
+if(i &gt;= k) t = min(t, f[i - k][j][k - 1] + (1ll &lt;&lt; k));
+if(j &gt;= k) t = min(t, f[i][j - k][k - 1] + (1ll &lt;&lt; k));
+</code></pre>
 <ul>
 <li>填表顺序：正常从小到大三重循环</li>
 <li>答案获取 <code class="notranslate">f[][][30]</code></li>
@@ -1855,101 +1852,101 @@ t = f[i][j][k - <span class="pl-c1">1</span>];
 最少要把两个数的剩余长度右移之后，公共前缀也可以往右移动，还有两个数字已经移动至0之后还能任意移动至长度上限，在这所有情况中取一个最小值就是最终答案</p>
 </blockquote>
 <h4>Final AC Code</h4>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>vector<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unordered_set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stack<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>queue<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>deque<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cmath<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>map<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>set<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>list<span class="pl-pds">&gt;</span></span>
+<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;unordered_set&gt;
+#include &lt;stack&gt;
+#include &lt;queue&gt;
+#include &lt;deque&gt;
+#include &lt;cmath&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;list&gt;
 
-<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
-<span class="pl-k">using</span> LL = <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">using</span> ULL = <span class="pl-k">unsigned</span> <span class="pl-k">long</span> <span class="pl-k">long</span>;
-<span class="pl-k">void</span> <span class="pl-en">fast_io</span>()
+using namespace std;
+using LL = long long;
+using ULL = unsigned long long;
+void fast_io()
 {
-    <span class="pl-c1">ios::sync_with_stdio</span>(<span class="pl-c1">false</span>);
-    cin.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
-    cout.<span class="pl-c1">tie</span>(<span class="pl-c1">nullptr</span>);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
 }
-<span class="pl-c"><span class="pl-c">//</span> LL read()</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     LL ret = 0;</span>
-<span class="pl-c"><span class="pl-c">//</span>     int flag = 1;</span>
-<span class="pl-c"><span class="pl-c">//</span>     char ch = getchar_unlocked(); // 只在Linux里能用这个</span>
+// LL read()
+// {
+//     LL ret = 0;
+//     int flag = 1;
+//     char ch = getchar_unlocked(); // 只在Linux里能用这个
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &lt; '0' || ch &gt; '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         if (ch == '-')</span>
-<span class="pl-c"><span class="pl-c">//</span>             flag = -1;</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
+//     while (ch &lt; '0' || ch &gt; '9')
+//     {
+//         if (ch == '-')
+//             flag = -1;
+//         ch = getchar_unlocked();
+//     }
 
-<span class="pl-c"><span class="pl-c">//</span>     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         ret = ret * 10 + ch - '0';</span>
-<span class="pl-c"><span class="pl-c">//</span>         ch = getchar_unlocked();</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
+//     while (ch &gt;= '0' &amp;&amp; ch &lt;= '9')
+//     {
+//         ret = ret * 10 + ch - '0';
+//         ch = getchar_unlocked();
+//     }
 
-<span class="pl-c"><span class="pl-c">//</span>     return ret * flag;</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
-<span class="pl-c"><span class="pl-c">//</span> void print(LL x)</span>
-<span class="pl-c"><span class="pl-c">//</span> {</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &lt; 0)</span>
-<span class="pl-c"><span class="pl-c">//</span>     {</span>
-<span class="pl-c"><span class="pl-c">//</span>         putchar('-');</span>
-<span class="pl-c"><span class="pl-c">//</span>         x = -x;</span>
-<span class="pl-c"><span class="pl-c">//</span>     }</span>
-<span class="pl-c"><span class="pl-c">//</span>     if (x &gt; 9)</span>
-<span class="pl-c"><span class="pl-c">//</span>         print(x / 10);</span>
-<span class="pl-c"><span class="pl-c">//</span>     putchar(x % 10 + '0');</span>
-<span class="pl-c"><span class="pl-c">//</span> }</span>
+//     return ret * flag;
+// }
+// void print(LL x)
+// {
+//     if (x &lt; 0)
+//     {
+//         putchar('-');
+//         x = -x;
+//     }
+//     if (x &gt; 9)
+//         print(x / 10);
+//     putchar(x % 10 + '0');
+// }
 
-<span class="pl-k">int</span> dx4[<span class="pl-c1">4</span>] = {<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">1</span>};
-<span class="pl-k">int</span> dy4[<span class="pl-c1">4</span>] = {<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dx8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>};
-<span class="pl-k">int</span> dy8[<span class="pl-c1">8</span>] = {-<span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, -<span class="pl-c1">1</span>, -<span class="pl-c1">1</span>};
+int dx4[4] = {0, 0, -1, 1};
+int dy4[4] = {1, -1, 0, 0};
+int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
-<span class="pl-c"><span class="pl-c">//</span> 一些常用的宏定义</span>
-#<span class="pl-k">define</span> <span class="pl-en">PII</span> pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">PLL</span> pair&lt;LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TIII</span> tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">TLLL</span> tuple &lt;LL, LL, LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVI</span> vector&lt;vector&lt;<span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VVLL</span> vector&lt;vector&lt;LL&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VI</span> vector&lt;<span class="pl-k">int</span>&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VLL</span> vector&lt;LL&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPII</span> vector&lt;pair&lt;<span class="pl-k">int</span>, <span class="pl-k">int</span>&gt;&gt;
-#<span class="pl-k">define</span> <span class="pl-en">VPLL</span> vector&lt;pair&lt;LL, LL&gt;&gt;
+// 一些常用的宏定义
+#define PII pair&lt;int, int&gt;
+#define PLL pair&lt;LL, LL&gt;
+#define TIII tuple&lt;int, int, int&gt;
+#define TLLL tuple &lt;LL, LL, LL&gt;
+#define VVI vector&lt;vector&lt;int&gt;&gt;
+#define VVLL vector&lt;vector&lt;LL&gt;&gt;
+#define VI vector&lt;int&gt;
+#define VLL vector&lt;LL&gt;
+#define VPII vector&lt;pair&lt;int, int&gt;&gt;
+#define VPLL vector&lt;pair&lt;LL, LL&gt;&gt;
 
 
-<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">65</span>, M = <span class="pl-c1">35</span>, inf = <span class="pl-c1">0x3f3f3f3f</span>;
-<span class="pl-k">const</span> LL INF = <span class="pl-c1">0x3f3f3f3f3f3f3f3f</span>;
+const int N = 65, M = 35, inf = 0x3f3f3f3f;
+const LL INF = 0x3f3f3f3f3f3f3f3f;
 LL f[N][N][M];
 
 
-<span class="pl-k">void</span> <span class="pl-en">init</span>(<span class="pl-k">void</span>)
+void init(void)
 {
-    <span class="pl-c1">memset</span>(f, <span class="pl-c1">0x3f</span>, <span class="pl-k">sizeof</span>(f));
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt;= <span class="pl-c1">60</span>; i++)  
+    memset(f, 0x3f, sizeof(f));
+    for(int i = 0; i &lt;= 60; i++)  
     {
-        <span class="pl-k">for</span>(<span class="pl-k">int</span> j = <span class="pl-c1">0</span>; j &lt;= <span class="pl-c1">60</span>; j++)
+        for(int j = 0; j &lt;= 60; j++)
         {
-            <span class="pl-k">for</span>(<span class="pl-k">int</span> k = <span class="pl-c1">0</span>; k &lt;= <span class="pl-c1">30</span>; k++)
+            for(int k = 0; k &lt;= 30; k++)
             {
-                <span class="pl-k">if</span>(i + j == <span class="pl-c1">0</span>) f[i][j][k] = <span class="pl-c1">0</span>;
-                <span class="pl-k">else</span> <span class="pl-k">if</span>(k)
+                if(i + j == 0) f[i][j][k] = 0;
+                else if(k)
                 {
                     LL&amp; t = f[i][j][k];
-                    t = f[i][j][k - <span class="pl-c1">1</span>];
-                    <span class="pl-k">if</span>(i &gt;= k) t = <span class="pl-c1">min</span>(t, f[i - k][j][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));
-                    <span class="pl-k">if</span>(j &gt;= k) t = <span class="pl-c1">min</span>(t, f[i][j - k][k - <span class="pl-c1">1</span>] + (<span class="pl-c1">1ll</span> &lt;&lt; k));
+                    t = f[i][j][k - 1];
+                    if(i &gt;= k) t = min(t, f[i - k][j][k - 1] + (1ll &lt;&lt; k));
+                    if(j &gt;= k) t = min(t, f[i][j - k][k - 1] + (1ll &lt;&lt; k));
                 }
             }
         }
@@ -1957,68 +1954,69 @@ LL f[N][N][M];
     }
 }
 
-<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+void solve()
 {
     LL x, y; cin &gt;&gt; x &gt;&gt; y;
-    <span class="pl-k">if</span>(x == y) 
+    if(x == y) 
     {
-        cout &lt;&lt; <span class="pl-c1">0</span> &lt;&lt; endl;
-        <span class="pl-k">return</span>;
+        cout &lt;&lt; 0 &lt;&lt; endl;
+        return;
     }
-    <span class="pl-k">int</span> l1 = <span class="pl-c1">0</span>, l2 = <span class="pl-c1">0</span>;
-    <span class="pl-k">if</span>(x == <span class="pl-c1">0</span> || y == <span class="pl-c1">0</span>)
+    int l1 = 0, l2 = 0;
+    if(x == 0 || y == 0)
     {
-        l2 = <span class="pl-c1">64</span> - <span class="pl-c1">__builtin_clzll</span>(x + y);
-        cout &lt;&lt; f[<span class="pl-c1">0</span>][l2][<span class="pl-c1">30</span>] &lt;&lt; endl;
-        <span class="pl-k">return</span>;
+        l2 = 64 - __builtin_clzll(x + y);
+        cout &lt;&lt; f[0][l2][30] &lt;&lt; endl;
+        return;
     }
     VI a, b;
-    <span class="pl-k">while</span>(x)
+    while(x)
     {
-        a.<span class="pl-c1">push_back</span>(x % <span class="pl-c1">2</span>);
-        x /= <span class="pl-c1">2</span>;
+        a.push_back(x % 2);
+        x /= 2;
     }
-    <span class="pl-k">while</span>(y)
+    while(y)
     {
-        b.<span class="pl-c1">push_back</span>(y % <span class="pl-c1">2</span>);
-        y /= <span class="pl-c1">2</span>;
+        b.push_back(y % 2);
+        y /= 2;
     }
-    <span class="pl-k">int</span> si = -<span class="pl-c1">1</span>;
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; a.<span class="pl-c1">size</span>() &amp;&amp; i &lt; b.<span class="pl-c1">size</span>(); i++)
+    int si = -1;
+    for(int i = 0; i &lt; a.size() &amp;&amp; i &lt; b.size(); i++)
     {
-        <span class="pl-k">if</span>(a[a.<span class="pl-c1">size</span>() - <span class="pl-c1">1</span> - i] == b[b.<span class="pl-c1">size</span>() - <span class="pl-c1">1</span> - i]) si = i;
-        <span class="pl-k">else</span> <span class="pl-k">break</span>;
+        if(a[a.size() - 1 - i] == b[b.size() - 1 - i]) si = i;
+        else break;
     }
     si++;
-    l1 = a.<span class="pl-c1">size</span>() - si;
-    l2 = b.<span class="pl-c1">size</span>() - si;
+    l1 = a.size() - si;
+    l2 = b.size() - si;
     LL res = INF;
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; si; i++)
+    for(int i = 0; i &lt; si; i++)
     {
-        res = <span class="pl-c1">min</span>(res, f[l1 + i][l2 + i][<span class="pl-c1">30</span>]);
+        res = min(res, f[l1 + i][l2 + i][30]);
     }
-    <span class="pl-k">for</span>(<span class="pl-k">int</span> i = a.<span class="pl-c1">size</span>(); i &lt;= <span class="pl-c1">60</span>; i++)
+    for(int i = a.size(); i &lt;= 60; i++)
     {
-        <span class="pl-k">for</span>(<span class="pl-k">int</span> j = b.<span class="pl-c1">size</span>(); j &lt;= <span class="pl-c1">60</span>; j++)
+        for(int j = b.size(); j &lt;= 60; j++)
         {
-            res = <span class="pl-c1">min</span>(res, f[i][j][<span class="pl-c1">30</span>]);
+            res = min(res, f[i][j][30]);
         }
     }
     cout &lt;&lt; res &lt;&lt; endl;
 }
 
-<span class="pl-k">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-c1">fast_io</span>();
-    <span class="pl-c1">init</span>();
-    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    fast_io();
+    init();
+    int t = 1;
     cin &gt;&gt; t;
-    <span class="pl-k">while</span> (t--)
+    while (t--)
     {
-        <span class="pl-c1">solve</span>();
+        solve();
     }
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    return 0;
+}
+</code></pre>
 <hr></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
@@ -2044,7 +2042,7 @@ if(""!=""){
 </script></div>
 </body>
 <script>
-var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
 var utterancesLoad=0;
 
 let themeSettings={
@@ -2122,70 +2120,7 @@ function iFrameLoading(){
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const createClipboardHTML = (codeContent, additionalClasses = '') => `
-        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
-        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
-            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
-                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
-                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
-            </clipboard-copy>
-            <div class="copy-feedback">Copied!</div>
-        </div>
-    `;
 
-    const handleCodeElements = (selector = '') => {
-        document.querySelectorAll(selector).forEach(codeElement => {
-            const codeContent = codeElement.innerHTML;
-            const newStructure = document.createElement('div');
-            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
-            newStructure.innerHTML = createClipboardHTML(codeContent);
-
-            const parentElement = codeElement.parentElement;
-            if (selector.includes('highlight')) {
-                parentElement.insertBefore(newStructure, codeElement.nextSibling);
-                parentElement.removeChild(codeElement);
-            } else {
-                parentElement.parentElement.replaceChild(newStructure, parentElement);
-            }
-        });
-    };
-
-    handleCodeElements('pre.notranslate > code.notranslate');
-    handleCodeElements('div.highlight > pre.notranslate');
-
-    let currentFeedback = null;
-    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
-        copyButton.addEventListener('click', () => {
-            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = codeContent;
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextArea);
-
-            const copyIcon = copyButton.querySelector('.octicon-copy');
-            const checkIcon = copyButton.querySelector('.octicon-check');
-            const copyFeedback = copyButton.nextElementSibling;
-
-            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
-            currentFeedback = copyFeedback;
-
-            copyIcon.classList.add('d-none');
-            checkIcon.classList.remove('d-none');
-            copyFeedback.style.display = 'block';
-            copyButton.style.borderColor = 'var(--color-success-fg)';
-
-            setTimeout(() => {
-                copyIcon.classList.remove('d-none');
-                checkIcon.classList.add('d-none');
-                copyFeedback.style.display = 'none';
-                copyButton.style.borderColor = '';
-            }, 2000);
-        });
-    });
-});
 
 </script>
 

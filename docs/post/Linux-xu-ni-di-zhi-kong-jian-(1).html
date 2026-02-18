@@ -51,7 +51,7 @@ char arr[] = 'Hello'; // 'Hello' 也是字面量，但把 arr[ ] 看作变量，
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-xu-ni-di-zhi-kong-jian-%281%29.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>Linux虚拟地址空间(1)</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
 </head>
@@ -75,7 +75,17 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     body {padding: 8px;}
     .postTitle{font-size:24px;}
 }
-
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
 </style>
 
 
@@ -129,12 +139,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </ul>
 </li>
 </ul>
-<pre lang="cpp" class="notranslate"><code class="notranslate">// --- (.text / .rodata) ---
-const int g_const = 100;
-char *str = "Hello"; //实际上，字符串字面量"Hello"存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中
-char arr[] = "Hello"; // "Hello" 也是字面量，但把 arr[ ] 看作变量，会在变量对应的内存区内开辟一块数组空间拷贝进去
-// 此时修改 arr[0] 是合法的，修改 str[0] 会 段错误。
-</code></pre>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.text / .rodata) ---</span>
+<span class="pl-k">const</span> <span class="pl-k">int</span> g_const = <span class="pl-c1">100</span>;
+<span class="pl-k">char</span> *str = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span>实际上，字符串字面量"Hello"存在于.rodata中，指针变量 str 作为普通变量存在于其他区域中</span>
+<span class="pl-k">char</span> arr[] = <span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>; <span class="pl-c"><span class="pl-c">//</span> "Hello" 也是字面量，但把 arr[ ] 看作变量，会在变量对应的内存区内开辟一块数组空间拷贝进去</span>
+<span class="pl-c"><span class="pl-c">//</span> 此时修改 arr[0] 是合法的，修改 str[0] 会 段错误。</span></pre></div>
 <blockquote>
 <p>在具体的操作系统中，.text 通常专门存放机器代码，.rodata 专门存放只读常量</p>
 </blockquote>
@@ -154,10 +163,9 @@ char arr[] = "Hello"; // "Hello" 也是字面量，但把 arr[ ] 看作变量，
 </ul>
 </li>
 </ul>
-<pre lang="cpp" class="notranslate"><code class="notranslate">// --- (.data) ---
-int g_var = 10;
-static int s_var = 20;
-</code></pre>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.data) ---</span>
+<span class="pl-k">int</span> g_var = <span class="pl-c1">10</span>;
+<span class="pl-k">static</span> <span class="pl-k">int</span> s_var = <span class="pl-c1">20</span>;</pre></div>
 <h3>3. 未初始化数据区 (.bss)</h3>
 <p>这个区域的名字来源于汇编语言时代的 "Block Started by Symbol"</p>
 <ul>
@@ -174,11 +182,10 @@ static int s_var = 20;
 </ul>
 </li>
 </ul>
-<pre lang="cpp" class="notranslate"><code class="notranslate">// --- (.bss) ---
-int g_bss;
-int g_zero = 0; 
-static int s_bss;
-</code></pre>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> --- (.bss) ---</span>
+<span class="pl-k">int</span> g_bss;
+<span class="pl-k">int</span> g_zero = <span class="pl-c1">0</span>; 
+<span class="pl-k">static</span> <span class="pl-k">int</span> s_bss;</pre></div>
 <blockquote>
 <p>接下来是与用户关联较大的...</p>
 </blockquote>
@@ -250,106 +257,102 @@ static int s_bss;
 <blockquote>
 <p>有句话告诉我们，操作系统是对于计算机硬件的最底层抽象，学习 C语言时接触的这些地址与指针，真的是计算机物理上确确实实的地址吗......当然不是~</p>
 </blockquote>
-<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;unistd.h&gt;
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>sys/types.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unistd.h<span class="pl-pds">&gt;</span></span>
 
-int gval = 0;
+<span class="pl-k">int</span> gval = <span class="pl-c1">0</span>;
 
-int main()
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
 {
-    pid_t id = fork();
-    if(id &lt; 0)
+    <span class="pl-c1">pid_t</span> id = <span class="pl-c1">fork</span>();
+    <span class="pl-k">if</span>(id &lt; <span class="pl-c1">0</span>)
     {
-        perror("fork");
-        return 1;
+        <span class="pl-c1">perror</span>(<span class="pl-s"><span class="pl-pds">"</span>fork<span class="pl-pds">"</span></span>);
+        <span class="pl-k">return</span> <span class="pl-c1">1</span>;
     }
-    else if(id == 0) //child
+    <span class="pl-k">else</span> <span class="pl-k">if</span>(id == <span class="pl-c1">0</span>) <span class="pl-c"><span class="pl-c">//</span>child</span>
     {
-        pid_t pid = getpid();
-        pid_t ppid = getppid();
-        while(1)
+        <span class="pl-c1">pid_t</span> pid = <span class="pl-c1">getpid</span>();
+        <span class="pl-c1">pid_t</span> ppid = <span class="pl-c1">getppid</span>();
+        <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
         {
-            printf("子进程, pid: %d, ppid: %d, gval: %d, &amp;gval: %p\n", pid, ppid, gval, &amp;gval);
-            sleep(1);
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>子进程, pid: %d, ppid: %d, gval: %d, &amp;gval: %p<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, pid, ppid, gval, &amp;gval);
+            <span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>);
             gval++;
         }
     }
-    else //fa
+    <span class="pl-k">else</span> <span class="pl-c"><span class="pl-c">//</span>fa</span>
     {
-        pid_t pid = getpid();
-        pid_t ppid = getppid();
-        while(1)
+        <span class="pl-c1">pid_t</span> pid = <span class="pl-c1">getpid</span>();
+        <span class="pl-c1">pid_t</span> ppid = <span class="pl-c1">getppid</span>();
+        <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
         {
-            printf("父进程, pid: %d, ppid: %d, gval: %d, &amp;gval: %p\n", pid, ppid, gval, &amp;gval);
-            sleep(1);
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>父进程, pid: %d, ppid: %d, gval: %d, &amp;gval: %p<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, pid, ppid, gval, &amp;gval);
+            <span class="pl-c1">sleep</span>(<span class="pl-c1">1</span>);
         }
     }
-    return 0;
-}
-</code></pre>
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/5f8c726b-73be-4b56-9592-7a3ae6855f90"><img width="748" height="585" alt="Image" src="https://github.com/user-attachments/assets/5f8c726b-73be-4b56-9592-7a3ae6855f90" style="max-width: 100%; height: auto; max-height: 585px;"></a></p>
 <p>如果C语言中的地址代表物理地址的话，物理地址相同的变量就不可能拥有不一样的两个值对吧<br>
 证明操作系统绝对是对硬件上的内存做了抽象的，这层抽象在 OS 学科里就被叫做虚拟地址空间<br>
 在Linux中被称作进程虚拟地址空间</p>
 <h3>mm_struct</h3>
-<pre lang="cpp" class="notranslate"><code class="notranslate">1    struct mm_struct
-2    {
-3        /*...*/
-4        struct vm_area_struct *mmap;        /* 指向虚拟区间(VMA)链表 */
-5        struct rb_root mm_rb;               /* red_black树 */
-6        unsigned long task_size;            /*具有该结构体的进程的虚拟地址空间的大小*/
-7        /*...*/
-8        // 代码段、数据段、堆栈段、参数段及环境段的起始和结束地址。
-9        unsigned long start_code, end_code, start_data, end_data;
-10       unsigned long start_brk, brk, start_stack;
-11       unsigned long arg_start, arg_end, env_start, env_end;
-12       /*...*/
-13   }
-</code></pre>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c1">1</span>    <span class="pl-k">struct</span> <span class="pl-en">mm_struct</span>
+<span class="pl-c1">2</span>    {
+<span class="pl-c1">3</span>        <span class="pl-c"><span class="pl-c">/*</span>...<span class="pl-c">*/</span></span>
+<span class="pl-c1">4</span>        <span class="pl-k">struct</span> <span class="pl-en">vm_area_struct</span> *mmap;        <span class="pl-c"><span class="pl-c">/*</span> 指向虚拟区间(VMA)链表 <span class="pl-c">*/</span></span>
+<span class="pl-c1">5</span>        <span class="pl-k">struct</span> <span class="pl-en">rb_root</span> mm_rb;               <span class="pl-c"><span class="pl-c">/*</span> red_black树 <span class="pl-c">*/</span></span>
+<span class="pl-c1">6</span>        <span class="pl-k">unsigned</span> <span class="pl-k">long</span> task_size;            <span class="pl-c"><span class="pl-c">/*</span>具有该结构体的进程的虚拟地址空间的大小<span class="pl-c">*/</span></span>
+<span class="pl-c1">7</span>        <span class="pl-c"><span class="pl-c">/*</span>...<span class="pl-c">*/</span></span>
+<span class="pl-c1">8</span>        <span class="pl-c"><span class="pl-c">//</span> 代码段、数据段、堆栈段、参数段及环境段的起始和结束地址。</span>
+<span class="pl-c1">9</span>        <span class="pl-k">unsigned</span> <span class="pl-k">long</span> start_code, end_code, start_data, end_data;
+<span class="pl-c1">10</span>       <span class="pl-k">unsigned</span> <span class="pl-k">long</span> start_brk, brk, start_stack;
+<span class="pl-c1">11</span>       <span class="pl-k">unsigned</span> <span class="pl-k">long</span> arg_start, arg_end, env_start, env_end;
+<span class="pl-c1">12</span>       <span class="pl-c"><span class="pl-c">/*</span>...<span class="pl-c">*/</span></span>
+<span class="pl-c1">13</span>   }<span class="pl-ii"></span></pre></div>
 <p>操作系统会给每个进程画饼，意思是每个进程都能看到全局的虚拟地址空间，但是进程间怎么配合使用肯定由操作系统来宏观调控<br>
 在 task_struct 中存在一个结构体指针 mm_struct*，指向对应进程唯一的内存描述符</p>
-<pre lang="cpp" class="notranslate"><code class="notranslate">struct task_struct
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">struct</span> <span class="pl-en">task_struct</span>
 {
-/*...*/
-struct mm_struct       *mm; //对于普通的用户进程来说该字段指向他的虚拟地址空间的用户空间部分，对于内核线程来说这部分为NULL。
-struct mm_struct       *active_mm; // 该字段是内核线程使⽤的。当该进程是内核线程时，它的mm字段为NULL，表⽰没有内存地址空间，
+<span class="pl-c"><span class="pl-c">/*</span>...<span class="pl-c">*/</span></span>
+<span class="pl-k">struct</span> <span class="pl-en">mm_struct</span>       *mm; <span class="pl-c"><span class="pl-c">//</span>对于普通的用户进程来说该字段指向他的虚拟地址空间的用户空间部分，对于内核线程来说这部分为NULL。</span>
+<span class="pl-k">struct</span> <span class="pl-en">mm_struct</span>       *active_mm; <span class="pl-c"><span class="pl-c">//</span> 该字段是内核线程使⽤的。当该进程是内核线程时，它的mm字段为NULL，表⽰没有内存地址空间，</span>
 可也并不是真正的没有，这是因为所有进程关于内核的映射都是一样的，内核线程可以使用任意进程的地址空间。
-/*...*/
-}
-</code></pre>
+<span class="pl-c"><span class="pl-c">/*</span>...<span class="pl-c">*/</span></span>
+}<span class="pl-ii"></span></pre></div>
 <p>和进程控制块一样，成套的内存描述符也需要被管理<br>
 当虚拟区较少时采取单链表，由mmap指针指向这个链表<br>
 当虚拟区间多时采取红⿊树进⾏管理，由mm_rb指向这棵树</p>
 <h3>虚拟内存区域 VMA</h3>
 <p>Linux 使用 vm_area_struct 结构体来表示一个独立的虚拟内存区域，它们就存在于 mm_struct 中<br>
 一个 mm_struct 中拥有多个 vm_area_struct ，用来表示内部机制与功能都不尽相同的各个虚拟内存区</p>
-<pre lang="cpp" class="notranslate"><code class="notranslate">1    struct vm_area_struct {
-2        unsigned long vm_start; //虚存区起始
-3        unsigned long vm_end;   //虚存区结束
-4        struct vm_area_struct *vm_next, *vm_prev;   //前后指针
-5        struct rb_node vm_rb;   //红黑树中的位置
-6        unsigned long rb_subtree_gap;
-7        struct mm_struct *vm_mm;    //所属的 mm_struct
-8        pgprot_t vm_page_prot;
-9        unsigned long vm_flags;     //标志位
-10       struct {
-11           struct rb_node rb;
-12           unsigned long rb_subtree_last;
-13       } shared;
-14       struct list_head anon_vma_chain;
-15       struct anon_vma *anon_vma;
-16       const struct vm_operations_struct *vm_ops;  //vma对应的实际操作
-17       unsigned long vm_pgoff;     //文件映射偏移量
-18       struct file * vm_file;      //映射的文件
-19       void * vm_private_data;     //私有数据
-20       atomic_long_t swap_readahead_info;
-21   #ifndef CONFIG_MMU
-22       struct vm_region *vm_region;        /* NOMMU mapping region */
-23   #endif
-24   #ifdef CONFIG_NUMA
-25       struct mempolicy *vm_policy;        /* NUMA policy
-</code></pre>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c1">1</span>    <span class="pl-k">struct</span> <span class="pl-en">vm_area_struct</span> {
+<span class="pl-c1">2</span>        <span class="pl-k">unsigned</span> <span class="pl-k">long</span> vm_start; <span class="pl-c"><span class="pl-c">//</span>虚存区起始</span>
+<span class="pl-c1">3</span>        <span class="pl-k">unsigned</span> <span class="pl-k">long</span> vm_end;   <span class="pl-c"><span class="pl-c">//</span>虚存区结束</span>
+<span class="pl-c1">4</span>        <span class="pl-k">struct</span> <span class="pl-en">vm_area_struct</span> *vm_next, *vm_prev;   <span class="pl-c"><span class="pl-c">//</span>前后指针</span>
+<span class="pl-c1">5</span>        <span class="pl-k">struct</span> <span class="pl-en">rb_node</span> vm_rb;   <span class="pl-c"><span class="pl-c">//</span>红黑树中的位置</span>
+<span class="pl-c1">6</span>        <span class="pl-k">unsigned</span> <span class="pl-k">long</span> rb_subtree_gap;
+<span class="pl-c1">7</span>        <span class="pl-k">struct</span> <span class="pl-en">mm_struct</span> *vm_mm;    <span class="pl-c"><span class="pl-c">//</span>所属的 mm_struct</span>
+<span class="pl-c1">8</span>        <span class="pl-c1">pgprot_t</span> vm_page_prot;
+<span class="pl-c1">9</span>        <span class="pl-k">unsigned</span> <span class="pl-k">long</span> vm_flags;     <span class="pl-c"><span class="pl-c">//</span>标志位</span>
+<span class="pl-c1">10</span>       <span class="pl-k">struct</span> {
+<span class="pl-c1">11</span>           <span class="pl-k">struct</span> <span class="pl-en">rb_node</span> rb;
+<span class="pl-c1">12</span>           <span class="pl-k">unsigned</span> <span class="pl-k">long</span> rb_subtree_last;
+<span class="pl-c1">13</span>       } shared;
+<span class="pl-c1">14</span>       <span class="pl-k">struct</span> <span class="pl-en">list_head</span> anon_vma_chain;
+<span class="pl-c1">15</span>       <span class="pl-k">struct</span> <span class="pl-en">anon_vma</span> *anon_vma;
+<span class="pl-c1">16</span>       <span class="pl-k">const</span> <span class="pl-k">struct</span> <span class="pl-en">vm_operations_struct</span> *vm_ops;  <span class="pl-c"><span class="pl-c">//</span>vma对应的实际操作</span>
+<span class="pl-c1">17</span>       <span class="pl-k">unsigned</span> <span class="pl-k">long</span> vm_pgoff;     <span class="pl-c"><span class="pl-c">//</span>文件映射偏移量</span>
+<span class="pl-c1">18</span>       <span class="pl-k">struct</span> <span class="pl-en">file</span> * vm_file;      <span class="pl-c"><span class="pl-c">//</span>映射的文件</span>
+<span class="pl-c1">19</span>       <span class="pl-k">void</span> * vm_private_data;     <span class="pl-c"><span class="pl-c">//</span>私有数据</span>
+<span class="pl-c1">20</span>       <span class="pl-c1">atomic_long_t</span> swap_readahead_info;
+<span class="pl-c1">21</span>   #ifndef CONFIG_MMU
+<span class="pl-c1">22</span>       <span class="pl-k">struct</span> <span class="pl-en">vm_region</span> *vm_region;        <span class="pl-c"><span class="pl-c">/*</span> NOMMU mapping region <span class="pl-c">*/</span></span>
+<span class="pl-c1">23</span>   #endif
+<span class="pl-c1">24</span>   #ifdef CONFIG_NUMA
+<span class="pl-c1">25</span>       <span class="pl-k">struct</span> <span class="pl-en">mempolicy</span> *vm_policy;        <span class="pl-c"><span class="pl-c">/*</span> NUMA policy</span></pre></div>
 <p>这里讲几个比较核心的~</p>
 <ul>
 <li>vm_next / vm_prev / vm_rb : 前面刚说的对于 mm_struct 进行管理的方式就是通过 vm_area_struct 中的前后指针与 vm_rb 进行细颗粒度管理的</li>
@@ -392,7 +395,7 @@ if(""!=""){
 </script></div>
 </body>
 <script>
-var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
 var utterancesLoad=0;
 
 let themeSettings={
@@ -466,7 +469,70 @@ function iFrameLoading(){
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
 
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
 
 </script>
 
