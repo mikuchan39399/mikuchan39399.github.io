@@ -241,7 +241,20 @@ Linux中的 文件数据与文件属性分开存储，存储文件属性的被�
 #<span class="pl-k">define</span> <span class="pl-en">EXT2_TIND_BLOCK</span>                 (EXT2_DIND_BLOCK + <span class="pl-c1">1</span>)
 #<span class="pl-k">define</span> <span class="pl-en">EXT2_N_BLOCKS</span>                   (EXT2_TIND_BLOCK + <span class="pl-c1">1</span>)
 
-<span class="pl-c"><span class="pl-c">/*</span> 备注：EXT2_N_BLOCKS = 15 <span class="pl-c">*/</span></span></pre></div></div>
+<span class="pl-c"><span class="pl-c">/*</span> 备注：EXT2_N_BLOCKS = 15 <span class="pl-c">*/</span></span></pre></div>
+<p>这里特别提一嘴，目录在Linux中也是文件，如果要在某个目录创建文件则需要目标目录的写权限<br>
+文件名并不属于文件本身的属性，它被归类于目录文件的文件数据中</p>
+<h2>3. ext2 文件系统</h2>
+<h3>3.1 MBR 主引导记录</h3>
+<p>磁盘的第 0 号扇区，也就是第一块扇区，被用作 MBR</p>
+<ul>
+<li>前 446 字节，这里存放着引导加载程序，主板 BIOS 亮机后的第一件事就是把这块区域从磁盘拉到内存里去执行</li>
+<li>中间 64 字节，分区表，记录这块磁盘被分作几块分区</li>
+<li>最后 2 字节，正常情况下永远是魔法数字 0x55AA，如果 BIOS 读到其他数字就会报错 No bootable device<br>
+MBR 之外的所有区域用作分区</li>
+</ul>
+<h3>3.2 Boot Sector 引导扇区</h3>
+<p>MBR 是整个磁盘的起点，引导扇区就是每个分区的起点</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
