@@ -7,7 +7,7 @@
 <img width="707" height="550" alt="Image" src="https://github.com/user-attachments/assets/18370cbb-be17-4cbd-b773-4f7c1c569642" />
 
 这里的磁头臂就属于机械设备，把这块圆盘当作多个半径不同的同心圆（磁道）来看待，磁头臂左右摆动以让磁头对齐某个同心圆
-同时，这里的磁头臂就和立体停车场一样，拥有Z轴，磁头臂上的所有磁头同步行动。
+同时，这里的磁头臂就和立体停车场一样，拥有Z轴，<mark>磁头臂上的所有磁头是同步行动的</mark>。
 可以把这里的所有圆面看成离散化的圆柱，可得磁盘寻址最外层单位为柱面，也就是在每个圆面上半径相同的圆。
 然后在确定地址在哪个Z轴的圆面上，最后，一个圆可以被分成均匀的扇形块，被称作 sector 扇区，圆本身可以转动从而让磁头对准它想要的那个扇区。一个扇区一般 512 字节。
 > 这里稍微简化一下，认为每个磁道的扇区大小与数量都相同好了
@@ -50,5 +50,75 @@ Linux 一切皆文件，文件 = 文件数据 + 文件属性
 - 组
 - 大小
 - 最后修改时间
+> 这些属性能用 ls 命令与 stat 命令查询
+Linux中的 文件数据与文件属性分开存储，存储文件属性的被叫做 inode 索引节点
+```cpp
+/*
+ * Structure of an inode on the disk
+ */
+struct ext2_inode {
+    __le16  i_mode;         /* File mode */
+    __le16  i_uid;          /* Low 16 bits of Owner Uid */
+    __le32  i_size;         /* Size in bytes */
+    __le32  i_atime;        /* Access time */
+    __le32  i_ctime;        /* Creation time */
+    __le32  i_mtime;        /* Modification time */
+    __le32  i_dtime;        /* Deletion Time */
+    __le16  i_gid;          /* Low 16 bits of Group Id */
+    __le16  i_links_count;  /* Links count */
+    __le32  i_blocks;       /* Blocks count */
+    __le32  i_flags;        /* File flags */
+    union {
+        struct {
+            __le32  l_i_reserved1;
+        } linux1;
+        struct {
+            __le32  h_i_translator;
+        } hurd1;
+        struct {
+            __le32  m_i_reserved1;
+        } masix1;
+    } osd1;                         /* OS dependent 1 */
+    __le32  i_block[EXT2_N_BLOCKS]; /* Pointers to blocks */
+    __le32  i_generation;           /* File version (for NFS) */
+    __le32  i_file_acl;             /* File ACL */
+    __le32  i_dir_acl;              /* Directory ACL */
+    __le32  i_faddr;                /* Fragment address */
+    union {
+        struct {
+            __u8    l_i_frag;       /* Fragment number */
+            __u8    l_i_fsize;      /* Fragment size */
+            __u16   i_pad1;
+            __le16  l_i_uid_high;   /* these 2 fields */
+            __le16  l_i_gid_high;   /* were reserved2[0] */
+            __u32   l_i_reserved2;
+        } linux2;
+        struct {
+            __u8    h_i_frag;       /* Fragment number */
+            __u8    h_i_fsize;      /* Fragment size */
+            __le16  h_i_mode_high;
+            __le16  h_i_uid_high;
+            __le16  h_i_gid_high;
+            __le32  h_i_author;
+        } hurd2;
+        struct {
+            __u8    m_i_frag;       /* Fragment number */
+            __u8    m_i_fsize;      /* Fragment size */
+            __u16   m_pad1;
+            __u32   m_i_reserved2[2];
+        } masix2;
+    } osd2;                         /* OS dependent 2 */
+};
 
+/*
+ * Constants relative to the data blocks
+ */
+#define EXT2_NDIR_BLOCKS                12
+#define EXT2_IND_BLOCK                  EXT2_NDIR_BLOCKS
+#define EXT2_DIND_BLOCK                 (EXT2_IND_BLOCK + 1)
+#define EXT2_TIND_BLOCK                 (EXT2_DIND_BLOCK + 1)
+#define EXT2_N_BLOCKS                   (EXT2_TIND_BLOCK + 1)
+
+/* 备注：EXT2_N_BLOCKS = 15 */
+```
 
