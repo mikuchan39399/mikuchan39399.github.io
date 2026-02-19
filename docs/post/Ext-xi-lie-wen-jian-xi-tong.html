@@ -71,7 +71,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     font-size: 12px;
 }
 </style>
-
+<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style>
 
 
 
@@ -254,7 +254,99 @@ Linux中的 文件数据与文件属性分开存储，存储文件属性的被�
 MBR 之外的所有区域用作分区</li>
 </ul>
 <h3>3.2 Boot Sector 引导扇区</h3>
-<p>MBR 是整个磁盘的起点，引导扇区就是每个分区的起点</p></div>
+<p>MBR 是整个磁盘的起点，引导扇区就是每个分区的起点，占 1024 字节，两块扇区<br>
+MBR 可以通过查询引导扇区来读取每个分区的具体文件系统，这里的代码更加复杂</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>不管这个分区是不是纯粹的数据区，甚至装没装操作系统，每个分区的引导扇区在ext系列文件系统中永久存在<br>
+每个分区除了引导扇区之外的区域就是ext系列文件系统了！</p>
+</div>
+<h3>3.3 块组</h3>
+<p>ext系列文件系统由多个块组构成，分而治之<br>
+接下来的内容就算是重难点了</p>
+<h2>4. 块组内部结构</h2>
+<h3>4.1 超级块（Super Block）</h3>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">/*</span></span>
+<span class="pl-c"> * Structure of the super block</span>
+<span class="pl-c"> <span class="pl-c">*/</span></span>
+<span class="pl-k">struct</span> <span class="pl-en">ext2_super_block</span> {
+    __le32  s_inodes_count;        <span class="pl-c"><span class="pl-c">/*</span> Inodes count <span class="pl-c">*/</span></span>
+    __le32  s_blocks_count;        <span class="pl-c"><span class="pl-c">/*</span> Blocks count <span class="pl-c">*/</span></span>
+    __le32  s_r_blocks_count;      <span class="pl-c"><span class="pl-c">/*</span> Reserved blocks count <span class="pl-c">*/</span></span>
+    __le32  s_free_blocks_count;   <span class="pl-c"><span class="pl-c">/*</span> Free blocks count <span class="pl-c">*/</span></span>
+    __le32  s_free_inodes_count;   <span class="pl-c"><span class="pl-c">/*</span> Free inodes count <span class="pl-c">*/</span></span>
+    __le32  s_first_data_block;    <span class="pl-c"><span class="pl-c">/*</span> First Data Block <span class="pl-c">*/</span></span>
+    __le32  s_log_block_size;      <span class="pl-c"><span class="pl-c">/*</span> Block size <span class="pl-c">*/</span></span>
+    __le32  s_log_frag_size;       <span class="pl-c"><span class="pl-c">/*</span> Fragment size <span class="pl-c">*/</span></span>
+    __le32  s_blocks_per_group;    <span class="pl-c"><span class="pl-c">/*</span> # Blocks per group <span class="pl-c">*/</span></span>
+    __le32  s_frags_per_group;     <span class="pl-c"><span class="pl-c">/*</span> # Fragments per group <span class="pl-c">*/</span></span>
+    __le32  s_inodes_per_group;    <span class="pl-c"><span class="pl-c">/*</span> # Inodes per group <span class="pl-c">*/</span></span>
+    __le32  s_mtime;               <span class="pl-c"><span class="pl-c">/*</span> Mount time <span class="pl-c">*/</span></span>
+    __le32  s_wtime;               <span class="pl-c"><span class="pl-c">/*</span> Write time <span class="pl-c">*/</span></span>
+    __le16  s_mnt_count;           <span class="pl-c"><span class="pl-c">/*</span> Mount count <span class="pl-c">*/</span></span>
+    __le16  s_max_mnt_count;       <span class="pl-c"><span class="pl-c">/*</span> Maximal mount count <span class="pl-c">*/</span></span>
+    __le16  s_magic;               <span class="pl-c"><span class="pl-c">/*</span> Magic signature <span class="pl-c">*/</span></span>
+    __le16  s_state;               <span class="pl-c"><span class="pl-c">/*</span> File system state <span class="pl-c">*/</span></span>
+    __le16  s_errors;              <span class="pl-c"><span class="pl-c">/*</span> Behaviour when detecting errors <span class="pl-c">*/</span></span>
+    __le16  s_minor_rev_level;     <span class="pl-c"><span class="pl-c">/*</span> minor revision level <span class="pl-c">*/</span></span>
+    __le32  s_lastcheck;           <span class="pl-c"><span class="pl-c">/*</span> time of last check <span class="pl-c">*/</span></span>
+    __le32  s_checkinterval;       <span class="pl-c"><span class="pl-c">/*</span> max. time between checks <span class="pl-c">*/</span></span>
+    __le32  s_creator_os;          <span class="pl-c"><span class="pl-c">/*</span> OS <span class="pl-c">*/</span></span>
+    __le32  s_rev_level;           <span class="pl-c"><span class="pl-c">/*</span> Revision level <span class="pl-c">*/</span></span>
+    __le16  s_def_resuid;          <span class="pl-c"><span class="pl-c">/*</span> Default uid for reserved blocks <span class="pl-c">*/</span></span>
+    __le16  s_def_resgid;          <span class="pl-c"><span class="pl-c">/*</span> Default gid for reserved blocks <span class="pl-c">*/</span></span>
+
+    <span class="pl-c"><span class="pl-c">/*</span></span>
+<span class="pl-c">     * These fields are for EXT2_DYNAMIC_REV superblocks only.</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * Note: the difference between the compatible feature set and</span>
+<span class="pl-c">     * the incompatible feature set is that if there is a bit set</span>
+<span class="pl-c">     * in the incompatible feature set that the kernel doesn't</span>
+<span class="pl-c">     * know about, it should refuse to mount the filesystem.</span>
+<span class="pl-c">     *</span>
+<span class="pl-c">     * e2fsck's requirements are more strict; if it doesn't know</span>
+<span class="pl-c">     * about a feature in either the compatible or incompatible</span>
+<span class="pl-c">     * feature set, it must abort and not try to meddle with</span>
+<span class="pl-c">     * things it doesn't understand...</span>
+<span class="pl-c">     <span class="pl-c">*/</span></span>
+    __le32  s_first_ino;           <span class="pl-c"><span class="pl-c">/*</span> First non-reserved inode <span class="pl-c">*/</span></span>
+    __le16  s_inode_size;          <span class="pl-c"><span class="pl-c">/*</span> size of inode structure <span class="pl-c">*/</span></span>
+    __le16  s_block_group_nr;      <span class="pl-c"><span class="pl-c">/*</span> block group # of this superblock <span class="pl-c">*/</span></span>
+    __le32  s_feature_compat;      <span class="pl-c"><span class="pl-c">/*</span> compatible feature set <span class="pl-c">*/</span></span>
+    __le32  s_feature_incompat;    <span class="pl-c"><span class="pl-c">/*</span> incompatible feature set <span class="pl-c">*/</span></span>
+    __le32  s_feature_ro_compat;   <span class="pl-c"><span class="pl-c">/*</span> readonly-compatible feature set <span class="pl-c">*/</span></span>
+    __u8    s_uuid[<span class="pl-c1">16</span>];            <span class="pl-c"><span class="pl-c">/*</span> 128-bit uuid for volume <span class="pl-c">*/</span></span>
+    <span class="pl-k">char</span>    s_volume_name[<span class="pl-c1">16</span>];     <span class="pl-c"><span class="pl-c">/*</span> volume name <span class="pl-c">*/</span></span>
+    <span class="pl-k">char</span>    s_last_mounted[<span class="pl-c1">64</span>];    <span class="pl-c"><span class="pl-c">/*</span> directory where last mounted <span class="pl-c">*/</span></span>
+    __le32  s_algorithm_usage_bitmap; <span class="pl-c"><span class="pl-c">/*</span> For compression <span class="pl-c">*/</span></span>
+
+    <span class="pl-c"><span class="pl-c">/*</span></span>
+<span class="pl-c">     * Performance hints. Directory preallocation should only</span>
+<span class="pl-c">     * happen if the EXT2_COMPAT_PREALLOC flag is on.</span>
+<span class="pl-c">     <span class="pl-c">*/</span></span>
+    __u8    s_prealloc_blocks;     <span class="pl-c"><span class="pl-c">/*</span> Nr of blocks to try to preallocate<span class="pl-c">*/</span></span>
+    __u8    s_prealloc_dir_blocks; <span class="pl-c"><span class="pl-c">/*</span> Nr to preallocate for dirs <span class="pl-c">*/</span></span>
+    __u16   s_padding1;
+
+    <span class="pl-c"><span class="pl-c">/*</span></span>
+<span class="pl-c">     * Journaling support valid if EXT3_FEATURE_COMPAT_HAS_JOURNAL set.</span>
+<span class="pl-c">     <span class="pl-c">*/</span></span>
+    __u8    s_journal_uuid[<span class="pl-c1">16</span>];    <span class="pl-c"><span class="pl-c">/*</span> uuid of journal superblock <span class="pl-c">*/</span></span>
+    __u32   s_journal_inum;        <span class="pl-c"><span class="pl-c">/*</span> inode number of journal file <span class="pl-c">*/</span></span>
+    __u32   s_journal_dev;         <span class="pl-c"><span class="pl-c">/*</span> device number of journal file <span class="pl-c">*/</span></span>
+    __u32   s_last_orphan;         <span class="pl-c"><span class="pl-c">/*</span> start of list of inodes to delete <span class="pl-c">*/</span></span>
+    __u32   s_hash_seed[<span class="pl-c1">4</span>];        <span class="pl-c"><span class="pl-c">/*</span> HTREE hash seed <span class="pl-c">*/</span></span>
+    __u8    s_def_hash_version;    <span class="pl-c"><span class="pl-c">/*</span> Default hash version to use <span class="pl-c">*/</span></span>
+    __u8    s_reserved_char_pad;
+    __u16   s_reserved_word_pad;
+    __le32  s_default_mount_opts;
+    __le32  s_first_meta_bg;       <span class="pl-c"><span class="pl-c">/*</span> First metablock block group <span class="pl-c">*/</span></span>
+    __u32   s_reserved[<span class="pl-c1">190</span>];       <span class="pl-c"><span class="pl-c">/*</span> Padding to the end of the block <span class="pl-c">*/</span></span>
+};</pre></div>
+<p>超级块存放着整个分区的文件系统信息</p>
+<h3>4.2 GDT（Group Descriptor Table）</h3>
+<h3>4.3 块位图 （Block Bitmap）</h3>
+<h3>4.4 inode 位图（inode Bitmap）</h3>
+<h3>4.5 inode Table（inode Table）</h3>
+<h3>4.5 数据块区（Data Blocks)</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
