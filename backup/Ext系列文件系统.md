@@ -135,11 +135,13 @@ MBR 是整个磁盘的起点，引导扇区就是每个分区的起点，占 102
 MBR 可以通过查询引导扇区来读取每个分区的具体文件系统，这里的代码更加复杂
 > [!NOTE]
 > 不管这个分区是不是纯粹的数据区，甚至装没装操作系统，每个分区的引导扇区在ext系列文件系统中永久存在
+
 每个分区除了引导扇区之外的区域就是ext系列文件系统了！
 ### 3.3 块组
 ext系列文件系统由多个块组构成，分而治之
 接下来的内容就算是重难点了
 ## 4. 块组内部结构
+按照先后顺序...
 ### 4.1 超级块（Super Block）
 ```cpp
 /*
@@ -220,11 +222,71 @@ struct ext2_super_block {
     __u32   s_reserved[190];       /* Padding to the end of the block */
 };
 ```
+> 最后还填充了190个字节以凑满1KB，类似的操作很多
+
 超级块存放着整个分区的文件系统信息
+- s_inodes_count 此分区的所有块组的 inode 总量 
+- s_blocks_count 此分区所有块组中的块总量
+- s_free_blocks_count 此分区空闲的块数量
+- s_free_inodes_count 此分区空闲 inode 的数量
+- s_blocks_per_group 此分区每个块组的块总量
+- s_inodes_per_group 此分区每个块组的 inode 总量
+- s_inode_size 此分区 inode 结构体的大小
+等等...这些超级块中的信息管理和描述着一个分区的文件系统，破坏了超级块的信息等同于破坏了文件系统
+> [!NOTE]
+> 超级块有可能存在于一个分区的多个块组中，为了备份
+
+
 ### 4.2 GDT（Group Descriptor Table）
+```cpp
+/*
+* Structure of a blocks group descriptor
+*/
+struct ext2_group_desc
+{
+    __le32 bg_block_bitmap; /* Blocks bitmap block */
+    __le32 bg_inode_bitmap; /* Inodes bitmap */
+    __le32 bg_inode_table; /* Inodes table block*/
+    __le16 bg_free_blocks_count; /* Free blocks count */
+    __le16 bg_free_inodes_count; /* Free inodes count */
+    __le16 bg_used_dirs_count; /* Directories count */
+    __le16 bg_pad;
+    __le32 bg_reserved[3];
+};
+```
+> [!TIP] 
+> GDT 就是磁盘版的 VMA
+> 如果你学过 Linux 的内存管理，不妨把 `ext2_group_desc` 类比成描述虚拟内存区域的 `struct vm_area_struct` (VMA)。
+> VMA 告诉操作系统：“这段内存是代码段，那段内存是堆栈”；
+> 而 GDT 则是告诉文件系统：“在这个 Block Group 里，哪几个块是 Block Bitmap，哪几个块是 Inode Table”。它们本质上都是
+> 为了划分和管理一段连续的存储空间而存在的**元数据索引**。
 ### 4.3 块位图 （Block Bitmap）
+Block Bitmap中记录着 Data Block 中哪个数据块已经被占⽤，哪个数据块没有被占⽤
 ### 4.4 inode 位图（inode Bitmap）
-### 4.5 inode Table（inode Table）
-### 4.5 数据块区（Data Blocks)
+每个比特位表⽰⼀个inode是否空闲可⽤。
+### 4.5 inode Table (inode 表)
+还记得我们刚才在那一大串代码里贴的 `struct ext2_inode` 吗？
+**inode Table 本质上就是一个巨大的、由 `ext2_inode` 结构体组成的连续数组**
+
+**为什么 Linux 找文件元数据那么快？**
+因为只要文件系统知道了文件的 `inode 号`，结合当前 Block Group 的起始地址，直接用 $O(1)$ 的时间复杂度做一次 `数组下标寻址`，就能把这个文件的所有属性全部从磁盘加载到内存
+
+> [!NOTE]
+> inode 号并不是全局随机分配的，它是基于这个巨大的 Table 的 Index 算出来的。
+> inode 号
+
+### 4.6 Data Block (数据块区)
+终于来到磁盘面积最大、也是我们存放学习资料（和Miku酱的美图）的真正位置了！
+
+这里是被 inode 中的 `i_block[15]` 数组（那 12个直接块 + 3个间接块）所指向的物理区域。但是，千万不要以为数据块里存的都是普通的文本或视频二进制！
+
+在 Linux 的哲学里：“一切皆文件”。因此，**Data Block 具有“双重人格”**，这取决于指向它的那个 inode 到底是个什么玩意儿：
+
+1. **如果 inode 是个普通文件 (`-`)：**
+   那 Data Block 里存的就是老老实实的文件内容（比如你写的代码，或者一首 Miku 的 mp3）。
+
+2. **如果 inode 是个目录 (`d`)：**                                       
+   那 Data Block 里存的内容就非常有趣了！它存的是一个叫做 **`dentry` (Directory Entry, 目录项)** 的结构体数组。
+   这个数组里记录着该目录下所有文件的**“文件名”**和**“对应的 inode 号”**。
 
 

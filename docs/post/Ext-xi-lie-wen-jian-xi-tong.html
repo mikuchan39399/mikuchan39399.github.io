@@ -71,7 +71,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     font-size: 12px;
 }
 </style>
-<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style>
+<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style><style>.markdown-alert.markdown-alert-tip {border-left-color:var(--borderColor-success-emphasis, var(--color-success-emphasis));background-color:var(--color-success-subtle);}.markdown-alert.markdown-alert-tip .markdown-alert-title {color: var(--fgColor-success,var(--color-success-fg));}</style>
 
 
 
@@ -256,13 +256,14 @@ MBR 之外的所有区域用作分区</li>
 <h3>3.2 Boot Sector 引导扇区</h3>
 <p>MBR 是整个磁盘的起点，引导扇区就是每个分区的起点，占 1024 字节，两块扇区<br>
 MBR 可以通过查询引导扇区来读取每个分区的具体文件系统，这里的代码更加复杂</p>
-<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>不管这个分区是不是纯粹的数据区，甚至装没装操作系统，每个分区的引导扇区在ext系列文件系统中永久存在<br>
-每个分区除了引导扇区之外的区域就是ext系列文件系统了！</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>不管这个分区是不是纯粹的数据区，甚至装没装操作系统，每个分区的引导扇区在ext系列文件系统中永久存在</p>
 </div>
+<p>每个分区除了引导扇区之外的区域就是ext系列文件系统了！</p>
 <h3>3.3 块组</h3>
 <p>ext系列文件系统由多个块组构成，分而治之<br>
 接下来的内容就算是重难点了</p>
 <h2>4. 块组内部结构</h2>
+<p>按照先后顺序...</p>
 <h3>4.1 超级块（Super Block）</h3>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">/*</span></span>
 <span class="pl-c"> * Structure of the super block</span>
@@ -341,12 +342,70 @@ MBR 可以通过查询引导扇区来读取每个分区的具体文件系统，�
     __le32  s_first_meta_bg;       <span class="pl-c"><span class="pl-c">/*</span> First metablock block group <span class="pl-c">*/</span></span>
     __u32   s_reserved[<span class="pl-c1">190</span>];       <span class="pl-c"><span class="pl-c">/*</span> Padding to the end of the block <span class="pl-c">*/</span></span>
 };</pre></div>
+<blockquote>
+<p>最后还填充了190个字节以凑满1KB，类似的操作很多</p>
+</blockquote>
 <p>超级块存放着整个分区的文件系统信息</p>
+<ul>
+<li>s_inodes_count 此分区的所有块组的 inode 总量</li>
+<li>s_blocks_count 此分区所有块组中的块总量</li>
+<li>s_free_blocks_count 此分区空闲的块数量</li>
+<li>s_free_inodes_count 此分区空闲 inode 的数量</li>
+<li>s_blocks_per_group 此分区每个块组的块总量</li>
+<li>s_inodes_per_group 此分区每个块组的 inode 总量</li>
+<li>s_inode_size 此分区 inode 结构体的大小<br>
+等等...这些超级块中的信息管理和描述着一个分区的文件系统，破坏了超级块的信息等同于破坏了文件系统</li>
+</ul>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>超级块有可能存在于一个分区的多个块组中，为了备份</p>
+</div>
 <h3>4.2 GDT（Group Descriptor Table）</h3>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">/*</span></span>
+<span class="pl-c">* Structure of a blocks group descriptor</span>
+<span class="pl-c"><span class="pl-c">*/</span></span>
+<span class="pl-k">struct</span> <span class="pl-en">ext2_group_desc</span>
+{
+    __le32 bg_block_bitmap; <span class="pl-c"><span class="pl-c">/*</span> Blocks bitmap block <span class="pl-c">*/</span></span>
+    __le32 bg_inode_bitmap; <span class="pl-c"><span class="pl-c">/*</span> Inodes bitmap <span class="pl-c">*/</span></span>
+    __le32 bg_inode_table; <span class="pl-c"><span class="pl-c">/*</span> Inodes table block<span class="pl-c">*/</span></span>
+    __le16 bg_free_blocks_count; <span class="pl-c"><span class="pl-c">/*</span> Free blocks count <span class="pl-c">*/</span></span>
+    __le16 bg_free_inodes_count; <span class="pl-c"><span class="pl-c">/*</span> Free inodes count <span class="pl-c">*/</span></span>
+    __le16 bg_used_dirs_count; <span class="pl-c"><span class="pl-c">/*</span> Directories count <span class="pl-c">*/</span></span>
+    __le16 bg_pad;
+    __le32 bg_reserved[<span class="pl-c1">3</span>];
+};</pre></div>
+<div class="markdown-alert markdown-alert-tip"><p class="markdown-alert-title"><svg class="octicon octicon-light-bulb mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p><p>GDT 就是磁盘版的 VMA<br>
+如果你学过 Linux 的内存管理，不妨把 <code class="notranslate">ext2_group_desc</code> 类比成描述虚拟内存区域的 <code class="notranslate">struct vm_area_struct</code> (VMA)。<br>
+VMA 告诉操作系统：“这段内存是代码段，那段内存是堆栈”；<br>
+而 GDT 则是告诉文件系统：“在这个 Block Group 里，哪几个块是 Block Bitmap，哪几个块是 Inode Table”。它们本质上都是<br>
+为了划分和管理一段连续的存储空间而存在的<strong>元数据索引</strong>。</p>
+</div>
 <h3>4.3 块位图 （Block Bitmap）</h3>
+<p>Block Bitmap中记录着 Data Block 中哪个数据块已经被占⽤，哪个数据块没有被占⽤</p>
 <h3>4.4 inode 位图（inode Bitmap）</h3>
-<h3>4.5 inode Table（inode Table）</h3>
-<h3>4.5 数据块区（Data Blocks)</h3></div>
+<p>每个比特位表⽰⼀个inode是否空闲可⽤。</p>
+<h3>4.5 inode Table (inode 表)</h3>
+<p>还记得我们刚才在那一大串代码里贴的 <code class="notranslate">struct ext2_inode</code> 吗？<br>
+<strong>inode Table 本质上就是一个巨大的、由 <code class="notranslate">ext2_inode</code> 结构体组成的连续数组</strong></p>
+<p><strong>为什么 Linux 找文件元数据那么快？</strong><br>
+因为只要文件系统知道了文件的 <code class="notranslate">inode 号</code>，结合当前 Block Group 的起始地址，直接用 $O(1)$ 的时间复杂度做一次 <code class="notranslate">数组下标寻址</code>，就能把这个文件的所有属性全部从磁盘加载到内存</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>inode 号并不是全局随机分配的，它是基于这个巨大的 Table 的 Index 算出来的。<br>
+inode 号</p>
+</div>
+<h3>4.6 Data Block (数据块区)</h3>
+<p>终于来到磁盘面积最大、也是我们存放学习资料（和Miku酱的美图）的真正位置了！</p>
+<p>这里是被 inode 中的 <code class="notranslate">i_block[15]</code> 数组（那 12个直接块 + 3个间接块）所指向的物理区域。但是，千万不要以为数据块里存的都是普通的文本或视频二进制！</p>
+<p>在 Linux 的哲学里：“一切皆文件”。因此，<strong>Data Block 具有“双重人格”</strong>，这取决于指向它的那个 inode 到底是个什么玩意儿：</p>
+<ol>
+<li>
+<p><strong>如果 inode 是个普通文件 (<code class="notranslate">-</code>)：</strong><br>
+那 Data Block 里存的就是老老实实的文件内容（比如你写的代码，或者一首 Miku 的 mp3）。</p>
+</li>
+<li>
+<p><strong>如果 inode 是个目录 (<code class="notranslate">d</code>)：</strong><br>
+那 Data Block 里存的内容就非常有趣了！它存的是一个叫做 <strong><code class="notranslate">dentry</code> (Directory Entry, 目录项)</strong> 的结构体数组。<br>
+这个数组里记录着该目录下所有文件的**“文件名”<strong>和</strong>“对应的 inode 号”**。</p>
+</li>
+</ol></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -405,7 +464,11 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
-
+cmButton=document.getElementById("cmButton");
+    span=document.createElement("span");
+    span.setAttribute("class","Counter");
+    span.innerHTML="1";
+    cmButton.appendChild(span);
 
 
 function openComments(){
@@ -511,6 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
-
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 </html>
