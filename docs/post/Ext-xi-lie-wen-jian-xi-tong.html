@@ -503,9 +503,47 @@ inode 号 并不存在于 inode 结构体内部，并且不可跨分区</p>
 这样，操作系统就不会管 old_dentry了，直接用上新分区里的 mnt_root 就行，mnt_root 是被挂载的分区的根目录 dentry</p>
 <p>这种遮蔽行为不需要删除 old_dentry 及其子树结构，很优雅<br>
 卸载分区同样只需要把那个标志位重置就行了</p>
+<h3>5.3 总结</h3>
+<p><strong>一次跨分区的路径解析全流程：</strong></p>
+<ol>
+<li>读取挂载在 /mnt/usb 下的 a.txt：</li>
+<li>系统从根目录 / 开始查，找到 mnt 的 dentry。</li>
+<li>继续往下，找到 usb 的 dentry（即 old_dentry）。</li>
+<li>发现 usb 的 dentry 被打上了已挂载的标签。</li>
+<li>触发传送门，用当前的上下文去查挂载哈希表。</li>
+<li>查出 U 盘文件系统的 vfsmount 实例。</li>
+<li>提取出 U 盘实例里的 mnt_root（U 盘的根 dentry）。</li>
+<li>从 U 盘的根 dentry 出发，在 U 盘的目录树中找到了 a.txt 的 dentry。</li>
+<li>拿到对应的 inode，顺利读取数据。</li>
+</ol>
 <h2>6. 软硬链接</h2>
 <h3>6.1 软链接</h3>
-<h3>6.2 硬链接</h3></div>
+<p>当你创建一个软链接时，文件系统会为它分配一个全新的 inode 和一个全新的 dentry，它是一个彻头彻尾的新文件。</p>
+<ul>
+<li>软链接文件的 data block 里存的是目标文件的绝对/相对路径字符串</li>
+<li>inode 结构体中的标志位被设置为<code class="notranslate">S_IFLNK</code>以标识此文件是一个软链接</li>
+<li>路径解析如果碰到软链接，会接着其存储的路径继续往下解析，继续去寻找真正的目标文件</li>
+<li>支持跨分区，反正他就是存着路径字符串而已</li>
+<li>允许软链接连接目录</li>
+<li>会有失效，悬空引用的问题 - <code class="notranslate">Dangling Link</code></li>
+</ul>
+<blockquote>
+<p>创建命令 - ln -s  /path/to/target_file   /path/to/soft_link_name</p>
+</blockquote>
+<h3>6.2 硬链接</h3>
+<p>硬链接并没有创建新的文件实体<br>
+当创建一个硬链接时，内核做的动作就只是创建一个 新的 dentry，并把其中的 inode 指针替换为目标文件 inode 的指针<br>
+<strong>也就是说，多个 dentry 指向同一个 inode结构体</strong></p>
+<ul>
+<li>引用计数保活 有点像 shared智能指针，inode 结构体 中有一个<code class="notranslate">i_nlink</code>成员，他记录目前有几个 dentry 指向此 inode，只有这个成员变为 0，且没有一个进程打开这个 inode 对应的文件，这个文件才会真正被回收</li>
+<li>不可跨分区，inode 不可跨分区</li>
+<li>严禁用户自己硬链接目录，那样你将永远无法到达目标文件的真实...</li>
+<li>虽然  . 和 .. 就是操作系统自己设立的目录硬链接，这就是为什么一个空目录的 <code class="notranslate">i_nlink</code> 是 2</li>
+</ul>
+<blockquote>
+<p>创建命令 - ln /path/to/target_file   /path/to/hard_link_name<br>
+不加参数默认就是硬链接</p>
+</blockquote></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
