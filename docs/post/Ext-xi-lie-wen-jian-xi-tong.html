@@ -393,7 +393,7 @@ inode 号</p>
 </div>
 <h3>4.6 Data Block (数据块区)</h3>
 <p>终于来到磁盘面积最大、也是我们存放学习资料（和Miku酱的美图）的真正位置了！</p>
-<p>这里是被 inode 中的 <code class="notranslate">i_block[15]</code> 数组（那 12个直接块 + 3个间接块）所指向的物理区域。但是，千万不要以为数据块里存的都是普通的文本或视频二进制！</p>
+<p>这里是被 inode 中的 <code class="notranslate">i_block[15]</code> 数组所指向的物理区域。但是，千万不要以为数据块里存的都是普通的文本或视频二进制！</p>
 <p>在 Linux 的哲学里：“一切皆文件”。因此，<strong>Data Block 具有“双重人格”</strong>，这取决于指向它的那个 inode 到底是个什么玩意儿：</p>
 <ol>
 <li>
@@ -405,7 +405,16 @@ inode 号</p>
 那 Data Block 里存的内容就非常有趣了！它存的是一个叫做 <strong><code class="notranslate">dentry</code> (Directory Entry, 目录项)</strong> 的结构体数组。<br>
 这个数组里记录着该目录下所有文件的**“文件名”<strong>和</strong>“对应的 inode 号”**。</p>
 </li>
-</ol></div>
+</ol>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">struct</span> <span class="pl-en">ext2_dir_entry_2</span> {
+    __le32  inode;          <span class="pl-c"><span class="pl-c">/*</span> 这个文件对应的 inode 编号 <span class="pl-c">*/</span></span>
+    __le16  rec_len;        <span class="pl-c"><span class="pl-c">/*</span> 这个目录项的长度 <span class="pl-c">*/</span></span>
+    __u8    name_len;       <span class="pl-c"><span class="pl-c">/*</span> 文件名的实际长度 <span class="pl-c">*/</span></span>
+    __u8    file_type;      <span class="pl-c"><span class="pl-c">/*</span> 文件类型（普通文件、目录、软链接等） <span class="pl-c">*/</span></span>
+    <span class="pl-k">char</span>    name[];         <span class="pl-c"><span class="pl-c">/*</span> 文件名字符串 (没有 \0 结尾) <span class="pl-c">*/</span></span>
+};</pre></div>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p><strong>磁盘上的目录项（如 <code class="notranslate">ext2_dir_entry_2</code>）：</strong> 它是物理存在的，躺在目录的 Data Block 里，仅仅记录了 <code class="notranslate">&lt;文件名, inode号&gt;</code> 的映射。它是持久化的。</p>
+</div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
