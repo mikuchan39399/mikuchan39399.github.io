@@ -262,6 +262,8 @@ struct ext2_group_desc
 > 为了划分和管理一段连续的存储空间而存在的**元数据索引**。
 ### 4.3 块位图 （Block Bitmap）
 Block Bitmap中记录着 Data Block 中哪个数据块已经被占⽤，哪个数据块没有被占⽤
+> Block 号按照分区划分，不可跨分区
+
 ### 4.4 inode 位图（inode Bitmap）
 每个比特位表⽰⼀个inode是否空闲可⽤。
 ### 4.5 inode Table (inode 表)
@@ -273,7 +275,7 @@ Block Bitmap中记录着 Data Block 中哪个数据块已经被占⽤，哪个�
 
 > [!NOTE]
 > inode 号并不是全局随机分配的，它是基于这个巨大的 Table 的 Index 算出来的。
-> inode 号
+> inode 号 并不存在于 inode 结构体内部，并且不可跨分区
 
 ### 4.6 Data Block (数据块区)
 终于来到磁盘面积最大、也是我们存放学习资料（和Miku酱的美图）的真正位置了！
@@ -297,7 +299,6 @@ struct ext2_dir_entry_2 {
     char    name[];         /* 文件名字符串 (没有 \0 结尾) */
 };
 ```
-
 > [!NOTE]
 > **磁盘上的目录项（如 `ext2_dir_entry_2`）：** 它是物理存在的，躺在目录的 Data Block 里，仅仅记录了 `<文件名, inode号>` 的映射。它是持久化的。
 

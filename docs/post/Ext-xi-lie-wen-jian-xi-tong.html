@@ -381,6 +381,9 @@ VMA 告诉操作系统：“这段内存是代码段，那段内存是堆栈”�
 </div>
 <h3>4.3 块位图 （Block Bitmap）</h3>
 <p>Block Bitmap中记录着 Data Block 中哪个数据块已经被占⽤，哪个数据块没有被占⽤</p>
+<blockquote>
+<p>Block 号按照分区划分，不可跨分区</p>
+</blockquote>
 <h3>4.4 inode 位图（inode Bitmap）</h3>
 <p>每个比特位表⽰⼀个inode是否空闲可⽤。</p>
 <h3>4.5 inode Table (inode 表)</h3>
@@ -389,7 +392,7 @@ VMA 告诉操作系统：“这段内存是代码段，那段内存是堆栈”�
 <p><strong>为什么 Linux 找文件元数据那么快？</strong><br>
 因为只要文件系统知道了文件的 <code class="notranslate">inode 号</code>，结合当前 Block Group 的起始地址，直接用 $O(1)$ 的时间复杂度做一次 <code class="notranslate">数组下标寻址</code>，就能把这个文件的所有属性全部从磁盘加载到内存</p>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>inode 号并不是全局随机分配的，它是基于这个巨大的 Table 的 Index 算出来的。<br>
-inode 号</p>
+inode 号 并不存在于 inode 结构体内部，并且不可跨分区</p>
 </div>
 <h3>4.6 Data Block (数据块区)</h3>
 <p>终于来到磁盘面积最大、也是我们存放学习资料（和Miku酱的美图）的真正位置了！</p>
