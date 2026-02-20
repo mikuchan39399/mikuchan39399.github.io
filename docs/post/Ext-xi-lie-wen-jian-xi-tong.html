@@ -490,7 +490,19 @@ inode 号 并不存在于 inode 结构体内部，并且不可跨分区</p>
 <p>目录文件存储着 inode 编号与文件名的映射，但 inode 编号不能跨分区，如何确定文件属于哪个分区？这就涉及到挂载机制。</p>
 <p>Linux 没有 Windows 的盘符概念。分区是对硬件的抽象，优秀的操作系统应该让这层抽象具有普适性，而不是再抽象回硬件形态（如 C:、D:）造成冗余。Linux 通过挂载点动态关联分区，对用户透明。</p>
 <p>挂载机制和路径解析关联很大，当一个分区中建立文件系统，也就是格式化之后，他还无法直接使用，必须得和指定的目录进行关联，让操作系统知道，哦哦，原来这个目录为根的子树往后是个新分区了呀<br>
-操作系统一开始只有根目录这一块最大的分区，挂载机制就相当于把其他的分区挂在了其他已经存在的目录树上，接下来我们来谈谈具体的过程</p>
+操作系统一开始只有与根目录相关联的一个分区，挂载机制就相当于把其他的分区挂在了其他已经存在的目录树上，接下来我们来谈谈具体的过程</p>
+<p>挂载操作可以用 mount 指令，当使用挂载指令把一块分区与一个目录进行关联，那么当然要对这个目录做路径解析，验证这个目录是否有足够的权限，是否存在，不合法直接报错就不会挂载了<br>
+若挂载成功，这时缓存目录树中一定已经有了那个被挂载目录的 dentry，我们叫它old_dentry<br>
+内核会在 old_dentry 中的 d_falgs 标志位设置已挂载，这个标志位一旦被设置成这样就会告知操作系统接下来的路径解析不要走原先的 dentry 树路径了，我们来走跨纬度传送门吧，lookup_mnt() 这个函数就是传送门，他会让操作系统去查全局挂载表</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">struct</span> <span class="pl-en">vfsmount</span> {
+    <span class="pl-k">struct</span> <span class="pl-en">dentry</span> *mnt_root;        <span class="pl-c"><span class="pl-c">/*</span> 新盘的根 Dentry <span class="pl-c">*/</span></span>
+    <span class="pl-k">struct</span> <span class="pl-en">super_block</span> *mnt_sb;     <span class="pl-c"><span class="pl-c">/*</span> 新盘的超级块 (Superblock) <span class="pl-c">*/</span></span>
+    <span class="pl-k">int</span> mnt_flags;                  <span class="pl-c"><span class="pl-c">/*</span> 挂载权限标志 (如 MS_RDONLY 只读) <span class="pl-c">*/</span></span>
+}; <span class="pl-c"><span class="pl-c">//</span>这个结构体可以被看作一个分区实例</span></pre></div>
+<p>全局挂载表是个哈希，它的 key 是一个 &lt;旧分区的 vfsmount, old_dentry&gt;，value 是新分区的 vfsmount<br>
+这样，操作系统就不会管 old_dentry了，直接用上新分区里的 mnt_root 就行，mnt_root 是被挂载的分区的根目录 dentry</p>
+<p>这种遮蔽行为不需要删除 old_dentry 及其子树结构，很优雅<br>
+卸载分区同样只需要把那个标志位重置就行了</p>
 <h2>6. 软硬链接</h2>
 <h3>6.1 软链接</h3>
 <h3>6.2 硬链接</h3></div>
