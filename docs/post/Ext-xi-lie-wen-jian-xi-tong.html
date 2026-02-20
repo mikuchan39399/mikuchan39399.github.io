@@ -353,7 +353,8 @@ MBR 可以通过查询引导扇区来读取每个分区的具体文件系统，�
 <li>s_free_inodes_count 此分区空闲 inode 的数量</li>
 <li>s_blocks_per_group 此分区每个块组的块总量</li>
 <li>s_inodes_per_group 此分区每个块组的 inode 总量</li>
-<li>s_inode_size 此分区 inode 结构体的大小<br>
+<li>s_inode_size 此分区 inode 结构体的大小</li>
+<li>s_first_data_block 超级块所在块的块号<br>
 等等...这些超级块中的信息管理和描述着一个分区的文件系统，破坏了超级块的信息等同于破坏了文件系统</li>
 </ul>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>超级块有可能存在于一个分区的多个块组中，为了备份</p>
@@ -417,6 +418,29 @@ inode 号 并不存在于 inode 结构体内部，并且不可跨分区</p>
     <span class="pl-k">char</span>    name[];         <span class="pl-c"><span class="pl-c">/*</span> 文件名字符串 (没有 \0 结尾) <span class="pl-c">*/</span></span>
 };</pre></div>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p><strong>磁盘上的目录项（如 <code class="notranslate">ext2_dir_entry_2</code>）：</strong> 它是物理存在的，躺在目录的 Data Block 里，仅仅记录了 <code class="notranslate">&lt;文件名, inode号&gt;</code> 的映射。它是持久化的。</p>
+</div>
+<div class="markdown-alert markdown-alert-tip"><p class="markdown-alert-title"><svg class="octicon octicon-light-bulb mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p><p><em>Bitmap 是如何映射的？</em>*<br>
+我们知道全局有一个庞大的 inode 编号和 Block 编号，但 Bitmap 是按照<code class="notranslate">块组</code>分别存放的。这就涉及到一个<strong>全局编号到局部比特位</strong>的映射转换。</p>
+<p>还记得前面提过的 超级块 吗？里面有两个关键字段：</p>
+<ul>
+<li><code class="notranslate">s_inodes_per_group</code>：每个块组包含的 inode 数量。</li>
+<li><code class="notranslate">s_blocks_per_group</code>：每个块组包含的 Block 数量。</li>
+</ul>
+<p><strong>以 inode 为例（1-base）：</strong><br>
+假设我们要找 inode 编号为 <code class="notranslate">I</code> 的状态：</p>
+<ol>
+<li><strong>它在哪一个块组？</strong> &gt;    <code class="notranslate">Group_Index = (I - 1) / s_inodes_per_group</code></li>
+<li><strong>它是该块组 inode Bitmap 里的第几个比特？</strong><br>
+<code class="notranslate">Bit_Index = (I - 1) % s_inodes_per_group</code></li>
+</ol>
+<p><strong>以 Data Block 为例（通常 Block 是 0-base，但要减去全局的起始数据块偏移）：</strong><br>
+假设要找 Block 编号为 <code class="notranslate">B</code> 的状态：</p>
+<ol>
+<li><strong>它在哪一个块组？</strong><br>
+<code class="notranslate">Group_Index = (B - s_first_data_block) / s_blocks_per_group</code></li>
+<li><strong>它是该块组 Block Bitmap 里的第几个比特？</strong><br>
+<code class="notranslate">Bit_Index = (B - s_first_data_block) % s_blocks_per_group</code></li>
+</ol>
 </div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 

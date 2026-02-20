@@ -232,6 +232,7 @@ struct ext2_super_block {
 - s_blocks_per_group 此分区每个块组的块总量
 - s_inodes_per_group 此分区每个块组的 inode 总量
 - s_inode_size 此分区 inode 结构体的大小
+- s_first_data_block 超级块所在块的块号
 等等...这些超级块中的信息管理和描述着一个分区的文件系统，破坏了超级块的信息等同于破坏了文件系统
 > [!NOTE]
 > 超级块有可能存在于一个分区的多个块组中，为了备份
@@ -302,3 +303,23 @@ struct ext2_dir_entry_2 {
 > [!NOTE]
 > **磁盘上的目录项（如 `ext2_dir_entry_2`）：** 它是物理存在的，躺在目录的 Data Block 里，仅仅记录了 `<文件名, inode号>` 的映射。它是持久化的。
 
+> [!TIP]
+> *Bitmap 是如何映射的？**
+> 我们知道全局有一个庞大的 inode 编号和 Block 编号，但 Bitmap 是按照`块组`分别存放的。这就涉及到一个**全局编号到局部比特位**的映射转换。
+> 
+> 还记得前面提过的 超级块 吗？里面有两个关键字段：
+> * `s_inodes_per_group`：每个块组包含的 inode 数量。
+> * `s_blocks_per_group`：每个块组包含的 Block 数量。
+> 
+> **以 inode 为例（1-base）：**
+> 假设我们要找 inode 编号为 `I` 的状态：
+> 1. **它在哪一个块组？** >    `Group_Index = (I - 1) / s_inodes_per_group`
+> 2. **它是该块组 inode Bitmap 里的第几个比特？**
+>    `Bit_Index = (I - 1) % s_inodes_per_group`
+> 
+> **以 Data Block 为例（通常 Block 是 0-base，但要减去全局的起始数据块偏移）：**
+> 假设要找 Block 编号为 `B` 的状态：
+> 1. **它在哪一个块组？**
+>    `Group_Index = (B - s_first_data_block) / s_blocks_per_group`
+> 2. **它是该块组 Block Bitmap 里的第几个比特？**
+>    `Bit_Index = (B - s_first_data_block) % s_blocks_per_group`
