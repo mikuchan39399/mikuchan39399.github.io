@@ -148,7 +148,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 |                                  |
 +----------------------------------+
 |                                  |
-|    Program Header Table (可选)   |
+|    Program Header Table          |
 |                                  |
 +----------------------------------+
 |                                  |
@@ -172,7 +172,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 |                                  |
 +----------------------------------+
 </code></pre>
+<p><code class="notranslate"> ELF Header</code> 中存储着整个ELF文件的相关信息，文件类型，机器类型，版本，入口地址，节头表与段头表的位置与大小等等<br>
+可以用<code class="notranslate">readelf -h xxx</code> 来查看一个ELF文件的文件头信息</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/c1ea4ee4-743e-465e-95e6-d03332600234"><img width="939" height="558" alt="Image" src="https://github.com/user-attachments/assets/c1ea4ee4-743e-465e-95e6-d03332600234" style="max-width: 100%; height: auto; max-height: 558px;"></a></p>
 <h3>2.2 节头表</h3>
+<p>将多个目标文件链接成可执行文件的过程需要节头表</p>
 <h3>2.3 段头表</h3>
 <h2>3. 深入链接与加载</h2>
 <h3>3.2 动态库加载</h3>
