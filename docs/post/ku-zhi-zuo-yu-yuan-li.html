@@ -331,7 +331,10 @@ Disassembly of section .init:
 <li><code class="notranslate">CR3</code>寄存器存放当前进程页表所在的物理地址</li>
 <li><code class="notranslate">MMU</code>会通过<code class="notranslate">CR3</code>寄存器找到当前进程页表读出<code class="notranslate">EIP</code>寄存器内虚拟地址对应的物理地址，然后把物理地址上的指令交给CPU执行</li>
 </ol>
-<h4>再谈</h4>
+<blockquote>
+<p>[!improtant]<br>
+所以虚拟地址机制需要 操作系统 编译器 CPU硬件三方的支持才能运作</p>
+</blockquote>
 <h3>3.4 动态库加载</h3>
 <h3>3.5 动态链接</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
