@@ -97,8 +97,50 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li><code class="notranslate">-t</code>：显示压缩包/归档文件中的内容列表。</li>
 <li><code class="notranslate">-v</code>：显示详细信息。</li>
 </ul>
+<h4>使用静态库</h4>
+<p>若可执行程序依赖某个静态库，则需要在编译时指明：</p>
+<ul>
+<li><code class="notranslate">-l</code> 指定库名，去掉文件后缀与<code class="notranslate">lib</code>前缀即为库名</li>
+<li><code class="notranslate">-I</code> 指定头文件搜索路径</li>
+<li><code class="notranslate">-L</code> 指定库路径</li>
+</ul>
 <h3>1.2 动态库</h3>
+<p>如果程序依赖动态库，则程序<code class="notranslate">运行时</code>需要链接动态库</p>
+<ul>
+<li>在程序运行之前加载动态库进内存并使用页表映射的过程被称作<code class="notranslate">动态链接</code></li>
+<li>把动态库加载进内存只需要加载程序用到的其中函数的地址，而不是函数所在目标文件的所有机器码</li>
+<li>若多个进程程序都需要使用同一动态库，相比于臃肿的静态库，动态库只需要被加载进物理内存一份，每个进程的页表自己去映射虚拟地址就行了，节省了内存空间</li>
+</ul>
+<h4>生成动态库</h4>
+<ol>
+<li>将 C 源码编译为“位置无关”的目标文件
+<ul>
+<li><code class="notranslate">gcc -fPIC -c 源文件.c</code></li>
+<li><code class="notranslate">-fPIC</code> 生成位置无关代码</li>
+</ul>
+</li>
+<li>链接生成动态库
+<ul>
+<li><code class="notranslate">gcc -o libmystdio.so my_stdio.o my_string.o -shared</code></li>
+<li><code class="notranslate">-shared</code> 表示生成共享库格式，也就是动态库格式</li>
+</ul>
+</li>
+<li>运行时搜索动态库目录
+<ul>
+<li>拷⻉ <code class="notranslate">动态库</code> ⽂件到系统共享库路径下,⼀般指 <code class="notranslate">/usr/lib</code>、<code class="notranslate">/usr/local/lib</code>、<code class="notranslate">/lib64</code> 或者开篇指明的库路径等</li>
+<li>向<strong>系统</strong>动态库路径下提供库同名软链接</li>
+<li>更改 <code class="notranslate">LD_LIBRARY_PATH</code> 环境变量</li>
+</ul>
+</li>
+</ol>
 <h2>2. ELF文件</h2>
+<p>以下四种文件皆为<code class="notranslate">ELF</code>格式文件</p>
+<ul>
+<li>可重定位文件/目标文件 <code class="notranslate">xxx.o</code></li>
+<li>可执行文件</li>
+<li>动态库文件 <code class="notranslate">xxx.so</code></li>
+<li>内核转储</li>
+</ul>
 <h3>2.1 介绍ELF格式</h3>
 <h3>2.2 节头表</h3>
 <h3>2.3 段头表</h3>
