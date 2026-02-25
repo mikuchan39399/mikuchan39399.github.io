@@ -287,7 +287,7 @@ Key to Flags:
 </ul>
 <h2>3. 深入链接与加载</h2>
 <h3>3.1 逻辑地址</h3>
-<p>进程<code class="notranslate">mm_struct</code>、<code class="notranslate">vm_area_struct</code>在进程刚刚创建的时候，初始化数据从哪⾥来的？</p>
+<p>进程<code class="notranslate">mm_struct</code>-&gt;<code class="notranslate">vm_area_struct</code>在进程刚刚创建的时候，初始化数据从哪⾥来的？</p>
 <ul>
 <li>我们可以用<code class="notranslate">objdump -S</code>反汇编一下可执行文件</li>
 </ul>
@@ -309,8 +309,27 @@ Disassembly of section .init:
     101a:       c3                      ret
 ......
 </code></pre>
-<h3>3.2 动态库加载</h3>
-<h3>3.3 动态链接</h3></div>
+<blockquote>
+<p>我们会发现一个ELF文件在被加载进内存之前就已经拥有虚拟地址了，就是最左边那一列<br>
+我们把ELF中的虚拟地址称作<strong>逻辑地址/偏移量</strong>，这与后面要讲的<code class="notranslate">PIC</code>位置无关代码关系很大<br>
+回答开篇的问题：操作系统在加载程序时，会解析 ELF 文件中的程序头表。程序头表中详细记录了各个<strong>段</strong>的预期逻辑地址、长度以及访问权限。</p>
+</blockquote>
+<p>操作系统正是提取了这些段信息，来实例化并初始化进程的 vm_area_struct 结构体。</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>所以虚拟地址这个概念需要操作系统与编译器互相协同支持</p>
+</div>
+<h3>3.2 CPU硬件支持虚拟地址</h3>
+<p>在操作系统把ELF可执行文件加载进内存之后，应该交由CPU执行程序，而所有ELF文件全都是逻辑地址编址过的，也就是说CPU也要支持虚拟地址</p>
+<ul>
+<li>CPU中有着这两个寄存器：
+<ul>
+<li><code class="notranslate">EIP</code> 程序计数器</li>
+<li><code class="notranslate">CR3</code> 页目录基址寄存器</li>
+</ul>
+</li>
+<li>和一个CPU内部硬件模块<code class="notranslate">MMU</code></li>
+</ul>
+<h3>3.3 动态库加载</h3>
+<h3>3.4 动态链接</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
