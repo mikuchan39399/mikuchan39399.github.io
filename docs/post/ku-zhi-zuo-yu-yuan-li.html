@@ -19,7 +19,7 @@
 <meta property="og:url" content="https://mikuchan39399.github.io/post/ku-zhi-zuo-yu-yuan-li.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>库制作与原理</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -337,13 +337,14 @@ Disassembly of section .init:
 </div>
 <h3>3.4 动态链接</h3>
 <p>程序执行的入口地址存在于ELF头中 - <code class="notranslate">Entry point address</code></p>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
+<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;stdio.h&gt;
 
-<span class="pl-k">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>I Like Miku!<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>);
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    printf("I Like Miku!\n");
+    return 0;
+}
+</code></pre>
 <pre class="notranslate"><code class="notranslate">whf@iZ7xvhr9e4wz4wpzicdcfgZ:~/workstaff/linux1/system_part/mytest$ readelf -h run
 ELF 头：
   Magic：   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 
