@@ -312,7 +312,8 @@ Disassembly of section .init:
 <p>我们会发现一个ELF文件在被加载进内存之前就已经拥有虚拟地址了，就是最左边那一列<br>
 我们把ELF中的虚拟地址称作<strong>逻辑地址/偏移量</strong>，这与后面要讲的<code class="notranslate">PIC</code>位置无关代码关系很大<br>
 回答开篇的问题：操作系统在加载程序时，会解析 ELF 文件中的程序头表。程序头表中详细记录了各个<strong>段</strong>的预期逻辑地址、长度以及访问权限。</p>
-<p>操作系统正是提取了这些段信息，来实例化并初始化进程的 vm_area_struct 结构体。</p>
+<p>操作系统正是提取了这些段信息，来实例化并初始化进程的 vm_area_struct 结构体。<br>
+也就是说段和<code class="notranslate">VMA</code>实际上是一一对应的</p>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>所以虚拟地址这个概念需要操作系统与编译器互相协同支持</p>
 </div>
 <h3>3.2 CPU硬件支持虚拟地址</h3>
@@ -526,12 +527,11 @@ PIC 的核心思想是：把代码段中需要被修改的绝对地址引用，�
 <p>我们之前的<code class="notranslate">main</code>函数里只有一个标准库函数<code class="notranslate">printf</code></p>
 <pre class="notranslate"><code class="notranslate">  115b:       e8 f0 fe ff ff          call   1050 &lt;puts@plt&gt;
 </code></pre>
-<p>这个<code class="notranslate">call</code>类型的汇编很明显就是编译后的<code class="notranslate">printf</code>函数，编译器优化成了<code class="notranslate">puts</code>函数，后面的<code class="notranslate">@plt</code>是什么玩意呢<br>
+<p>这个<code class="notranslate">call</code>类型的汇编很明显就是编译后的<code class="notranslate">printf</code>函数，后面的<code class="notranslate">@plt</code>是什么玩意呢<br>
 理论上，有了 <code class="notranslate">PIC</code> 和 <code class="notranslate">GOT</code> 就足以完成动态链接了，代码直接去 GOT 里读地址就行。那为什么还要搞出一个 <code class="notranslate">PLT</code>（过程链接表）呢？<br>
 这主要是为了服务于接下来要讲的<strong>延迟加载</strong>机制。</p>
-<p>PLT 存在于代码段中（<code class="notranslate">.plt</code> 节），也就是反汇编看到的 puts@plt。</p>
-<p>它是一堆很小的“跳板”代码。</p>
-<p>当我们在 C 语言里调用 <code class="notranslate">printf</code> 时，编译器实际上把它编译成了调用本程序内部的 printf@plt。</p>
+<p>PLT 存在于代码段中（<code class="notranslate">.plt</code> 节），也就是反汇编看到的 puts@plt。<br>
+它是一堆很小的“跳板”代码。</p>
 <pre class="notranslate"><code class="notranslate">0000000000001050 &lt;puts@plt&gt;:
     1050:       f3 0f 1e fa             endbr64
     1054:       ff 25 76 2f 00 00       jmp    *0x2f76(%rip)        # 3fd0 &lt;puts@GLIBC_2.2.5&gt;
@@ -542,27 +542,17 @@ PIC 的核心思想是：把代码段中需要被修改的绝对地址引用，�
 <p>实际上，程序运行一次通常只会用到其中的一小部分函数。所以，Linux 默认采用了<strong>延迟加载</strong>策略：只有当一个外部函数第一次被调用时，才去解析它的真实地址。</p>
 <p>第一次调用（未解析）：</p>
 <ul>
-<li>
-<p>程序调用 puts@plt。</p>
-</li>
-<li>
-<p>PLT 里的 jmp 指令去查 GOT 表。</p>
-</li>
-<li>
-<p>在第一次调用前，动态链接器在 GOT 表里填写的并不是 puts 的真实地址，而是 PLT 跳板中下一条指令的地址！</p>
-</li>
-<li>
-<p>于是，程序并没有跳到外部库，而是又跳回了 PLT 继续往下执行。</p>
-</li>
-<li>
-<p>接下来的 PLT 代码会将当前函数的 ID（表明是求 <code class="notranslate">puts</code> 的地址）压入栈中，并跳转到动态链接器（<code class="notranslate">_dl_runtime_resolve</code>）。</p>
-</li>
+<li>程序调用 puts@plt。</li>
+<li>PLT 里的 jmp 指令去查 GOT 表。</li>
+<li>在第一次调用前，动态链接器在 GOT 表里填写的并不是 puts 的真实地址，而是 PLT 跳板中下一条指令的地址！</li>
+<li>于是，程序并没有跳到外部库，而是又跳回了 PLT 继续往下执行。</li>
+<li>接下来的 PLT 代码会将当前函数的 ID（表明是求 <code class="notranslate">puts</code> 的地址）压入栈中，并跳转到动态链接器（<code class="notranslate">_dl_runtime_resolve</code>）。</li>
+<li>动态链接器大显神威，查找到 <code class="notranslate">puts</code> 的真实物理映射虚拟地址，将真实地址覆盖写入到 <code class="notranslate">GOT</code> 表对应的条目中，最后顺手把控制权交给真正的 <code class="notranslate">puts</code> 函数。<br>
+第二次及以后的调用（已解析）：</li>
+<li>程序调用 puts@plt。</li>
+<li><code class="notranslate">PLT</code> 里的 <code class="notranslate">jmp</code> 指令去查 <code class="notranslate">GOT</code> 表。</li>
+<li>此时 <code class="notranslate">GOT</code> 表里已经是刚刚填入的 <code class="notranslate">puts</code> 真实地址了。</li>
 </ul>
-<p><code class="notranslate">动态链接器大显神威，查找到 </code>puts<code class="notranslate">的真实物理映射虚拟地址，将真实地址覆盖写入到</code>GOT<code class="notranslate">表对应的条目中，最后顺手把控制权交给真正的</code>puts` 函数。</p>
-<p>第二次及以后的调用（已解析）：</p>
-<p>你的程序再次调用 puts@plt。</p>
-<p>PLT 里的 jmp 指令去查 GOT 表。</p>
-<p>此时 GOT 表里已经是刚刚填入的 puts 真实地址了。</p>
 <p>CPU 直接跳转到真实的 puts 库代码中执行。没有任何额外的开销！</p>
 <div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>总结一下：PLT 是跳板，GOT 是地址表。第一次跳板查表，表里装的是“查找服务”的地址，于是触发链接器填表；第二次跳板查表，表里已经是真实函数地址，直接起飞。这充分体现了计算机科学中一句名言：“任何问题都可以通过增加一个间接层来解决”。</p>
 </div></div>
