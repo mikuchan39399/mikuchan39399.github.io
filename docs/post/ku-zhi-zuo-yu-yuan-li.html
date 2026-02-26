@@ -19,7 +19,7 @@
 <meta property="og:url" content="https://mikuchan39399.github.io/post/ku-zhi-zuo-yu-yuan-li.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>库制作与原理</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
 </head>
@@ -334,7 +334,148 @@ Disassembly of section .init:
 <div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg class="octicon octicon-report mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p><p>所以虚拟地址机制需要 操作系统 编译器 CPU硬件三方的支持才能运作</p>
 </div>
 <h3>3.4 动态链接</h3>
-<p>一个ELF文件运行时如果依赖动态库，则动态库会被映射进进程虚拟地址空间的共享区，程序通过虚拟地址来使用动态库，这个我们是知道的</p></div>
+<p>程序执行的入口地址存在于ELF头中 - <code class="notranslate">Entry point address</code></p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>I Like Miku!<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>);
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<pre class="notranslate"><code class="notranslate">whf@iZ7xvhr9e4wz4wpzicdcfgZ:~/workstaff/linux1/system_part/mytest$ objdump -S run
+
+run：     文件格式 elf64-x86-64
+
+
+Disassembly of section .init:
+
+0000000000001000 &lt;_init&gt;:
+    1000:       f3 0f 1e fa             endbr64
+    1004:       48 83 ec 08             sub    $0x8,%rsp
+    1008:       48 8b 05 d9 2f 00 00    mov    0x2fd9(%rip),%rax        # 3fe8 &lt;__gmon_start__@Base&gt;
+    100f:       48 85 c0                test   %rax,%rax
+    1012:       74 02                   je     1016 &lt;_init+0x16&gt;
+    1014:       ff d0                   call   *%rax
+    1016:       48 83 c4 08             add    $0x8,%rsp
+    101a:       c3                      ret
+
+Disassembly of section .plt:
+
+0000000000001020 &lt;.plt&gt;:
+    1020:       ff 35 9a 2f 00 00       push   0x2f9a(%rip)        # 3fc0 &lt;_GLOBAL_OFFSET_TABLE_+0x8&gt;
+    1026:       ff 25 9c 2f 00 00       jmp    *0x2f9c(%rip)        # 3fc8 &lt;_GLOBAL_OFFSET_TABLE_+0x10&gt;
+    102c:       0f 1f 40 00             nopl   0x0(%rax)
+    1030:       f3 0f 1e fa             endbr64
+    1034:       68 00 00 00 00          push   $0x0
+    1039:       e9 e2 ff ff ff          jmp    1020 &lt;_init+0x20&gt;
+    103e:       66 90                   xchg   %ax,%ax
+
+Disassembly of section .plt.got:
+
+0000000000001040 &lt;__cxa_finalize@plt&gt;:
+    1040:       f3 0f 1e fa             endbr64
+    1044:       ff 25 ae 2f 00 00       jmp    *0x2fae(%rip)        # 3ff8 &lt;__cxa_finalize@GLIBC_2.2.5&gt;
+    104a:       66 0f 1f 44 00 00       nopw   0x0(%rax,%rax,1)
+
+Disassembly of section .plt.sec:
+
+0000000000001050 &lt;puts@plt&gt;:
+    1050:       f3 0f 1e fa             endbr64
+    1054:       ff 25 76 2f 00 00       jmp    *0x2f76(%rip)        # 3fd0 &lt;puts@GLIBC_2.2.5&gt;
+    105a:       66 0f 1f 44 00 00       nopw   0x0(%rax,%rax,1)
+
+Disassembly of section .text:
+
+0000000000001060 &lt;_start&gt;:
+    1060:       f3 0f 1e fa             endbr64
+    1064:       31 ed                   xor    %ebp,%ebp
+    1066:       49 89 d1                mov    %rdx,%r9
+    1069:       5e                      pop    %rsi
+    106a:       48 89 e2                mov    %rsp,%rdx
+    106d:       48 83 e4 f0             and    $0xfffffffffffffff0,%rsp
+    1071:       50                      push   %rax
+    1072:       54                      push   %rsp
+    1073:       45 31 c0                xor    %r8d,%r8d
+    1076:       31 c9                   xor    %ecx,%ecx
+    1078:       48 8d 3d ca 00 00 00    lea    0xca(%rip),%rdi        # 1149 &lt;main&gt;
+    107f:       ff 15 53 2f 00 00       call   *0x2f53(%rip)        # 3fd8 &lt;__libc_start_main@GLIBC_2.34&gt;
+    1085:       f4                      hlt
+    1086:       66 2e 0f 1f 84 00 00    cs nopw 0x0(%rax,%rax,1)
+    108d:       00 00 00 
+
+0000000000001090 &lt;deregister_tm_clones&gt;:
+    1090:       48 8d 3d 79 2f 00 00    lea    0x2f79(%rip),%rdi        # 4010 &lt;__TMC_END__&gt;
+    1097:       48 8d 05 72 2f 00 00    lea    0x2f72(%rip),%rax        # 4010 &lt;__TMC_END__&gt;
+    109e:       48 39 f8                cmp    %rdi,%rax
+    10a1:       74 15                   je     10b8 &lt;deregister_tm_clones+0x28&gt;
+    10a3:       48 8b 05 36 2f 00 00    mov    0x2f36(%rip),%rax        # 3fe0 &lt;_ITM_deregisterTMCloneTable@Base&gt;
+    10aa:       48 85 c0                test   %rax,%rax
+    10ad:       74 09                   je     10b8 &lt;deregister_tm_clones+0x28&gt;
+    10af:       ff e0                   jmp    *%rax
+    10b1:       0f 1f 80 00 00 00 00    nopl   0x0(%rax)
+    10b8:       c3                      ret
+    10b9:       0f 1f 80 00 00 00 00    nopl   0x0(%rax)
+
+00000000000010c0 &lt;register_tm_clones&gt;:
+    10c0:       48 8d 3d 49 2f 00 00    lea    0x2f49(%rip),%rdi        # 4010 &lt;__TMC_END__&gt;
+    10c7:       48 8d 35 42 2f 00 00    lea    0x2f42(%rip),%rsi        # 4010 &lt;__TMC_END__&gt;
+    10ce:       48 29 fe                sub    %rdi,%rsi
+    10d1:       48 89 f0                mov    %rsi,%rax
+    10d4:       48 c1 ee 3f             shr    $0x3f,%rsi
+    10d8:       48 c1 f8 03             sar    $0x3,%rax
+    10dc:       48 01 c6                add    %rax,%rsi
+    10df:       48 d1 fe                sar    $1,%rsi
+    10e2:       74 14                   je     10f8 &lt;register_tm_clones+0x38&gt;
+    10e4:       48 8b 05 05 2f 00 00    mov    0x2f05(%rip),%rax        # 3ff0 &lt;_ITM_registerTMCloneTable@Base&gt;
+    10eb:       48 85 c0                test   %rax,%rax
+    10ee:       74 08                   je     10f8 &lt;register_tm_clones+0x38&gt;
+    10f0:       ff e0                   jmp    *%rax
+    10f2:       66 0f 1f 44 00 00       nopw   0x0(%rax,%rax,1)
+    10f8:       c3                      ret
+    10f9:       0f 1f 80 00 00 00 00    nopl   0x0(%rax)
+
+0000000000001100 &lt;__do_global_dtors_aux&gt;:
+    1100:       f3 0f 1e fa             endbr64
+    1104:       80 3d 05 2f 00 00 00    cmpb   $0x0,0x2f05(%rip)        # 4010 &lt;__TMC_END__&gt;
+    110b:       75 2b                   jne    1138 &lt;__do_global_dtors_aux+0x38&gt;
+    110d:       55                      push   %rbp
+    110e:       48 83 3d e2 2e 00 00    cmpq   $0x0,0x2ee2(%rip)        # 3ff8 &lt;__cxa_finalize@GLIBC_2.2.5&gt;
+    1115:       00 
+    1116:       48 89 e5                mov    %rsp,%rbp
+    1119:       74 0c                   je     1127 &lt;__do_global_dtors_aux+0x27&gt;
+    111b:       48 8b 3d e6 2e 00 00    mov    0x2ee6(%rip),%rdi        # 4008 &lt;__dso_handle&gt;
+    1122:       e8 19 ff ff ff          call   1040 &lt;__cxa_finalize@plt&gt;
+    1127:       e8 64 ff ff ff          call   1090 &lt;deregister_tm_clones&gt;
+    112c:       c6 05 dd 2e 00 00 01    movb   $0x1,0x2edd(%rip)        # 4010 &lt;__TMC_END__&gt;
+    1133:       5d                      pop    %rbp
+    1134:       c3                      ret
+    1135:       0f 1f 00                nopl   (%rax)
+    1138:       c3                      ret
+    1139:       0f 1f 80 00 00 00 00    nopl   0x0(%rax)
+
+0000000000001140 &lt;frame_dummy&gt;:
+    1140:       f3 0f 1e fa             endbr64
+    1144:       e9 77 ff ff ff          jmp    10c0 &lt;register_tm_clones&gt;
+
+0000000000001149 &lt;main&gt;:
+    1149:       f3 0f 1e fa             endbr64
+    114d:       55                      push   %rbp
+    114e:       48 89 e5                mov    %rsp,%rbp
+    1151:       48 8d 05 ac 0e 00 00    lea    0xeac(%rip),%rax        # 2004 &lt;_IO_stdin_used+0x4&gt;
+    1158:       48 89 c7                mov    %rax,%rdi
+    115b:       e8 f0 fe ff ff          call   1050 &lt;puts@plt&gt;
+    1160:       b8 00 00 00 00          mov    $0x0,%eax
+    1165:       5d                      pop    %rbp
+    1166:       c3                      ret
+
+Disassembly of section .fini:
+
+0000000000001168 &lt;_fini&gt;:
+    1168:       f3 0f 1e fa             endbr64
+    116c:       48 83 ec 08             sub    $0x8,%rsp
+    1170:       48 83 c4 08             add    $0x8,%rsp
+    1174:       c3                      ret
+</code></pre></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
