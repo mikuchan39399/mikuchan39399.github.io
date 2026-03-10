@@ -10,9 +10,33 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="">
+<meta name="description" content="不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
+## 管道
+- 管道是`Unix`中最古老的`IPC`形式
+- 一个进程与另一个进程链接的数据流被称作**管道**
+- 管道本质上是存在于内核中的一段缓冲区
+### 匿名管道
+
+### 命名管道
+## System V
+### System V 共享内存
+### System V 消息队列
+### System V 信号量
+。">
 <meta property="og:title" content="Linux进程间通信">
-<meta property="og:description" content="">
+<meta property="og:description" content="不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
+## 管道
+- 管道是`Unix`中最古老的`IPC`形式
+- 一个进程与另一个进程链接的数据流被称作**管道**
+- 管道本质上是存在于内核中的一段缓冲区
+### 匿名管道
+
+### 命名管道
+## System V
+### System V 共享内存
+### System V 消息队列
+### System V 信号量
+。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -73,7 +97,19 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"></div>
+<div class="markdown-body" id="postBody"><p>不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做<code class="notranslate">IPC</code></p>
+<h2>管道</h2>
+<ul>
+<li>管道是<code class="notranslate">Unix</code>中最古老的<code class="notranslate">IPC</code>形式</li>
+<li>一个进程与另一个进程链接的数据流被称作<strong>管道</strong></li>
+<li>管道本质上是存在于内核中的一段缓冲区</li>
+</ul>
+<h3>匿名管道</h3>
+<h3>命名管道</h3>
+<h2>System V</h2>
+<h3>System V 共享内存</h3>
+<h3>System V 消息队列</h3>
+<h3>System V 信号量</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
