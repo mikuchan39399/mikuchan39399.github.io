@@ -20,13 +20,13 @@
 #include <unistd.h>
 
 int pipe(int fd[2]);
-fuction:
-此函数用于创建一个匿名管道
-param:
-fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端
-return:
-成功返回0, 失败返回错误码
 ```
+- 功能:
+此函数用于创建一个匿名管道
+- 参数:
+fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端
+- 返回值:
+成功返回0, 失败返回错误码
 
 ### 命名管道
 ## System V
@@ -45,13 +45,13 @@ return:
 #include <unistd.h>
 
 int pipe(int fd[2]);
-fuction:
-此函数用于创建一个匿名管道
-param:
-fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端
-return:
-成功返回0, 失败返回错误码
 ```
+- 功能:
+此函数用于创建一个匿名管道
+- 参数:
+fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端
+- 返回值:
+成功返回0, 失败返回错误码
 
 ### 命名管道
 ## System V
@@ -140,13 +140,15 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <pre class="notranslate"><code class="notranslate">#include &lt;unistd.h&gt;
 
 int pipe(int fd[2]);
-fuction:
-此函数用于创建一个匿名管道
-param:
-fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端
-return:
-成功返回0, 失败返回错误码
 </code></pre>
+<ul>
+<li>功能:<br>
+此函数用于创建一个匿名管道</li>
+<li>参数:<br>
+fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端</li>
+<li>返回值:<br>
+成功返回0, 失败返回错误码</li>
+</ul>
 <h3>命名管道</h3>
 <h2>System V</h2>
 <h3>System V 共享内存</h3>
