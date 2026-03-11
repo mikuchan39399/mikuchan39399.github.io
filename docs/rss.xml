@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 13:18:50 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux进程间通信</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</link><description>不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 13:53:18 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux进程间通信</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</link><description>不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
 ## 管道
 - 管道是`Unix`中最古老的`IPC`形式
 - 一个进程与另一个进程链接的数据流被称作**管道**
@@ -12,7 +12,7 @@
 int pipe(int fd[2]);
 ```
 - 功能:
-此函数用于创建一个匿名管道
+此函数用于创建一个匿名管道`pipe`，并打开对其的读写端口
 - 参数:
 fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写端
 - 返回值:
@@ -20,7 +20,7 @@ fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写�
 
 匿名管道的特性是只能通过子进程继承父进程文件描述符表的方式联通进程，也就是说匿名管道只能供有亲缘关系的进程间使用
 使用匿名管道
-```
+```cpp
 #include &lt;iostream&gt;
 #include &lt;fcntl.h&gt;
 #include &lt;unistd.h&gt;
@@ -81,8 +81,136 @@ int main()
 - 管道生命周期随进程
 - 管道是半双⼯的，需要进程双方通信时，需要建⽴起两个管道
 ### 命名管道
+命名管道`FIFO`是一种特殊的，不刷新至磁盘的文件，相较于匿名管道，命名管道可用于任意两个进程间的通信
+`命令行创建命名管道`
+```
+mkfifo filename
+```
+`程序调用函数创建`
+```c
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+
+int mkfifo (const char* filename, mode_t mode);
+```
+命名管道在创建出来之后需要主动`open`，这是与匿名管道之间的区别所在，创建打开完成之后，两者之间具有相同的语义
+- 读方式打开命名管道
+   - 阻塞模式：阻塞直到有其他进程以写方式打开该命名管道
+   - 非阻塞模式：立刻返回对应文件描述符
+- 写方式打开命名管道
+   - 阻塞模式：阻塞直到有相应进程为读⽽打开该命名管道
+   - 非阻塞模式：立刻返回`-1`, `errno`被设置为`ENXIO`
+```
+#pragma once
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+
+constexpr int defualt_fd = -1;
+constexpr std::size_t SIZE = 4096;
+
+class NamedPipe
+{
+public:
+    NamedPipe(const std::string name)
+    : _name(name)
+    , _fd(defualt_fd)
+    {}
+
+    ~NamedPipe() 
+    {
+        Close();
+        Remove();
+    }
+
+    bool Create(mode_t mode)
+    {
+        int n = mkfifo(_name.c_str(), mode);
+        if(n == 0)
+        {
+            std::cout &lt;&lt; 'mkfifo create success' &lt;&lt; std::endl;
+            return true;
+        }
+        else
+        {
+            perror('mkfifo');
+            return false;
+        }
+    }
+
+    bool Close()
+    {
+        if(_fd == defualt_fd) 
+            return false;
+        else 
+        {
+            close(_fd);
+            return true;
+        }
+    }
+
+    bool OpenForRead()
+    {
+        _fd = open(_name.c_str(), O_RDONLY);
+        if(_fd &lt; 0)
+        {
+            perror('open');
+            return false;
+        }
+        std::cout &lt;&lt; 'open file success' &lt;&lt; std::endl;
+        return true;
+    }
+
+    bool OpenForWrite()
+    {
+        _fd = open(_name.c_str(), O_WRONLY);
+        if(_fd &lt; 0)
+        {
+            perror('open');
+            return false;
+        }
+        std::cout &lt;&lt; 'open file success' &lt;&lt; std::endl;
+        return true;
+    }
+
+    bool Read(std::string&amp; out)
+    {
+        char buffer[SIZE]{};
+        ssize_t num = 0;
+        do 
+        {
+            num = read(_fd, buffer, sizeof(buffer)); 
+        } while (num &lt; 0 &amp;&amp; errno == EINTR);
+
+        if(num &gt; 0)
+        {
+            out.assign(buffer, num);
+            return true;
+        }
+        return false;
+    }
+
+    void Write(const std::string&amp; in)
+    {
+        write(_fd, in.c_str(), in.size());
+    }
+
+    void Remove()
+    {
+        int m = unlink(_name.c_str());
+        (void)m;
+    }
+private:
+    std::string _name;
+    int _fd;
+};
+```
 ## System V
 ### System V 共享内存
+
 ### System V 消息队列
 ### System V 信号量
 。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</guid><pubDate>Thu, 26 Feb 2026 10:39:41 +0000</pubDate></item><item><title>库制作与原理</title><link>https://mikuchan39399.github.io/post/ku-zhi-zuo-yu-yuan-li.html</link><description>## 1 库
