@@ -229,13 +229,13 @@ private:
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
-key_t ftok(const char *__pathname, int __proj_id) noexcept(true)
+key_t ftok(const char *pathname, int proj_id)
 ```
 - 功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值
 - 键值供内核辨别资源的唯一性
 - 参数
-    -  `__pathname` 已存在的文件路径名
-    - `__proj_id`项目 ID
+    -  `pathname` 已存在的文件路径名
+    - `proj_id`项目 ID
 - 返回值：键值
 
 
@@ -243,13 +243,13 @@ key_t ftok(const char *__pathname, int __proj_id) noexcept(true)
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
-int shmget(key_t __key, size_t __size, int __shmflg) noexcept(true)
+int shmget(key_t key, size_t size, int shmflg)
 ```
 - 功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符
 - 键值供内核辨别资源的唯一性
-- 参数
-    -  `__key` 对应键值
-    - `__size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。">
+- 参数：
+    -  `key` 对应键值
+    - `size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。">
 <meta property="og:title" content="Linux进程间通信">
 <meta property="og:description" content="不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
 ## 管道
@@ -470,13 +470,13 @@ private:
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
-key_t ftok(const char *__pathname, int __proj_id) noexcept(true)
+key_t ftok(const char *pathname, int proj_id)
 ```
 - 功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值
 - 键值供内核辨别资源的唯一性
 - 参数
-    -  `__pathname` 已存在的文件路径名
-    - `__proj_id`项目 ID
+    -  `pathname` 已存在的文件路径名
+    - `proj_id`项目 ID
 - 返回值：键值
 
 
@@ -484,13 +484,13 @@ key_t ftok(const char *__pathname, int __proj_id) noexcept(true)
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
-int shmget(key_t __key, size_t __size, int __shmflg) noexcept(true)
+int shmget(key_t key, size_t size, int shmflg)
 ```
 - 功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符
 - 键值供内核辨别资源的唯一性
-- 参数
-    -  `__key` 对应键值
-    - `__size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。">
+- 参数：
+    -  `key` 对应键值
+    - `size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -795,14 +795,14 @@ private:
 <div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
 <span class="pl-k">#include</span> <span class="pl-s">&lt;sys/shm.h&gt;</span>
 <span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
-<span class="pl-smi">key_t</span> <span class="pl-en">ftok</span>(<span class="pl-k">const</span> <span class="pl-smi">char</span> <span class="pl-c1">*</span><span class="pl-s1">__pathname</span>, <span class="pl-smi">int</span> <span class="pl-s1">__proj_id</span>) <span class="pl-en">noexcept</span>(<span class="pl-s1">true</span>)</pre></div>
+<span class="pl-smi">key_t</span> <span class="pl-en">ftok</span>(<span class="pl-k">const</span> <span class="pl-smi">char</span> <span class="pl-c1">*</span><span class="pl-s1">pathname</span>, <span class="pl-smi">int</span> <span class="pl-s1">proj_id</span>)</pre></div>
 <ul>
 <li>功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值</li>
 <li>键值供内核辨别资源的唯一性</li>
 <li>参数
 <ul>
-<li><code class="notranslate">__pathname</code> 已存在的文件路径名</li>
-<li><code class="notranslate">__proj_id</code>项目 ID</li>
+<li><code class="notranslate">pathname</code> 已存在的文件路径名</li>
+<li><code class="notranslate">proj_id</code>项目 ID</li>
 </ul>
 </li>
 <li>返回值：键值</li>
@@ -810,20 +810,15 @@ private:
 <div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
 <span class="pl-k">#include</span> <span class="pl-s">&lt;sys/shm.h&gt;</span>
 <span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
-<span class="pl-smi">int</span> <span class="pl-en">shmget</span>(<span class="pl-smi">key_t</span> <span class="pl-s1">__key</span>, <span class="pl-smi">size_t</span> <span class="pl-s1">__size</span>, <span class="pl-smi">int</span> <span class="pl-s1">__shmflg</span>) <span class="pl-en">noexcept</span>(<span class="pl-s1">true</span>)</pre></div>
+<span class="pl-smi">int</span> <span class="pl-en">shmget</span>(<span class="pl-smi">key_t</span> <span class="pl-s1">key</span>, <span class="pl-smi">size_t</span> <span class="pl-s1">size</span>, <span class="pl-smi">int</span> <span class="pl-s1">shmflg</span>)</pre></div>
 <ul>
-<li>
-<p>功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符</p>
-</li>
-<li>
-<p>键值供内核辨别资源的唯一性</p>
-</li>
-<li>
-<p>参数</p>
+<li>功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符</li>
+<li>键值供内核辨别资源的唯一性</li>
+<li>参数：
 <ul>
-<li><code class="notranslate">__key</code> 对应键值</li>
-<li><code class="notranslate">__size</code> 若键值无对应共享内存，创建一个<code class="notranslate">__size</code>字节的共享内存。若已存在则应传入0缺省使用创建时大小</li>
-<li><code class="notranslate">__shmflg</code> 由九个权限标志构成，它们的⽤法和创建⽂件时使⽤的<code class="notranslate">mode</code>标志是⼀样的
+<li><code class="notranslate">key</code> 对应键值</li>
+<li><code class="notranslate">size</code> 若键值无对应共享内存，创建一个<code class="notranslate">__size</code>字节的共享内存。若已存在则应传入0缺省使用创建时大小</li>
+<li><code class="notranslate">shmflg</code> 由九个权限标志构成，它们的⽤法和创建⽂件时使⽤的<code class="notranslate">mode</code>标志是⼀样的
 <ul>
 <li><code class="notranslate">| IPC_CREAT</code>：共享内存不存在，创建并返回；共享内存已存在，获取并返回</li>
 <li><code class="notranslate">| IPC_CREAT | IPC_EXCL</code>：共享内存不存在，创建并返回；共享内存已存在，出错返回。</li>
@@ -831,12 +826,224 @@ private:
 </li>
 </ul>
 </li>
-<li>
-<p>返回值：键值</p>
+<li>返回值：成功返回⼀个⾮负整数，即该共享内存段的标识码，失败返回<code class="notranslate">-1</code></li>
+<li>标识码供上层用户使用</li>
+</ul>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/shm.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
+<span class="pl-smi">void</span> <span class="pl-c1">*</span><span class="pl-en">shmat</span>(<span class="pl-smi">int</span> <span class="pl-s1">shmid</span>, <span class="pl-k">const</span> <span class="pl-smi">void</span> <span class="pl-c1">*</span><span class="pl-s1">shmaddr</span>, <span class="pl-smi">int</span> <span class="pl-s1">shmflg</span>)</pre></div>
+<ul>
+<li>功能：将指定的共享内存段映射到当前进程的虚拟地址空间中</li>
+<li>标识码供内核定位具体的共享内存段</li>
+<li>参数：
+<ul>
+<li><code class="notranslate">shmid</code> 共享内存标识码，即 <code class="notranslate">shmget</code> 的返回值</li>
+<li><code class="notranslate">shmaddr</code> 指定连接的具体地址。通常传入 <code class="notranslate">NULL / nullptr</code>，由操作系统内核自动选择一个合适的页对齐地址来映射</li>
+<li><code class="notranslate">shmflg</code> 读写权限标志位
+<ul>
+<li><code class="notranslate">0</code> 缺省使用共享内存创建时权限</li>
+<li><code class="notranslate">SHM_RDONLY</code> 以只读方式挂接共享内存</li>
+</ul>
 </li>
 </ul>
+</li>
+<li>返回值：成功返回一个指针，指向共享内存映射在当前进程中的首地址，失败返回 <code class="notranslate">(void *)-1</code>，并设置 <code class="notranslate">errno</code></li>
+</ul>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/shm.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
+<span class="pl-smi">int</span> <span class="pl-en">shmdt</span>(<span class="pl-k">const</span> <span class="pl-smi">void</span> <span class="pl-c1">*</span><span class="pl-s1">shmaddr</span>)</pre></div>
+<ul>
+<li>功能：将共享内存段与当前进程脱离</li>
+<li>参数：
+<ul>
+<li><code class="notranslate">shmaddr</code> 被挂接的共享内存的首地址，即 <code class="notranslate">shmat</code> 成功时的返回值</li>
+</ul>
+</li>
+<li>返回值：成功返回 <code class="notranslate">0</code>，失败返回 <code class="notranslate">-1</code>，并设置 <code class="notranslate">errno</code></li>
+</ul>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/shm.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
+<span class="pl-smi">int</span> <span class="pl-en">shmctl</span>(<span class="pl-smi">int</span> <span class="pl-s1">shmid</span>, <span class="pl-smi">int</span> <span class="pl-s1">cmd</span>, <span class="pl-k">struct</span> <span class="pl-smi">shmid_ds</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>)</pre></div>
+<ul>
+<li>功能：用于控制共享内存的状态，常用的场景是删除共享内存段</li>
+<li>参数：
+<ul>
+<li><code class="notranslate">shmid</code> 共享内存标识码</li>
+<li><code class="notranslate">cmd</code> 将要采取的具体控制动作，常用宏定义如下：
+<ul>
+<li><code class="notranslate">IPC_RMID</code>：标记删除共享内存段，当所有关联该内存的进程都执行了 <code class="notranslate">shmdt</code> 断开连接后，内核才会真正释放物理内存</li>
+<li><code class="notranslate">IPC_STAT</code>：获取共享内存的状态，把 <code class="notranslate">shmid_ds</code> 结构中的数据设置为共享内存的当前关联值</li>
+<li><code class="notranslate">IPC_SET</code>：在进程有足够权限的前提下，把共享内存的当前关联值设置为 <code class="notranslate">buf </code>数据结构中给出的值</li>
+</ul>
+</li>
+<li><code class="notranslate">buf</code> 指向一个保存着共享内存模式状态和访问权限的数据结构。如果只是为了删除，直接传入 <code class="notranslate">NULL/nullptr</code> 即可</li>
+</ul>
+</li>
+</ul>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#pragma</span> once
+<span class="pl-k">#include</span> <span class="pl-s">&lt;iostream&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/ipc.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/shm.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;string&gt;</span>
+
+<span class="pl-k">inline</span> <span class="pl-smi">std</span>::<span class="pl-s1">string</span> <span class="pl-s1">g_pathname</span>{<span class="pl-s">"."</span>};
+<span class="pl-k">inline</span> <span class="pl-smi">int</span> <span class="pl-s1">g_proj_id</span>{<span class="pl-c1">0x66</span>};
+<span class="pl-k">inline</span> <span class="pl-smi">int</span> <span class="pl-s1">g_default_size</span>{<span class="pl-c1">4096</span>};
+
+<span class="pl-smi">class</span> <span class="pl-s1">SharedMemory</span>
+{
+<span class="pl-ent">public</span>:
+    <span class="pl-s1">SharedMemory</span>(<span class="pl-smi">int</span> <span class="pl-s1">size</span> <span class="pl-c1">=</span> <span class="pl-s1">g_default_size</span>)
+    : <span class="pl-en">_size</span>(<span class="pl-s1">size</span>)
+    , <span class="pl-en">_key</span>(<span class="pl-c1">0</span>)
+    , <span class="pl-en">_shmid</span>(<span class="pl-c1">-</span><span class="pl-c1">1</span>) 
+    , <span class="pl-en">_start_addr</span>(<span class="pl-smi">nullptr</span>)
+    , <span class="pl-en">_is_creator</span>(<span class="pl-smi">false</span>)
+    {}
+
+    <span class="pl-en">SharedMemory</span>(<span class="pl-k">const</span> <span class="pl-smi">SharedMemory</span><span class="pl-c1">&amp;</span>) <span class="pl-c1">=</span> <span class="pl-s1">delete</span>;
+    <span class="pl-s1">SharedMemory</span><span class="pl-c1">&amp;</span> <span class="pl-s1">operator</span><span class="pl-c1">=</span>(<span class="pl-k">const</span> <span class="pl-smi">SharedMemory</span><span class="pl-c1">&amp;</span>) <span class="pl-c1">=</span> <span class="pl-s1">delete</span>;
+    <span class="pl-smi">bool</span> <span class="pl-en">InitKey</span>()
+    {
+        <span class="pl-s1">_key</span> <span class="pl-c1">=</span> <span class="pl-en">ftok</span>(<span class="pl-s1">g_pathname</span>.<span class="pl-en">c_str</span>(), <span class="pl-s1">g_proj_id</span>);
+        <span class="pl-k">if</span>(<span class="pl-s1">_key</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>) 
+        {
+            <span class="pl-en">perror</span>(<span class="pl-s">"ftok"</span>);
+            <span class="pl-k">return</span> false;
+        }
+        <span class="pl-k">return</span> true;
+    }
+
+    <span class="pl-smi">bool</span> <span class="pl-en">Create</span>()
+    {
+        <span class="pl-k">if</span> (!<span class="pl-en">InitKey</span>()) <span class="pl-k">return</span> false;
+        <span class="pl-en">printf</span>(<span class="pl-s">"形成键值: 0x%x\n"</span>, <span class="pl-s1">_key</span>);
+        <span class="pl-s1">_shmid</span> <span class="pl-c1">=</span> <span class="pl-en">shmget</span>(<span class="pl-s1">_key</span>, <span class="pl-s1">_size</span>, <span class="pl-c1">IPC_CREAT</span> | <span class="pl-c1">IPC_EXCL</span> | <span class="pl-c1">0666</span>); <span class="pl-c">// 创建全新的shm</span>
+        <span class="pl-k">if</span>(<span class="pl-s1">_shmid</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>)
+        {
+            <span class="pl-en">perror</span>(<span class="pl-s">"shmget create"</span>);
+            <span class="pl-k">return</span> false;
+        }
+        <span class="pl-s1">_is_creator</span> <span class="pl-c1">=</span> true;
+        <span class="pl-en">printf</span>(<span class="pl-s">"形成shmid成功: %d\n"</span>, <span class="pl-s1">_shmid</span>);
+        <span class="pl-k">return</span> true;
+    }
+
+    <span class="pl-smi">bool</span> <span class="pl-en">Get</span>()
+    {
+        <span class="pl-k">if</span> (!<span class="pl-en">InitKey</span>()) <span class="pl-k">return</span> false;
+
+        <span class="pl-c">// 客户端不需要 IPC_CREAT 和 IPC_EXCL，直接拿权限即可</span>
+        <span class="pl-s1">_shmid</span> <span class="pl-c1">=</span> <span class="pl-en">shmget</span>(<span class="pl-s1">_key</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0666</span>);
+        <span class="pl-k">if</span>(<span class="pl-s1">_shmid</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>) 
+        {
+            <span class="pl-en">perror</span>(<span class="pl-s">"shmget get"</span>);
+            <span class="pl-k">return</span> false;
+        }
+        <span class="pl-s1">_is_creator</span> <span class="pl-c1">=</span> false;
+        <span class="pl-en">printf</span>(<span class="pl-s">"获取shmid成功: %d\n"</span>, <span class="pl-s1">_shmid</span>);
+        <span class="pl-k">return</span> true;
+    }
+    <span class="pl-smi">bool</span> <span class="pl-en">Remove</span>()
+    {
+        <span class="pl-k">if</span> (<span class="pl-s1">_shmid</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>) <span class="pl-k">return</span> true;
+        <span class="pl-smi">int</span> <span class="pl-s1">n</span> <span class="pl-c1">=</span> <span class="pl-en">shmctl</span>(<span class="pl-s1">_shmid</span>, <span class="pl-c1">IPC_RMID</span>, <span class="pl-c1">nullptr</span>);
+        <span class="pl-k">if</span>(<span class="pl-s1">n</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>)
+        {
+            <span class="pl-en">perror</span>(<span class="pl-s">"shmctl"</span>);
+            <span class="pl-k">return</span> false;
+        }
+        <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"删除shm成功"</span> &lt;&lt; <span class="pl-s1">std</span>::<span class="pl-s1">endl</span>;
+        <span class="pl-k">return</span> true;
+    }
+    <span class="pl-smi">bool</span> <span class="pl-en">Attach</span>()
+    {
+        <span class="pl-s1">_start_addr</span> <span class="pl-c1">=</span> <span class="pl-en">shmat</span>(<span class="pl-s1">_shmid</span>, <span class="pl-c1">nullptr</span>, <span class="pl-c1">0</span>); <span class="pl-c">// 这里标志位设为0则缺省使用共享内存创建时权限</span>
+        <span class="pl-k">if</span>(<span class="pl-s1">_start_addr</span> <span class="pl-c1">==</span> (<span class="pl-smi">void</span><span class="pl-c1">*</span>)<span class="pl-c1">-1</span>)
+        {
+            <span class="pl-en">perror</span>(<span class="pl-s">"shmat"</span>);
+            <span class="pl-s1">_start_addr</span> <span class="pl-c1">=</span> <span class="pl-c1">nullptr</span>;
+            <span class="pl-k">return</span> false;
+        }
+        <span class="pl-k">return</span> true;
+    }
+    <span class="pl-smi">bool</span> <span class="pl-en">Detach</span>()
+    {
+        <span class="pl-k">if</span> (<span class="pl-s1">_start_addr</span> <span class="pl-c1">==</span> <span class="pl-c1">nullptr</span>) <span class="pl-k">return</span> true;
+        <span class="pl-smi">int</span> <span class="pl-s1">n</span> <span class="pl-c1">=</span> <span class="pl-en">shmdt</span>(<span class="pl-s1">_start_addr</span>);
+        <span class="pl-k">if</span>(<span class="pl-s1">n</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>)
+        {
+            <span class="pl-en">perror</span>(<span class="pl-s">"shmdt"</span>);
+            <span class="pl-k">return</span> false;
+        }
+        <span class="pl-s1">_start_addr</span> <span class="pl-c1">=</span> <span class="pl-c1">nullptr</span>;
+        <span class="pl-k">return</span> true;
+    }
+    <span class="pl-smi">void</span><span class="pl-c1">*</span> <span class="pl-en">GetAddr</span>() <span class="pl-s1">const</span> 
+    {
+        <span class="pl-k">return</span> <span class="pl-s1">_start_addr</span>;
+    }
+    ~<span class="pl-en">SharedMemory</span>() 
+    {
+        <span class="pl-en">Detach</span>();
+        <span class="pl-k">if</span> (<span class="pl-s1">_is_creator</span>) 
+        {
+            <span class="pl-en">Remove</span>();
+        }
+    }
+<span class="pl-ent">private</span>:
+    <span class="pl-smi">int</span> <span class="pl-s1">_size</span>;
+    <span class="pl-smi">key_t</span> <span class="pl-s1">_key</span>;
+    <span class="pl-smi">int</span> <span class="pl-s1">_shmid</span>;
+    <span class="pl-smi">void</span><span class="pl-c1">*</span> <span class="pl-s1">_start_addr</span>;
+    <span class="pl-smi">bool</span> <span class="pl-s1">_is_creator</span>;
+};  </pre></div>
+<p>现在我们要用上面封装的接口进行进程间通信<br>
+Server 进程 - 写数据</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>Shm.hpp<span class="pl-pds">"</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>memory<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>unistd.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>cstring<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>() <span class="pl-c"><span class="pl-c">//</span> server.cc</span>
+{
+    <span class="pl-c"><span class="pl-c">//</span> 1. 实例化对象</span>
+    <span class="pl-k">auto</span> shm = std::make_unique&lt;SharedMemory&gt;();
+    <span class="pl-c"><span class="pl-c">//</span> 2. 创建并挂载</span>
+    shm-&gt;<span class="pl-c1">Create</span>();
+    shm-&gt;<span class="pl-c1">Attach</span>();
+    <span class="pl-c"><span class="pl-c">//</span> 3. 获得挂载进虚拟地址空间的共享内存的具体起始地址</span>
+    <span class="pl-k">void</span>* addr = shm-&gt;<span class="pl-c1">GetAddr</span>();
+    <span class="pl-c"><span class="pl-c">//</span> 4. 写入数据</span>
+    <span class="pl-c1">strcpy</span>((<span class="pl-k">char</span>*)addr, <span class="pl-s"><span class="pl-pds">"</span>i am process A<span class="pl-pds">"</span></span>);
+}</pre></div>
+<p>Client 进程 - 读数据</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>Shm.hpp<span class="pl-pds">"</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>memory<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>() <span class="pl-c"><span class="pl-c">//</span> client.cc</span>
+{
+    <span class="pl-c"><span class="pl-c">//</span> 1. 实例化对象</span>
+    <span class="pl-k">auto</span> shm = std::make_unique&lt;SharedMemory&gt;();
+    <span class="pl-c"><span class="pl-c">//</span> 2. 获取并挂载</span>
+    shm-&gt;<span class="pl-c1">Get</span>();
+    shm-&gt;<span class="pl-c1">Attach</span>();
+    <span class="pl-c"><span class="pl-c">//</span> 3. 获得挂载进虚拟地址空间的共享内存的具体起始地址</span>
+    <span class="pl-k">void</span>* addr = shm-&gt;<span class="pl-c1">GetAddr</span>();
+    <span class="pl-c"><span class="pl-c">//</span> 4. 读取并打印数据</span>
+    std::cout &lt;&lt; <span class="pl-k">static_cast</span>&lt;<span class="pl-k">char</span>*&gt;(addr) &lt;&lt; std::endl;
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <h3>System V 消息队列</h3>
-<h3>System V 信号量</h3></div>
+<p>TO DO</p>
+<h3>System V 信号量</h3>
+<p>TO DO</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
