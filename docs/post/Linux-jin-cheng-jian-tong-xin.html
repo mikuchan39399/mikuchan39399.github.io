@@ -1021,6 +1021,7 @@ Server 进程 - 写数据</p>
     <span class="pl-k">void</span>* addr = shm-&gt;<span class="pl-c1">GetAddr</span>();
     <span class="pl-c"><span class="pl-c">//</span> 4. 写入数据</span>
     <span class="pl-c1">strcpy</span>((<span class="pl-k">char</span>*)addr, <span class="pl-s"><span class="pl-pds">"</span>i am process A<span class="pl-pds">"</span></span>);
+<span class="pl-c"><span class="pl-c">//</span> while(1) {}</span>
 }</pre></div>
 <p>Client 进程 - 读数据</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>Shm.hpp<span class="pl-pds">"</span></span>
