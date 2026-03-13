@@ -423,7 +423,7 @@ int main() // server.cc
     void* addr = shm->GetAddr();
     // 4. 写入数据
     strcpy((char*)addr, "i am process A");
-// while(1) {}
+    sleep(20);
 }
 ```
 Client 进程 - 读数据
