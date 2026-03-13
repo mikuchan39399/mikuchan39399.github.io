@@ -4,6 +4,7 @@
 - 一个进程与另一个进程链接的数据流被称作**管道**
 - 管道本质上是存在于内核中的一段缓冲区
 - 管道自带同步与互斥机制
+- 管道生命周期随进程
 ### 匿名管道
 ```
 #include <unistd.h>
@@ -209,6 +210,38 @@ private:
 ```
 ## System V
 ### System V 共享内存
+- 共享内存是`IPC`速度最快的方式，直接往内核态中写入数据，它没有任何同步或互斥机制
+- 在实际工程中，共享内存几乎必须配合其他同步机制一起使用
+- `System V IPC` 生命周期随内核
+```c
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+key_t ftok(const char *__pathname, int __proj_id) noexcept(true)
+```
+- 功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值
+- 键值供内核辨别资源的唯一性
+- 参数
+    -  `__pathname` 已存在的文件路径名
+    - `__proj_id`项目 ID
+- 返回值：键值
 
+
+```c
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+int shmget(key_t __key, size_t __size, int __shmflg) noexcept(true)
+```
+- 功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符
+- 键值供内核辨别资源的唯一性
+- 参数
+    -  `__key` 对应键值
+    - `__size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。若已存在则应传入0缺省使用创建时大小
+    - `__shmflg` 由九个权限标志构成，它们的⽤法和创建⽂件时使⽤的`mode`标志是⼀样的
+         - `| IPC_CREAT`：共享内存不存在，创建并返回；共享内存已存在，获取并返回
+         - `| IPC_CREAT | IPC_EXCL`：共享内存不存在，创建并返回；共享内存已存在，出错返回。
+
+- 返回值：键值
 ### System V 消息队列
 ### System V 信号量
