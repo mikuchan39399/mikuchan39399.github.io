@@ -109,7 +109,7 @@ int mkfifo (const char* filename, mode_t mode);
 #include <unistd.h>
 #include <fcntl.h>
 
-constexpr int defualt_fd = -1;
+constexpr int default_fd = -1;
 constexpr std::size_t SIZE = 4096;
 
 class NamedPipe
@@ -117,7 +117,7 @@ class NamedPipe
 public:
     NamedPipe(const std::string name)
     : _name(name)
-    , _fd(defualt_fd)
+    , _fd(default_fd)
     {}
 
     ~NamedPipe() 
@@ -209,6 +209,7 @@ private:
 };
 ```
 ## System V
+`System V IPC` 包含共享内存、消息队列和信号量三种通信机制。虽然它们功能各异，但在 Linux 内核底层，它们共享着同一套架构设计。
 ### System V 共享内存
 - 共享内存是`IPC`速度最快的方式，直接往内核态中写入数据，它没有任何同步或互斥机制
 - 在实际工程中，共享内存几乎必须配合其他同步机制一起使用
@@ -450,3 +451,66 @@ int main() // client.cc
 TO DO
 ### System V 信号量
 TO DO
+### System V 内核通用机制
+为了统一管理这三种 `IPC` 资源，Linux 内核采用纯 C 语言实现了类似面向对象编程中的“继承”与“多态”，并结合柔性数组进行内存优化。
+#### Key
+- 作用：让多个无关进程定位同一份 `IPC` 资源
+- 用户态通过 `ftok()` 生成一个全系统唯一的 `key`。内核收到 `key` 后，在内核的全局 `IPC` 数组中遍历比对。若匹配成功，内核会返回一个类似文件描述符的整数 `shmid`
+- `key` 负责内核资源全局的唯一性标识，`id` 负责暴露给上层用户进程进行快速读写定位
+#### C语言多态
+System V 的 三种 IPC 拥有不同的机制与相同的公共属性，例如权限，所有者，`key`
+内核的全局 IPC 数组运用多态统一管理这些 IPC 资源
+```c
+// ================= 基类 =================
+struct kern_ipc_perm {
+    spinlock_t      lock;
+    bool            deleted;
+    int             id;
+    key_t           key;
+    kuid_t          uid;
+    kgid_t          gid;
+    // ... 其他权限属性
+};
+
+// ================= 派生类 1：共享内存 =================
+struct shmid_kernel {	
+    struct kern_ipc_perm  shm_perm;
+    struct file           *shm_file;
+    unsigned long         shm_nattch;
+    unsigned long         shm_segsz; 
+    // ...
+};
+
+// ================= 派生类 2：消息队列 =================
+struct msg_queue {
+    struct kern_ipc_perm  q_perm;
+    time64_t              q_stime;
+    time64_t              q_rtime;
+    struct list_head      q_messages; 
+    // ...
+};
+
+// ================= 派生类 3：信号量 =================
+struct sem_array {
+    struct kern_ipc_perm  sem_perm;
+    time64_t              sem_otime;
+    struct sem            *sems;
+    int                   sem_nsems;
+    // ...
+};
+```
+- 可以看到三种 `System V IPC` 管理结构体中的第一个成员都是 `struct kern_ipc_perm`
+- 结构体指针与结构体第一个成员变量的指针在数值上是相同的
+- 所以全局 IPC 数组中存取着一个个`struct kern_ipc_perm`类型成员变量指针，强制转换成对应结构体类型的指针就达到了**基类指针指向派生类的目的！**
+#### 柔性数组
+```
+// 那个全局 IPC 数组的具体实现
+struct ipc_id_ary {
+    int size;
+    struct kern_ipc_perm *p[0]; // 柔性数组，本身不占用结构体内存大小
+};
+用 `malloc` 另外划分内存会让结构体内部内存不连续
+而柔性数组能让一开始就这样创建整个结构体：
+`malloc(sizeof(struct ipc_id_ary) + sizeof(kern_ipc_perm*) * N)`
+使得结构体头部`size`与底下的数组数据在物理内存上绝对连续，CPU 可以一次性将它们全部读入 `Cache`，性能更优
+```

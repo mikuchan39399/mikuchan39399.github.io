@@ -121,7 +121,7 @@ int mkfifo (const char* filename, mode_t mode);
 #include <unistd.h>
 #include <fcntl.h>
 
-constexpr int defualt_fd = -1;
+constexpr int default_fd = -1;
 constexpr std::size_t SIZE = 4096;
 
 class NamedPipe
@@ -129,7 +129,7 @@ class NamedPipe
 public:
     NamedPipe(const std::string name)
     : _name(name)
-    , _fd(defualt_fd)
+    , _fd(default_fd)
     {}
 
     ~NamedPipe() 
@@ -221,35 +221,7 @@ private:
 };
 ```
 ## System V
-### System V 共享内存
-- 共享内存是`IPC`速度最快的方式，直接往内核态中写入数据，它没有任何同步或互斥机制
-- 在实际工程中，共享内存几乎必须配合其他同步机制一起使用
-- `System V IPC` 生命周期随内核
-```c
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-key_t ftok(const char *pathname, int proj_id)
-```
-- 功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值
-- 键值供内核辨别资源的唯一性
-- 参数
-    -  `pathname` 已存在的文件路径名
-    - `proj_id`项目 ID
-- 返回值：键值
-
-
-```c
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-int shmget(key_t key, size_t size, int shmflg)
-```
-- 功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符
-- 键值供内核辨别资源的唯一性
-- 参数：
-    -  `key` 对应键值
-    - `size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。">
+`System V IPC` 包含共享内存、消息队列和信号量三种通信机制。">
 <meta property="og:title" content="Linux进程间通信">
 <meta property="og:description" content="不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
 ## 管道
@@ -362,7 +334,7 @@ int mkfifo (const char* filename, mode_t mode);
 #include <unistd.h>
 #include <fcntl.h>
 
-constexpr int defualt_fd = -1;
+constexpr int default_fd = -1;
 constexpr std::size_t SIZE = 4096;
 
 class NamedPipe
@@ -370,7 +342,7 @@ class NamedPipe
 public:
     NamedPipe(const std::string name)
     : _name(name)
-    , _fd(defualt_fd)
+    , _fd(default_fd)
     {}
 
     ~NamedPipe() 
@@ -462,35 +434,7 @@ private:
 };
 ```
 ## System V
-### System V 共享内存
-- 共享内存是`IPC`速度最快的方式，直接往内核态中写入数据，它没有任何同步或互斥机制
-- 在实际工程中，共享内存几乎必须配合其他同步机制一起使用
-- `System V IPC` 生命周期随内核
-```c
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-key_t ftok(const char *pathname, int proj_id)
-```
-- 功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值
-- 键值供内核辨别资源的唯一性
-- 参数
-    -  `pathname` 已存在的文件路径名
-    - `proj_id`项目 ID
-- 返回值：键值
-
-
-```c
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-int shmget(key_t key, size_t size, int shmflg)
-```
-- 功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符
-- 键值供内核辨别资源的唯一性
-- 参数：
-    -  `key` 对应键值
-    - `size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。">
+`System V IPC` 包含共享内存、消息队列和信号量三种通信机制。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -686,7 +630,7 @@ fd: 文件描述符数组, fd[0]代表对管道读端, fd[1]代表对管道写�
 #include &lt;unistd.h&gt;
 #include &lt;fcntl.h&gt;
 
-constexpr int defualt_fd = -1;
+constexpr int default_fd = -1;
 constexpr std::size_t SIZE = 4096;
 
 class NamedPipe
@@ -694,7 +638,7 @@ class NamedPipe
 public:
     NamedPipe(const std::string name)
     : _name(name)
-    , _fd(defualt_fd)
+    , _fd(default_fd)
     {}
 
     ~NamedPipe() 
@@ -786,6 +730,7 @@ private:
 };
 </code></pre>
 <h2>System V</h2>
+<p><code class="notranslate">System V IPC</code> 包含共享内存、消息队列和信号量三种通信机制。虽然它们功能各异，但在 Linux 内核底层，它们共享着同一套架构设计。</p>
 <h3>System V 共享内存</h3>
 <ul>
 <li>共享内存是<code class="notranslate">IPC</code>速度最快的方式，直接往内核态中写入数据，它没有任何同步或互斥机制</li>
@@ -1044,7 +989,71 @@ Server 进程 - 写数据</p>
 <h3>System V 消息队列</h3>
 <p>TO DO</p>
 <h3>System V 信号量</h3>
-<p>TO DO</p></div>
+<p>TO DO</p>
+<h3>System V 内核通用机制</h3>
+<p>为了统一管理这三种 <code class="notranslate">IPC</code> 资源，Linux 内核采用纯 C 语言实现了类似面向对象编程中的“继承”与“多态”，并结合柔性数组进行内存优化。</p>
+<h4>Key</h4>
+<ul>
+<li>作用：让多个无关进程定位同一份 <code class="notranslate">IPC</code> 资源</li>
+<li>用户态通过 <code class="notranslate">ftok()</code> 生成一个全系统唯一的 <code class="notranslate">key</code>。内核收到 <code class="notranslate">key</code> 后，在内核的全局 <code class="notranslate">IPC</code> 数组中遍历比对。若匹配成功，内核会返回一个类似文件描述符的整数 <code class="notranslate">shmid</code></li>
+<li><code class="notranslate">key</code> 负责内核资源全局的唯一性标识，<code class="notranslate">id</code> 负责暴露给上层用户进程进行快速读写定位</li>
+</ul>
+<h4>C语言多态</h4>
+<p>System V 的 三种 IPC 拥有不同的机制与相同的公共属性，例如权限，所有者，<code class="notranslate">key</code><br>
+内核的全局 IPC 数组运用多态统一管理这些 IPC 资源</p>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-c">// ================= 基类 =================</span>
+<span class="pl-k">struct</span> <span class="pl-smi">kern_ipc_perm</span> {
+    <span class="pl-smi">spinlock_t</span>      <span class="pl-c1">lock</span>;
+    <span class="pl-smi">bool</span>            <span class="pl-c1">deleted</span>;
+    <span class="pl-smi">int</span>             <span class="pl-c1">id</span>;
+    <span class="pl-smi">key_t</span>           <span class="pl-c1">key</span>;
+    <span class="pl-smi">kuid_t</span>          <span class="pl-c1">uid</span>;
+    <span class="pl-smi">kgid_t</span>          <span class="pl-c1">gid</span>;
+    <span class="pl-c">// ... 其他权限属性</span>
+};
+
+<span class="pl-c">// ================= 派生类 1：共享内存 =================</span>
+<span class="pl-k">struct</span> <span class="pl-smi">shmid_kernel</span> {	
+    <span class="pl-k">struct</span> <span class="pl-smi">kern_ipc_perm</span>  <span class="pl-c1">shm_perm</span>;
+    <span class="pl-k">struct</span> <span class="pl-smi">file</span>           <span class="pl-c1">*</span><span class="pl-c1">shm_file</span>;
+    <span class="pl-smi">unsigned long</span>         <span class="pl-c1">shm_nattch</span>;
+    <span class="pl-smi">unsigned long</span>         <span class="pl-c1">shm_segsz</span>; 
+    <span class="pl-c">// ...</span>
+};
+
+<span class="pl-c">// ================= 派生类 2：消息队列 =================</span>
+<span class="pl-k">struct</span> <span class="pl-smi">msg_queue</span> {
+    <span class="pl-k">struct</span> <span class="pl-smi">kern_ipc_perm</span>  <span class="pl-c1">q_perm</span>;
+    <span class="pl-smi">time64_t</span>              <span class="pl-c1">q_stime</span>;
+    <span class="pl-smi">time64_t</span>              <span class="pl-c1">q_rtime</span>;
+    <span class="pl-k">struct</span> <span class="pl-smi">list_head</span>      <span class="pl-c1">q_messages</span>; 
+    <span class="pl-c">// ...</span>
+};
+
+<span class="pl-c">// ================= 派生类 3：信号量 =================</span>
+<span class="pl-k">struct</span> <span class="pl-smi">sem_array</span> {
+    <span class="pl-k">struct</span> <span class="pl-smi">kern_ipc_perm</span>  <span class="pl-c1">sem_perm</span>;
+    <span class="pl-smi">time64_t</span>              <span class="pl-c1">sem_otime</span>;
+    <span class="pl-k">struct</span> <span class="pl-smi">sem</span>            <span class="pl-c1">*</span><span class="pl-c1">sems</span>;
+    <span class="pl-smi">int</span>                   <span class="pl-c1">sem_nsems</span>;
+    <span class="pl-c">// ...</span>
+};</pre></div>
+<ul>
+<li>可以看到三种 <code class="notranslate">System V IPC</code> 管理结构体中的第一个成员都是 <code class="notranslate">struct kern_ipc_perm</code></li>
+<li>结构体指针与结构体第一个成员变量的指针在数值上是相同的</li>
+<li>所以全局 IPC 数组中存取着一个个<code class="notranslate">struct kern_ipc_perm</code>类型成员变量指针，强制转换成对应结构体类型的指针就达到了<strong>基类指针指向派生类的目的！</strong></li>
+</ul>
+<h4>柔性数组</h4>
+<pre class="notranslate"><code class="notranslate">// 那个全局 IPC 数组的具体实现
+struct ipc_id_ary {
+    int size;
+    struct kern_ipc_perm *p[0]; // 柔性数组，本身不占用结构体内存大小
+};
+用 `malloc` 另外划分内存会让结构体内部内存不连续
+而柔性数组能让一开始就这样创建整个结构体：
+`malloc(sizeof(struct ipc_id_ary) + sizeof(kern_ipc_perm*) * N)`
+使得结构体头部`size`与底下的数组数据在物理内存上绝对连续，CPU 可以一次性将它们全部读入 `Cache`，性能更优
+</code></pre></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

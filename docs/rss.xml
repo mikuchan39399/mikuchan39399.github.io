@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 14 Mar 2026 02:45:39 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux信号</title><link>https://mikuchan39399.github.io/post/Linux-xin-hao.html</link><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-xin-hao.html</guid><pubDate>Sat, 14 Mar 2026 02:24:08 +0000</pubDate></item><item><title>Linux进程间通信</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</link><description>不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://mikuchan39399.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://mikuchan39399.github.io</link></image><lastBuildDate>Sat, 14 Mar 2026 05:16:28 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>Linux信号</title><link>https://mikuchan39399.github.io/post/Linux-xin-hao.html</link><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-xin-hao.html</guid><pubDate>Sat, 14 Mar 2026 02:24:08 +0000</pubDate></item><item><title>Linux进程间通信</title><link>https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</link><description>不同进程之间一般情况下是相互独立的，也有很多方法让不同的进程间能看到同一份资源从而实现进程间通信，也叫做`IPC`
 ## 管道
 - 管道是`Unix`中最古老的`IPC`形式
 - 一个进程与另一个进程链接的数据流被称作**管道**
@@ -110,7 +110,7 @@ int mkfifo (const char* filename, mode_t mode);
 #include &lt;unistd.h&gt;
 #include &lt;fcntl.h&gt;
 
-constexpr int defualt_fd = -1;
+constexpr int default_fd = -1;
 constexpr std::size_t SIZE = 4096;
 
 class NamedPipe
@@ -118,7 +118,7 @@ class NamedPipe
 public:
     NamedPipe(const std::string name)
     : _name(name)
-    , _fd(defualt_fd)
+    , _fd(default_fd)
     {}
 
     ~NamedPipe() 
@@ -210,35 +210,7 @@ private:
 };
 ```
 ## System V
-### System V 共享内存
-- 共享内存是`IPC`速度最快的方式，直接往内核态中写入数据，它没有任何同步或互斥机制
-- 在实际工程中，共享内存几乎必须配合其他同步机制一起使用
-- `System V IPC` 生命周期随内核
-```c
-#include &lt;sys/ipc.h&gt;
-#include &lt;sys/shm.h&gt;
-#include &lt;sys/types.h&gt;
-key_t ftok(const char *pathname, int proj_id)
-```
-- 功能：将一个已存在的路径名和一个项目 ID 转换成一个 System V IPC 键值
-- 键值供内核辨别资源的唯一性
-- 参数
-    -  `pathname` 已存在的文件路径名
-    - `proj_id`项目 ID
-- 返回值：键值
-
-
-```c
-#include &lt;sys/ipc.h&gt;
-#include &lt;sys/shm.h&gt;
-#include &lt;sys/types.h&gt;
-int shmget(key_t key, size_t size, int shmflg)
-```
-- 功能：根据给定的键值，创建一块新的共享内存，或者获取一块已经存在的共享内存，返回共享内存的标识符
-- 键值供内核辨别资源的唯一性
-- 参数：
-    -  `key` 对应键值
-    - `size` 若键值无对应共享内存，创建一个`__size`字节的共享内存。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</guid><pubDate>Thu, 26 Feb 2026 10:39:41 +0000</pubDate></item><item><title>库制作与原理</title><link>https://mikuchan39399.github.io/post/ku-zhi-zuo-yu-yuan-li.html</link><description>## 1 库
+`System V IPC` 包含共享内存、消息队列和信号量三种通信机制。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/Linux-jin-cheng-jian-tong-xin.html</guid><pubDate>Thu, 26 Feb 2026 10:39:41 +0000</pubDate></item><item><title>库制作与原理</title><link>https://mikuchan39399.github.io/post/ku-zhi-zuo-yu-yuan-li.html</link><description>## 1 库
 库是提供特定功能的，成熟的可复用的代码，printf 函数就是C语言的`标准库`函数，库的重要性不言而喻。</description><guid isPermaLink="true">https://mikuchan39399.github.io/post/ku-zhi-zuo-yu-yuan-li.html</guid><pubDate>Fri, 20 Feb 2026 12:00:10 +0000</pubDate></item><item><title>Ext系列文件系统</title><link>https://mikuchan39399.github.io/post/Ext-xi-lie-wen-jian-xi-tong.html</link><description>## 1. 磁盘
 ### 1.1 磁盘特性
 磁盘是计算机中唯一的机械设备
