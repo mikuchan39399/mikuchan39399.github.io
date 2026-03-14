@@ -1044,16 +1044,16 @@ Server 进程 - 写数据</p>
 <li>所以全局 IPC 数组中存取着一个个<code class="notranslate">struct kern_ipc_perm</code>类型成员变量指针，强制转换成对应结构体类型的指针就达到了<strong>基类指针指向派生类的目的！</strong></li>
 </ul>
 <h4>柔性数组</h4>
-<pre class="notranslate"><code class="notranslate">// 那个全局 IPC 数组的具体实现
-struct ipc_id_ary {
-    int size;
-    struct kern_ipc_perm *p[0]; // 柔性数组，本身不占用结构体内存大小
-};
-用 `malloc` 另外划分内存会让结构体内部内存不连续
-而柔性数组能让一开始就这样创建整个结构体：
-`malloc(sizeof(struct ipc_id_ary) + sizeof(kern_ipc_perm*) * N)`
-使得结构体头部`size`与底下的数组数据在物理内存上绝对连续，CPU 可以一次性将它们全部读入 `Cache`，性能更优
-</code></pre></div>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-c">// 那个全局 IPC 数组的具体实现</span>
+<span class="pl-k">struct</span> <span class="pl-smi">ipc_id_ary</span> {
+    <span class="pl-smi">int</span> <span class="pl-c1">size</span>;
+    <span class="pl-k">struct</span> <span class="pl-smi">kern_ipc_perm</span> <span class="pl-c1">*</span><span class="pl-c1">p</span>[<span class="pl-c1">0</span>]; <span class="pl-c">// 柔性数组，本身不占用结构体内存大小</span>
+};</pre></div>
+<p>用 <code class="notranslate">malloc</code> 另外划分内存会让结构体内部内存不连续<br>
+而柔性数组能让一开始就这样创建整个结构体：<br>
+<code class="notranslate">malloc(sizeof(struct ipc_id_ary) + sizeof(kern_ipc_perm*) * N)</code><br>
+使得结构体头部<code class="notranslate">size</code>与底下的数组数据在物理内存上绝对连续，CPU 可以一次性将它们全部读入 <code class="notranslate">Cache</code>，性能更优</p>
+<pre class="notranslate"><code class="notranslate"></code></pre></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

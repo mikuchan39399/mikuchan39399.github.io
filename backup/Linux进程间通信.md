@@ -503,12 +503,13 @@ struct sem_array {
 - 结构体指针与结构体第一个成员变量的指针在数值上是相同的
 - 所以全局 IPC 数组中存取着一个个`struct kern_ipc_perm`类型成员变量指针，强制转换成对应结构体类型的指针就达到了**基类指针指向派生类的目的！**
 #### 柔性数组
-```
+```c
 // 那个全局 IPC 数组的具体实现
 struct ipc_id_ary {
     int size;
     struct kern_ipc_perm *p[0]; // 柔性数组，本身不占用结构体内存大小
 };
+```
 用 `malloc` 另外划分内存会让结构体内部内存不连续
 而柔性数组能让一开始就这样创建整个结构体：
 `malloc(sizeof(struct ipc_id_ary) + sizeof(kern_ipc_perm*) * N)`
