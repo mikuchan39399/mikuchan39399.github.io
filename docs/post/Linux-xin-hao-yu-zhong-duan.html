@@ -254,9 +254,46 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a"><img width="1174" height="357" alt="Image" src="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a" style="max-width: 100%; height: auto; max-height: 357px;"></a></p>
-<p>可</p>
+<p><code class="notranslate">SIGINT</code>信号被阻塞之后就算不捕捉它，也无法到达信号递达的状态，也就退出不了进程了</p>
+<p>捕捉信号也可以用一组<code class="notranslate">oop</code>一些的接口：</p>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;iostream&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
+
+<span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">int</span> <span class="pl-s1">signo</span>)
+{
+    <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"获取到一个信号: "</span> &lt;&lt; <span class="pl-s1">signo</span> &lt;&lt; <span class="pl-s1">std</span>::<span class="pl-s1">endl</span>;
+}
+
+<span class="pl-smi">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-k">struct</span> <span class="pl-smi">sigaction</span> <span class="pl-s1">act</span>, <span class="pl-s1">old_act</span>;
+    <span class="pl-s1">act</span>.<span class="pl-c1">sa_handler</span> <span class="pl-c1">=</span> <span class="pl-s1">handler</span>;
+    <span class="pl-s1">act</span>.<span class="pl-c1">sa_flags</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
+    <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span>(<span class="pl-s1">act</span>.<span class="pl-c1">sa_mask</span>));
+    <span class="pl-en">sigaction</span>(<span class="pl-c1">SIGTERM</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">act</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">old_act</span>);
+    <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
+    {
+        <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"我是一个进程: "</span> &lt;&lt; <span class="pl-en">getpid</span>() &lt;&lt; <span class="pl-s1">std</span>::<span class="pl-s1">endl</span>;
+        <span class="pl-en">sleep</span>(<span class="pl-c1">1</span>);
+    }
+}</pre></div>
+<p>这个<code class="notranslate">sa_mask</code>成员比较有意思<br>
+这个信号集让对应置1信号被处理时自动变为阻塞状态，防止信号被递归处理</p>
 <h3>信号处理</h3>
-<h2>中断</h2>
+<p><strong>信号处理是异步的！</strong><br>
+也就是说，一个进程收到信号的时候，他不一定会马上去执行对应的<code class="notranslate">handler</code>函数<br>
+那它什么时候才去执行？</p>
+<ol>
+<li>此时程序处于<strong>用户态</strong>愉快地执行着，此时因为神秘的原因程序进入<strong>内核态</strong></li>
+<li>程序现在处于<strong>内核态</strong>，处理完对应任务之后，顺手检查一下看看有没有信号需要处理的，如果没有捕捉信号采用自定义处理办法，忽略和默认行为操作系统知根知底，顺手执行完后返回<strong>用户态</strong>原先的位置继续执行下去</li>
+<li>如果用户自定义了信号处理函数，万一这个函数有问题怎么办，可不敢让它在<strong>内核态</strong>执行，这里什么权限都有，操作系统要回到<strong>用户态</strong>执行这个函数</li>
+<li>回到<strong>用户态</strong>，此时程序去执行那个自定义函数，在<strong>用户态</strong>找不到原来的指令在哪，需要返回<strong>内核态</strong></li>
+<li><strong>内核态</strong>中有一个<code class="notranslate">sys_sigretun()</code>函数，拥有足够的权限让程序返回用户态后从著控制流程中上次被中断的地方继续往下执行</li>
+</ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5"><img width="649" height="221" alt="Image" src="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5" style="max-width: 100%; height: auto; max-height: 221px;"></a></p>
+<p>这就是一个无限形的流程，节点在<strong>内核态</strong></p>
+<h2>中断---操作系统到底是怎么运行的</h2>
 <h3>硬件中断</h3>
 <h3>软中断</h3>
 <h3>异常</h3></div>

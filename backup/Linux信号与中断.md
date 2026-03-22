@@ -160,9 +160,51 @@ int main()
 
 <img width="1174" height="357" alt="Image" src="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a" />
 
-可
+`SIGINT`信号被阻塞之后就算不捕捉它，也无法到达信号递达的状态，也就退出不了进程了
+
+捕捉信号也可以用一组`oop`一些的接口：
+```c
+#include <iostream>
+#include <unistd.h>
+#include <signal.h>
+
+void handler(int signo)
+{
+    std::cout << "获取到一个信号: " << signo << std::endl;
+}
+
+int main()
+{
+    struct sigaction act, old_act;
+    act.sa_handler = handler;
+    act.sa_flags = 0;
+    sigemptyset(&(act.sa_mask));
+    sigaction(SIGTERM, &act, &old_act);
+    while(1)
+    {
+        std::cout << "我是一个进程: " << getpid() << std::endl;
+        sleep(1);
+    }
+}
+```
+这个`sa_mask`成员比较有意思
+这个信号集让对应置1信号被处理时自动变为阻塞状态，防止信号被递归处理
+
 ### 信号处理
-## 中断
+**信号处理是异步的！**
+也就是说，一个进程收到信号的时候，他不一定会马上去执行对应的`handler`函数
+那它什么时候才去执行？
+1. 此时程序处于**用户态**愉快地执行着，此时因为神秘的原因程序进入**内核态**
+2. 程序现在处于**内核态**，处理完对应任务之后，顺手检查一下看看有没有信号需要处理的，如果没有捕捉信号采用自定义处理办法，忽略和默认行为操作系统知根知底，顺手执行完后返回**用户态**原先的位置继续执行下去
+3. 如果用户自定义了信号处理函数，万一这个函数有问题怎么办，可不敢让它在**内核态**执行，这里什么权限都有，操作系统要回到**用户态**执行这个函数
+4. 回到**用户态**，此时程序去执行那个自定义函数，在**用户态**找不到原来的指令在哪，需要返回**内核态**
+5. **内核态**中有一个`sys_sigretun()`函数，拥有足够的权限让程序返回用户态后从著控制流程中上次被中断的地方继续往下执行
+
+<img width="649" height="221" alt="Image" src="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5" />
+
+这就是一个无限形的流程，节点在**内核态**
+## 中断---操作系统到底是怎么运行的
 ### 硬件中断
+
 ### 软中断
 ### 异常
