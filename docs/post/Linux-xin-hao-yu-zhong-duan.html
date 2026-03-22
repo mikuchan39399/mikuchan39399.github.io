@@ -132,13 +132,25 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 - 外设，例如刚才键盘上的 `Ctrl + C`
 - 命令行工具：`kill -信号名 pid` 可以往指定进程发送对应信号
 - 程序内函数： 
+```c
+#include 
+#include 
+int kill(pid_t pid, int sig); // 往指定进程发送信号
+<p>#include &lt;signal.h&gt;<br>
+int raise(int sig); // 往当前进程发送信号</p>
+<p>#include &lt;stdlib.h&gt;<br>
+void abort(void); // 让当前进程接受信号而 &lt;异常&gt; 终止<br>
+// 就像exit函数⼀样,abort函数总是会成功的,所以没有返回值。</p>
+<pre class="notranslate"><code class="notranslate">- 软件产生信号
+
 ### 信号传递
 ### 信号处理
 ### 信号相关 API
 ## 中断
 ### 硬件中断
 ### 软中断
-### 异常</div>
+### 异常
+</code></pre></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

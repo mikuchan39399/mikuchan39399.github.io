@@ -48,6 +48,20 @@ int main()
 - 外设，例如刚才键盘上的 `Ctrl + C`
 - 命令行工具：`kill -信号名 pid` 可以往指定进程发送对应信号
 - 程序内函数： 
+```c
+#include <sys/types.h>
+#include <signal.h>
+int kill(pid_t pid, int sig); // 往指定进程发送信号
+
+#include <signal.h>
+int raise(int sig); // 往当前进程发送信号
+
+#include <stdlib.h>
+void abort(void); // 让当前进程接受信号而 <异常> 终止
+// 就像exit函数⼀样,abort函数总是会成功的,所以没有返回值。
+```
+- 软件产生信号
+
 ### 信号传递
 ### 信号处理
 ### 信号相关 API
