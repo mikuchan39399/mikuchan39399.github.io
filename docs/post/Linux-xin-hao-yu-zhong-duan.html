@@ -101,6 +101,21 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 <li>返回值 修改之前的旧信号处理函数的函数指针</li>
 </ul>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>csignal<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">void</span> <span class="pl-en">handler</span>(<span class="pl-k">int</span> signo)
+{
+    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>捕捉到<span class="pl-pds">"</span></span> &lt;&lt; signo &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>号信号<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; 
+}
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c1">signal</span>(SIGINT, handler);
+    <span class="pl-k">while</span>(<span class="pl-c1">1</span>);    
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<p>我用这个接口捕捉了<code class="notranslate">SIGINT</code>信号，让我们看看现在用<code class="notranslate">Ctrl + C</code>还能不能杀掉这个进程</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a"><img width="1092" height="260" alt="Image" src="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a" style="max-width: 100%; height: auto; max-height: 260px;"></a></p>
+<p>当使用<code class="notranslate">Ctrl + C</code>杀不掉某个进程的时候，一种可能是程序捕捉了<code class="notranslate">SIGINT</code>，还有可能是这个进程不是<strong>前台进程</strong>，而前台进程只有一个</p>
 <h2>信号机制</h2>
 <h3>信号产生</h3>
 <h3>信号传递</h3>

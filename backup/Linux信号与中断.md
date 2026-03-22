@@ -11,6 +11,25 @@ sighandler_t signal(int signum, sighandler_t handler);
    - `singnum` 信号编号
    - `handler` 信号处理函数
 - 返回值 修改之前的旧信号处理函数的函数指针
+```cpp
+#include <iostream>
+#include <csignal>
+void handler(int signo)
+{
+    std::cout << "捕捉到" << signo << "号信号\n"; 
+}
+int main()
+{
+    signal(SIGINT, handler);
+    while(1);    
+    return 0;
+}
+```
+我用这个接口捕捉了`SIGINT`信号，让我们看看现在用`Ctrl + C`还能不能杀掉这个进程
+
+<img width="1092" height="260" alt="Image" src="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a" />
+
+当使用`Ctrl + C`杀不掉某个进程的时候，一种可能是程序捕捉了`SIGINT`，还有可能是这个进程不是**前台进程**，而前台进程只有一个
 
 ## 信号机制
 ### 信号产生
