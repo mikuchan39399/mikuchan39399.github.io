@@ -306,7 +306,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>通知 CPU：CPU 上的 <code class="notranslate">INTR</code>引脚接收中断控制器发来的高电平信号</li>
 <li>CPU 回应：在 CPU 回应中断控制器时，中断控制器把这个中断对应的中断向量号（一个 8 位的整数编号）通过数据总线扔给 CPU</li>
 <li>CPU 保护现场：保存中断前的上下文，以便中断结束后继续执行任务</li>
-<li>CPU 根据中断号，去中断向量表中查表，执行对应的指令集</li>
+<li>CPU 陷入内核态，根据中断号，去中断向量表中查表，执行对应的操作系统指令集</li>
 <li>CPU 执行完毕，恢复现场中断结束，继续执行之前的工作</li>
 </ol>
 <h4>时钟中断</h4>
