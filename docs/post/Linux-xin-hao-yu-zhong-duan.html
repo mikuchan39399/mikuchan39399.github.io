@@ -119,38 +119,147 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <h2>信号机制</h2>
 <p>可以用<code class="notranslate">kill -l</code> 命令查看所有信号</p>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3479ebe3-d43f-4f5b-bef9-6e311180c212"><img width="936" height="401" alt="Image" src="https://github.com/user-attachments/assets/3479ebe3-d43f-4f5b-bef9-6e311180c212" style="max-width: 100%; height: auto; max-height: 401px;"></a></p>
-&gt; 为什么没有32, 33号信号？貌似是因为某些历史遗留原因
-每个信号名都有一个宏，表示信号名对应的信号编号
-编号34以上是实时信号，咱们在这儿不讨论实时信号，可以用`man 7 signal`查询各个信号的产生条件和默认处理动作
-信号的默认处理动作有三种：
-- 忽略 `SIG_IGN`
-- 默认 `SIG_DFL`
-- 捕捉，提供相应自定义信号处理函数
-&gt; 其实SIG_DFL和SIG_IGN就是把0,1强转为函数指针类型
-### 信号产生
-信号产生有以下几种方式
-- 外设，例如刚才键盘上的 `Ctrl + C`
-- 命令行工具：`kill -信号名 pid` 可以往指定进程发送对应信号
-- 程序内函数： 
-```c
-#include 
-#include 
-int kill(pid_t pid, int sig); // 往指定进程发送信号
-<p>#include &lt;signal.h&gt;<br>
-int raise(int sig); // 往当前进程发送信号</p>
-<p>#include &lt;stdlib.h&gt;<br>
-void abort(void); // 让当前进程接受信号而 &lt;异常&gt; 终止<br>
-// 就像exit函数⼀样,abort函数总是会成功的,所以没有返回值。</p>
-<pre class="notranslate"><code class="notranslate">- 软件产生信号
+<blockquote>
+<p>为什么没有32, 33号信号？貌似是因为某些历史遗留原因</p>
+</blockquote>
+<p>每个信号名都有一个宏，表示信号名对应的信号编号<br>
+编号34以上是实时信号，咱们在这儿不讨论实时信号，可以用<code class="notranslate">man 7 signal</code>查询各个信号的产生条件和默认处理动作<br>
+信号的默认处理动作有三种：</p>
+<ul>
+<li>忽略 <code class="notranslate">SIG_IGN</code></li>
+<li>默认 <code class="notranslate">SIG_DFL</code></li>
+<li>捕捉，提供相应自定义信号处理函数</li>
+</ul>
+<blockquote>
+<p>其实SIG_DFL和SIG_IGN就是把0,1强转为函数指针类型</p>
+</blockquote>
+<h3>信号产生</h3>
+<p>信号产生有以下几种方式</p>
+<ol>
+<li>外设，例如刚才键盘上的 <code class="notranslate">Ctrl + C</code></li>
+<li>命令行工具：<code class="notranslate">kill -信号名 pid</code> 可以往指定进程发送对应信号</li>
+<li>程序内函数：</li>
+</ol>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
+<span class="pl-smi">int</span> <span class="pl-en">kill</span>(<span class="pl-smi">pid_t</span> <span class="pl-s1">pid</span>, <span class="pl-smi">int</span> <span class="pl-s1">sig</span>); <span class="pl-c">// 往指定进程发送信号</span>
 
-### 信号传递
-### 信号处理
-### 信号相关 API
-## 中断
-### 硬件中断
-### 软中断
-### 异常
-</code></pre></div>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
+<span class="pl-smi">int</span> <span class="pl-en">raise</span>(<span class="pl-smi">int</span> <span class="pl-s1">sig</span>); <span class="pl-c">// 往当前进程发送信号</span>
+
+<span class="pl-k">#include</span> <span class="pl-s">&lt;stdlib.h&gt;</span>
+<span class="pl-smi">void</span> <span class="pl-en">abort</span>(<span class="pl-smi">void</span>); <span class="pl-c">// 让当前进程接受信号而 &lt;异常&gt; 终止</span>
+<span class="pl-c">// 就像exit函数⼀样,abort函数总是会成功的,所以没有返回值。</span></pre></div>
+<ol start="4">
+<li>软件产生信号</li>
+</ol>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
+<span class="pl-smi">unsigned <span class="pl-smi">int</span></span> <span class="pl-en">alarm</span>(<span class="pl-smi">unsigned <span class="pl-smi">int</span></span> <span class="pl-s1">seconds</span>);</pre></div>
+<ul>
+<li>作用：设定一个闹钟，让内核在 seconds 秒后给当前进程发送 SIGALRM</li>
+<li>返回值：
+<ul>
+<li>此闹钟之前没有运行时闹钟，返回 0</li>
+<li>否则返回运行时闹钟剩余触发秒数并重置闹钟状态为当前调用</li>
+</ul>
+</li>
+</ul>
+<ol start="5">
+<li>硬件异常产生信号<br>
+硬件因为某些原因产生异常后，被硬件以某种方式检测到并通知操作系统内核，让内核向当前进程发送适当信号，例如：</li>
+</ol>
+<ul>
+<li>除以0 - <code class="notranslate">CPU</code> 上的 <code class="notranslate">ALU</code> 运算单元产生异常，操作系统发送<code class="notranslate">SIGFPE</code>信号</li>
+<li>野指针/空指针/非法内存地址 - <code class="notranslate">MMU</code>内存管理单元产生异常，操作系统发送<code class="notranslate">SIGSEGV</code>信号</li>
+</ul>
+<h3>信号传递</h3>
+<p>实际执行信号处理动作被称为信号递达<code class="notranslate">Delivery</code><br>
+信号从产生到递达之间的状态，被称为信号未决<code class="notranslate">Pending</code><br>
+信号可以被进程选择性阻塞<br>
+被阻塞的信号会一直处于未决状态，直到进程解除对此信号的阻塞，才能信号递达<br>
+阻塞不同于忽略，忽略本身就是一种信号递达<br>
+每个进程当中都有两个位图和一个函数指针数组，分别为：</p>
+<ul>
+<li><code class="notranslate">block</code> 位图</li>
+<li><code class="notranslate">pending</code> 位图</li>
+<li><code class="notranslate">handler</code>  <code class="notranslate">sighandler_t</code>类型函数指针数组<br>
+这些位图的数据类型是<code class="notranslate">sigset_t</code>，被称作信号集，<code class="notranslate">block</code>信号集也被称为信号屏蔽字<br>
+信号编号就是这两个信号集和函数指针数组的下标，<code class="notranslate">SIG_IGN</code>和<code class="notranslate">SIG_DFL</code>要被强转成<code class="notranslate">sighandler_t</code>类型放进这个数组中<br>
+这两个信号集用于标识进程中每个信号的状态<br>
+有一些可以操纵信号集的函数：</li>
+</ul>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigemptyset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>); <span class="pl-c">//清空信号集为全0</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigfillset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>);  <span class="pl-c">// 填满信号集为全1</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigaddset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">int</span> <span class="pl-s1">signo</span>); <span class="pl-c">//将信号集的目标信号编号标志位置为1</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigdelset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">int</span> <span class="pl-s1">signo</span>); <span class="pl-c">// 将信号集的目标信号编号标志位置为0</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigismember</span>(<span class="pl-k">const</span> <span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">int</span> <span class="pl-s1">signo</span>); <span class="pl-c">// 判断目标信号标志位在信号集是否为1</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigpending</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>); <span class="pl-c">// 读取当前未决信号集，通过set输出型参数传出</span></pre></div>
+<p>比较重要的一个：</p>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
+<span class="pl-smi">int</span> <span class="pl-en">sigprocmask</span>(<span class="pl-smi">int</span> <span class="pl-s1">how</span>, <span class="pl-k">const</span> <span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">oset</span>);</pre></div>
+<p>作用：读取或更改进程的信号屏蔽字/阻塞信号集<br>
+参数：</p>
+<ul>
+<li>set 作用于进程的信号屏蔽字</li>
+<li>oset 之前的信号屏蔽字</li>
+<li>how
+<ul>
+<li>SIG_BLOCK 按位或</li>
+<li>SIGUNBLOCK 按位与 (~set)，解除阻塞的信号</li>
+<li>SIG_SETMASK 覆盖</li>
+</ul>
+</li>
+</ul>
+<p>以下代码演示了阻塞的信号只能待在未决信号集里吃灰</p>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;iostream&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;csignal&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;functional&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/wait.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;vector&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+
+<span class="pl-smi">void</span> <span class="pl-en">PrintPending</span>(<span class="pl-smi">sigset_t</span><span class="pl-c1">&amp;</span> <span class="pl-s1">pending</span>)
+{
+    <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"\n[ sigpending list: "</span>;
+    <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">31</span>; <span class="pl-s1">i</span>; <span class="pl-s1">i</span><span class="pl-c1">--</span>)
+    {
+        <span class="pl-k">if</span>(<span class="pl-en">sigismember</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">pending</span>, <span class="pl-s1">i</span>))
+        {
+            <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"1"</span>;
+        }
+        <span class="pl-k">else</span>
+        {
+            <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"0"</span>;
+        }
+    }
+    <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">" ]"</span> &lt;&lt; <span class="pl-s">"\r"</span>;
+}
+
+<span class="pl-smi">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-smi">sigset_t</span> <span class="pl-s1">block</span>, <span class="pl-s1">old_block</span>;
+    <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">block</span>); <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">old_block</span>);
+    <span class="pl-en">sigaddset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">block</span>, <span class="pl-c1">SIGINT</span>);
+    <span class="pl-en">sigprocmask</span>(<span class="pl-c1">SIG_SETMASK</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">block</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">old_block</span>);
+    <span class="pl-k">while</span>(true)
+    {
+        <span class="pl-smi">sigset_t</span> <span class="pl-s1">pending</span>;
+        <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">pending</span>);
+        <span class="pl-en">sigpending</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">pending</span>);
+        <span class="pl-en">PrintPending</span>(<span class="pl-s1">pending</span>);
+        <span class="pl-en">sleep</span>(<span class="pl-c1">1</span>);
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a"><img width="1174" height="357" alt="Image" src="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a" style="max-width: 100%; height: auto; max-height: 357px;"></a></p>
+<p>可</p>
+<h3>信号处理</h3>
+<h2>中断</h2>
+<h3>硬件中断</h3>
+<h3>软中断</h3>
+<h3>异常</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
