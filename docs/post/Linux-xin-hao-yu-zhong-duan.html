@@ -306,10 +306,15 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>通知 CPU：CPU 上的 <code class="notranslate">INTR</code>引脚接收中断控制器发来的高电平信号</li>
 <li>CPU 回应：在 CPU 回应中断控制器时，中断控制器把这个中断对应的中断向量号（一个 8 位的整数编号）通过数据总线扔给 CPU</li>
 <li>CPU 保护现场：保存中断前的上下文，以便中断结束后继续执行任务</li>
-<li>CPU 陷入内核态，根据中断号，去中断向量表中查表，执行对应的操作系统指令集</li>
+<li>CPU 陷入内核态，根据中断号，去中断向量表中查表，执行对应的操作系统指令集，以回应不同的中断需求</li>
 <li>CPU 执行完毕，恢复现场中断结束，继续执行之前的工作</li>
 </ol>
 <h4>时钟中断</h4>
+<p>之前提到过，进程检查信号需要先陷入内核态，那不能没有外设就绪就不检查信号了吧？<br>
+操作系统来调度进程，可是谁来调度操作系统自己？<br>
+CPU 中内置了一块称作<strong>时钟源</strong>的硬件，它可以周期性地以固定时间间隔不断通过中断向量表或可编程间隔定时器，向 CPU 发起中断，这被称作<strong>时钟中断</strong></p>
+<blockquote>
+</blockquote>
 <h3>软中断</h3>
 <h3>异常</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
