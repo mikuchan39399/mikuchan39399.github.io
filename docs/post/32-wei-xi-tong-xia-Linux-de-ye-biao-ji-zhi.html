@@ -31,7 +31,7 @@
 - **A位 / D位**：页框被访问过吗，页框是不是脏页，页面置换算法，比如`clock`时钟算法，全靠这两个标志位做决策 
 
 ### 页框元数据
-内存中有一个全局数组，名叫`mem_map`，它的成员是`struct page`结构体，它的成员有：
+内存中有一个全局数组，名叫`mem_map`，它的成员是`struct page`结构体，每一个成员都是一个页框的元数据，而数组下标就是页框对应的页框号`PFN`，它的成员有：
 1. `flags` **页面状态标志**
 这是一个`32`位/`64`位的无符号整数，每一位代表一个独立的状态
    - `PG_locked`：页框被锁住了，比如这个页框正在进行磁盘 I/O，别的进程不准动它
@@ -74,7 +74,7 @@
 - **A位 / D位**：页框被访问过吗，页框是不是脏页，页面置换算法，比如`clock`时钟算法，全靠这两个标志位做决策 
 
 ### 页框元数据
-内存中有一个全局数组，名叫`mem_map`，它的成员是`struct page`结构体，它的成员有：
+内存中有一个全局数组，名叫`mem_map`，它的成员是`struct page`结构体，每一个成员都是一个页框的元数据，而数组下标就是页框对应的页框号`PFN`，它的成员有：
 1. `flags` **页面状态标志**
 这是一个`32`位/`64`位的无符号整数，每一位代表一个独立的状态
    - `PG_locked`：页框被锁住了，比如这个页框正在进行磁盘 I/O，别的进程不准动它
@@ -175,7 +175,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li><strong>A位 / D位</strong>：页框被访问过吗，页框是不是脏页，页面置换算法，比如<code class="notranslate">clock</code>时钟算法，全靠这两个标志位做决策</li>
 </ul>
 <h3>页框元数据</h3>
-<p>内存中有一个全局数组，名叫<code class="notranslate">mem_map</code>，它的成员是<code class="notranslate">struct page</code>结构体，它的成员有：</p>
+<p>内存中有一个全局数组，名叫<code class="notranslate">mem_map</code>，它的成员是<code class="notranslate">struct page</code>结构体，每一个成员都是一个页框的元数据，而数组下标就是页框对应的页框号<code class="notranslate">PFN</code>，它的成员有：</p>
 <ol>
 <li><code class="notranslate">flags</code> <strong>页面状态标志</strong><br>
 这是一个<code class="notranslate">32</code>位/<code class="notranslate">64</code>位的无符号整数，每一位代表一个独立的状态
