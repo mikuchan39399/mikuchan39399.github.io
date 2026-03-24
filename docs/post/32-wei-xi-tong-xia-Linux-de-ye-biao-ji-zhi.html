@@ -38,13 +38,18 @@
    - `PG_dirty`：这个页框是脏的，和之前标志位里的 D位有联动
    - `PG_lru`：这个页框当前挂在 `LRU` 链表上，正在参与页面置换算法的淘汰赛
    - `PG_slab`：这个页框被内核的 `Slab` 分配器剁成臊子用了
+   ...
 2. `_refcount` **引用计数**
 这个我熟，硬链接和智能指针，它记录当前有几个对象，比如进程或内核组件在使用这个页框，降为 `0` 就可以被操作系统回收进空闲内存池了
 3. `_mapcount` **映射计数**
 记录有几个**用户态**的 `PTE` 指向这个页框，比如调用 `fork()` 之后，父子进程共享同一个页框，这个数字就会增加，实现写时拷贝 `COW` 就用到了这个数字
 4. `lru` **链表节点**
 它包含两个指针 `next` 和 `prev`，用于把这个 `struct page` 串进各种链表里，侵入式数据结构的设计，专供页面置换算法遍历使用
-5. `mapping` 和 `index`
+5. `mapping` 和 `index` **反向映射 RMAP / 页缓存**
+记录这个页框属于哪个文件，在文件里的位置/偏移量，内存不够要从内存里踢掉这个页的时候，操作系统就能够找到所有映射了这个页的进程，改变它们的`PTE`，把 存在位`P`设为 `0`
+> 所以，操作系统对物理内存的管理，就变为了对这个全局数组增删改查的过程
+`struct page` 是给操作系统看的，`PTE` 和 `PDE` 里的标志位是给 `MMU` 看的，标志位是硬件层面最底层的拦截和探测标记，而页框元数据是内核管理全局内存的数据依据
+
 ### 内核级页目录项
 操作系统开机时，操作系统本身的代码和数据会被加载进物理内存，这部分物理内存也需要用页表映射管理起来，操作系统全局存在一张内核级页表，专门用于映射 `3GB ~ 4GB`，`0xC0000000 ~ 0xFFFFFFFF`这段内核虚拟地址空间。">
 <meta property="og:title" content="32位系统下Linux的页表机制">
@@ -76,13 +81,18 @@
    - `PG_dirty`：这个页框是脏的，和之前标志位里的 D位有联动
    - `PG_lru`：这个页框当前挂在 `LRU` 链表上，正在参与页面置换算法的淘汰赛
    - `PG_slab`：这个页框被内核的 `Slab` 分配器剁成臊子用了
+   ...
 2. `_refcount` **引用计数**
 这个我熟，硬链接和智能指针，它记录当前有几个对象，比如进程或内核组件在使用这个页框，降为 `0` 就可以被操作系统回收进空闲内存池了
 3. `_mapcount` **映射计数**
 记录有几个**用户态**的 `PTE` 指向这个页框，比如调用 `fork()` 之后，父子进程共享同一个页框，这个数字就会增加，实现写时拷贝 `COW` 就用到了这个数字
 4. `lru` **链表节点**
 它包含两个指针 `next` 和 `prev`，用于把这个 `struct page` 串进各种链表里，侵入式数据结构的设计，专供页面置换算法遍历使用
-5. `mapping` 和 `index`
+5. `mapping` 和 `index` **反向映射 RMAP / 页缓存**
+记录这个页框属于哪个文件，在文件里的位置/偏移量，内存不够要从内存里踢掉这个页的时候，操作系统就能够找到所有映射了这个页的进程，改变它们的`PTE`，把 存在位`P`设为 `0`
+> 所以，操作系统对物理内存的管理，就变为了对这个全局数组增删改查的过程
+`struct page` 是给操作系统看的，`PTE` 和 `PDE` 里的标志位是给 `MMU` 看的，标志位是硬件层面最底层的拦截和探测标记，而页框元数据是内核管理全局内存的数据依据
+
 ### 内核级页目录项
 操作系统开机时，操作系统本身的代码和数据会被加载进物理内存，这部分物理内存也需要用页表映射管理起来，操作系统全局存在一张内核级页表，专门用于映射 `3GB ~ 4GB`，`0xC0000000 ~ 0xFFFFFFFF`这段内核虚拟地址空间。">
 <meta property="og:type" content="article">
@@ -173,7 +183,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li><code class="notranslate">PG_locked</code>：页框被锁住了，比如这个页框正在进行磁盘 I/O，别的进程不准动它</li>
 <li><code class="notranslate">PG_dirty</code>：这个页框是脏的，和之前标志位里的 D位有联动</li>
 <li><code class="notranslate">PG_lru</code>：这个页框当前挂在 <code class="notranslate">LRU</code> 链表上，正在参与页面置换算法的淘汰赛</li>
-<li><code class="notranslate">PG_slab</code>：这个页框被内核的 <code class="notranslate">Slab</code> 分配器剁成臊子用了</li>
+<li><code class="notranslate">PG_slab</code>：这个页框被内核的 <code class="notranslate">Slab</code> 分配器剁成臊子用了<br>
+...</li>
 </ul>
 </li>
 <li><code class="notranslate">_refcount</code> <strong>引用计数</strong><br>
@@ -182,8 +193,13 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 记录有几个<strong>用户态</strong>的 <code class="notranslate">PTE</code> 指向这个页框，比如调用 <code class="notranslate">fork()</code> 之后，父子进程共享同一个页框，这个数字就会增加，实现写时拷贝 <code class="notranslate">COW</code> 就用到了这个数字</li>
 <li><code class="notranslate">lru</code> <strong>链表节点</strong><br>
 它包含两个指针 <code class="notranslate">next</code> 和 <code class="notranslate">prev</code>，用于把这个 <code class="notranslate">struct page</code> 串进各种链表里，侵入式数据结构的设计，专供页面置换算法遍历使用</li>
-<li><code class="notranslate">mapping</code> 和 <code class="notranslate">index</code></li>
+<li><code class="notranslate">mapping</code> 和 <code class="notranslate">index</code> <strong>反向映射 RMAP / 页缓存</strong><br>
+记录这个页框属于哪个文件，在文件里的位置/偏移量，内存不够要从内存里踢掉这个页的时候，操作系统就能够找到所有映射了这个页的进程，改变它们的<code class="notranslate">PTE</code>，把 存在位<code class="notranslate">P</code>设为 <code class="notranslate">0</code></li>
 </ol>
+<blockquote>
+<p>所以，操作系统对物理内存的管理，就变为了对这个全局数组增删改查的过程<br>
+<code class="notranslate">struct page</code> 是给操作系统看的，<code class="notranslate">PTE</code> 和 <code class="notranslate">PDE</code> 里的标志位是给 <code class="notranslate">MMU</code> 看的，标志位是硬件层面最底层的拦截和探测标记，而页框元数据是内核管理全局内存的数据依据</p>
+</blockquote>
 <h3>内核级页目录项</h3>
 <p>操作系统开机时，操作系统本身的代码和数据会被加载进物理内存，这部分物理内存也需要用页表映射管理起来，操作系统全局存在一张内核级页表，专门用于映射 <code class="notranslate">3GB ~ 4GB</code>，<code class="notranslate">0xC0000000 ~ 0xFFFFFFFF</code>这段内核虚拟地址空间。</p>
 <ol>
@@ -191,8 +207,12 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li><strong>内核有一块直接映射区</strong>，在这<code class="notranslate">1GB</code>内核虚拟地址中，前面的一大块，通常是<code class="notranslate">896MB</code>，这部分的映射关系，不同于用户级页表项歪七扭八的离散映射，直接映射区维持着简单的偏移量关系：<code class="notranslate">内核虚拟地址 = 内核物理地址 + 0xC0000000 (3GB)</code>，操作系统在开机初始化时，自己把这块直接映射区对应的页表项线性地填好了，这样对于内核软件来说，用个宏就能转换直接映射区的虚拟地址和物理地址</li>
 <li><strong>为什么用户态程序不能访问内核区</strong>，内核级页表的页表项中的<code class="notranslate">U/S</code>位被设置为<code class="notranslate">0</code><strong>特权级</strong>，<code class="notranslate">MMU</code> 查表得时候发现用户态访问这个页表项直接就让 CPU 去走段错误中断门去给进程发段错误信号了</li>
 </ol>
-<h3>缺页中断</h3>
-<h3>TLB</h3></div>
+<h3>TLB</h3>
+<p>单级⻚表对连续内存要求⾼，于是引⼊了多级⻚表，但是多级⻚表也是⼀把双刃剑，在减少连续存储要求且减少存储空间的同时降低了查询效率</p>
+<p><code class="notranslate">MMU</code> 引入了一个叫做<code class="notranslate">TLB</code><strong>快表</strong>的缓存结构，翻译为后备缓冲器<br>
+CPU 给 <code class="notranslate">MMU</code> 虚拟地址后，<code class="notranslate">MMU</code> 先去 <code class="notranslate">TLB</code> 那看看有没有对应的物理地址，如果有就直接拿着物理地址发到总线给内存相关硬件，不用去查页目录了<br>
+但是快表挺小的，缓存命中率难免较低，所以<code class="notranslate">MMU</code> 在页表里查到物理地址了之后会顺手将这条映射关系给 <code class="notranslate">TLB</code>，让它记录一下刷新缓存</p>
+<h3>缺页异常</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
