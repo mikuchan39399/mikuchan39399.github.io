@@ -125,7 +125,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 }
 
 </style>
-
+<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style>
 
 
 
@@ -222,7 +222,10 @@ CPU 给 <code class="notranslate">MMU</code> 虚拟地址后，<code class="notr
 <li><code class="notranslate">Hard Page Fault / Major Page Fault</code> 物理内存中没有对应的物理⻚，需要CPU打开磁盘设备读取到物理内存中，再让MMU建⽴虚拟地址和物理地址的映射</li>
 <li><code class="notranslate">Soft Page Fault / Minor Page Fault</code> 这时物理内存中是存在对应物理⻚的，只不过可能是其他进程调⼊的，发出缺⻚异常的进程不知道⽽已，此时 <code class="notranslate">MMU</code> 只需要建⽴映射即可，⽆需从磁盘读取写⼊内存，⼀般出现在多进程共享内存区域</li>
 <li><code class="notranslate">Invalid Page Fault</code> 无效缺页错误，野指针/空指针那种错误，进程访问非法内存</li>
-</ul></div>
+</ul>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p><strong>写时拷贝也是一种缺页异常</strong><br>
+父子进程共享物理页且都只有读权限，当其中一方尝试写入时，<code class="notranslate">MMU</code> 发现权限不足触发异常，内核介入后发现是 <code class="notranslate">COW</code>机制，于是默默分配新页框、拷贝数据并修改 <code class="notranslate">PTE</code> 权限，然后再让进程继续执行</p>
+</div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
