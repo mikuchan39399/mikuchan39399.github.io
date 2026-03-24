@@ -204,15 +204,24 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>操作系统开机时，操作系统本身的代码和数据会被加载进物理内存，这部分物理内存也需要用页表映射管理起来，操作系统全局存在一张内核级页表，专门用于映射 <code class="notranslate">3GB ~ 4GB</code>，<code class="notranslate">0xC0000000 ~ 0xFFFFFFFF</code>这段内核虚拟地址空间。</p>
 <ol>
 <li><strong>所有进程共享同一份内核映射</strong>，所有进程被创建时，操作系统会将全局的那份内核级页目录项，拷贝到新进程的页目录表的高地址部分，也就是说所有内核代码数据的虚拟地址都相同</li>
-<li><strong>内核有一块直接映射区</strong>，在这<code class="notranslate">1GB</code>内核虚拟地址中，前面的一大块，通常是<code class="notranslate">896MB</code>，这部分的映射关系，不同于用户级页表项歪七扭八的离散映射，直接映射区维持着简单的偏移量关系：<code class="notranslate">内核虚拟地址 = 内核物理地址 + 0xC0000000 (3GB)</code>，操作系统在开机初始化时，自己把这块直接映射区对应的页表项线性地填好了，这样对于内核软件来说，用个宏就能转换直接映射区的虚拟地址和物理地址</li>
+<li><strong>内核有一块直接映射区</strong>，在这<code class="notranslate">1GB</code>内核虚拟地址中，前面的一大块，通常是<code class="notranslate">896MB</code>，这部分的映射关系，不同于用户级页表项歪七扭八的离散映射，直接映射区维持着简单的偏移量关系：<code class="notranslate">内核虚拟地址 = 内核物理地址 + 0xC0000000 (3GB)</code>，操作系统在开机初始化时，自己把这块直接映射区对应的页表项线性地填好了，这样对于内核来说，用个宏就能转换直接映射区的虚拟地址和物理地址</li>
 <li><strong>为什么用户态程序不能访问内核区</strong>，内核级页表的页表项中的<code class="notranslate">U/S</code>位被设置为<code class="notranslate">0</code><strong>特权级</strong>，<code class="notranslate">MMU</code> 查表得时候发现用户态访问这个页表项直接就让 CPU 去走段错误中断门去给进程发段错误信号了</li>
 </ol>
 <h3>TLB</h3>
-<p>单级⻚表对连续内存要求⾼，于是引⼊了多级⻚表，但是多级⻚表也是⼀把双刃剑，在减少连续存储要求且减少存储空间的同时降低了查询效率</p>
+<p>单级⻚表对连续内存要求⾼，于是引⼊了多级⻚表，但是多级⻚表也是⼀把双刃剑，在<strong>减少连续存储要求且减少存储空间的同时降低了查询效率</strong></p>
 <p><code class="notranslate">MMU</code> 引入了一个叫做<code class="notranslate">TLB</code><strong>快表</strong>的缓存结构，翻译为后备缓冲器<br>
 CPU 给 <code class="notranslate">MMU</code> 虚拟地址后，<code class="notranslate">MMU</code> 先去 <code class="notranslate">TLB</code> 那看看有没有对应的物理地址，如果有就直接拿着物理地址发到总线给内存相关硬件，不用去查页目录了<br>
 但是快表挺小的，缓存命中率难免较低，所以<code class="notranslate">MMU</code> 在页表里查到物理地址了之后会顺手将这条映射关系给 <code class="notranslate">TLB</code>，让它记录一下刷新缓存</p>
-<h3>缺页异常</h3></div>
+<h3>缺页异常</h3>
+<p>设想，CPU 给 <code class="notranslate">MMU</code> 的虚拟地址，在 <code class="notranslate">TLB</code> 和⻚表都没有找到对应的物理⻚，该怎么办呢？其实这就是<br>
+缺⻚异常 <code class="notranslate">Page Fault</code><br>
+假如⽬标内存⻚在物理内存中没有对应的物理⻚或者存在但⽆对应权限，CPU 就⽆法获取数据，这种<br>
+情况下 CPU 就会执行缺页异常的流程，缺页中断也分不同的情况，在另一篇笔记中谈到过是要让操作系统来判断缺页异常类型</p>
+<ul>
+<li><code class="notranslate">Hard Page Fault / Major Page Fault</code> 物理内存中没有对应的物理⻚，需要CPU打开磁盘设备读取到物理内存中，再让MMU建⽴虚拟地址和物理地址的映射</li>
+<li><code class="notranslate">Soft Page Fault / Minor Page Fault</code> 这时物理内存中是存在对应物理⻚的，只不过可能是其他进程调⼊的，发出缺⻚异常的进程不知道⽽已，此时 <code class="notranslate">MMU</code> 只需要建⽴映射即可，⽆需从磁盘读取写⼊内存，⼀般出现在多进程共享内存区域</li>
+<li><code class="notranslate">Invalid Page Fault</code> 无效缺页错误，野指针/空指针那种错误，进程访问非法内存</li>
+</ul></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
