@@ -279,7 +279,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     }
 }</pre></div>
 <p>这个<code class="notranslate">sa_mask</code>成员比较有意思<br>
-这个信号集让对应置1信号被处理时自动变为阻塞状态，防止信号被递归处理</p>
+这个信号集让<code class="notranslate">handler</code>执行期间，当前信号本身会自动加入阻塞集对应置1信号被处理时自动变为阻塞状态，防止信号被递归处理</p>
 <h3>信号处理</h3>
 <p><strong>信号处理是异步的！</strong><br>
 也就是说，一个进程收到信号的时候，他不一定会马上去执行对应的<code class="notranslate">handler</code>函数<br>
