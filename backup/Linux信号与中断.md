@@ -8,7 +8,7 @@ sighandler_t signal(int signum, sighandler_t handler);
 ```
 - 作用：修改目标信号的处理回调函数
 - 参数
-   - `singnum` 信号编号
+   - `signum` 信号编号
    - `handler` 信号处理函数
 - 返回值 修改之前的旧信号处理函数的函数指针
 ```cpp
