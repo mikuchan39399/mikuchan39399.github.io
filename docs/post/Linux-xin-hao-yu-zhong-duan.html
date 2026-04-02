@@ -156,7 +156,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
 <span class="pl-smi">unsigned <span class="pl-smi">int</span></span> <span class="pl-en">alarm</span>(<span class="pl-smi">unsigned <span class="pl-smi">int</span></span> <span class="pl-s1">seconds</span>);</pre></div>
 <ul>
-<li>作用：设定一个闹钟，让内核在 seconds 秒后给当前进程发送 SIGALRM</li>
+<li>作用：设定一个闹钟，让内核在 <code class="notranslate">seconds</code> 秒后给当前进程发送 <code class="notranslate">SIGALRM</code>1</li>
 <li>返回值：
 <ul>
 <li>此闹钟之前没有运行时闹钟，返回 0</li>
@@ -206,7 +206,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>how
 <ul>
 <li>SIG_BLOCK 按位或</li>
-<li>SIGUNBLOCK 按位与 (~set)，解除阻塞的信号</li>
+<li>SIG_UNBLOCK 按位与 (~set)，解除阻塞的信号</li>
 <li>SIG_SETMASK 覆盖</li>
 </ul>
 </li>

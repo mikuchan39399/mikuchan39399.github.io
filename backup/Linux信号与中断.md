@@ -67,7 +67,7 @@ void abort(void); // 让当前进程接受信号而 <异常> 终止
 #include <unistd.h>
 unsigned int alarm(unsigned int seconds);
 ```
-- 作用：设定一个闹钟，让内核在 seconds 秒后给当前进程发送 SIGALRM 
+- 作用：设定一个闹钟，让内核在 `seconds` 秒后给当前进程发送 `SIGALRM`1 
 - 返回值：
    - 此闹钟之前没有运行时闹钟，返回 0
    - 否则返回运行时闹钟剩余触发秒数并重置闹钟状态为当前调用
@@ -110,7 +110,7 @@ int sigprocmask(int how, const sigset_t *set, sigset_t *oset);
 - oset 之前的信号屏蔽字
 - how
    - SIG_BLOCK 按位或
-   - SIGUNBLOCK 按位与 (~set)，解除阻塞的信号
+   - SIG_UNBLOCK 按位与 (~set)，解除阻塞的信号
    - SIG_SETMASK 覆盖
  
 以下代码演示了阻塞的信号只能待在未决信号集里吃灰
