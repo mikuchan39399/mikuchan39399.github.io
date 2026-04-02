@@ -653,7 +653,7 @@ ESP = 0xBFFFF080         ← 原来是旧栈顶，现在指向伪造的新栈顶
 <li>主程序从 <code class="notranslate">0x08049ABC</code> 继续执行，浑然不知刚才发生了什么</li>
 </ol>
 <h4>为什么需要这么绕</h4>
-<p>一句话总结：<strong>内核不信任用户代码，但又必须让用户代码执行。</strong></p>
+<p>因为<strong>内核不信任用户代码，但又必须让用户代码执行。</strong></p>
 <ul>
 <li>不能在内核态执行 handler → 安全问题</li>
 <li>不能直接 <code class="notranslate">iret</code> 回主程序 → handler 还没执行</li>
