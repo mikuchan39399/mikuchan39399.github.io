@@ -114,11 +114,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
 <p>我用这个接口捕捉了<code class="notranslate">SIGINT</code>信号，让我们看看现在用<code class="notranslate">Ctrl + C</code>还能不能杀掉这个进程</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a"><img width="1092" height="260" alt="Image" src="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a" style="max-width: 100%; height: auto; max-height: 260px;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a"><img width="1092" height="260" alt="Image" src="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a" style="max-width: 100%; height: auto; max-height: 260px;; aspect-ratio: 1092 / 260; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p>当使用<code class="notranslate">Ctrl + C</code>杀不掉某个进程的时候，一种可能是程序捕捉了<code class="notranslate">SIGINT</code>，还有可能是这个进程不是<strong>前台进程</strong>，而前台进程只有一个，键盘只能给前台进程发信号，⼀个命令后⾯加个&amp;可以放到后台运⾏,这样 Shell 不必等待进程结束就可以接受新的命令启动新的进程。</p>
 <h2>信号机制</h2>
 <p>可以用<code class="notranslate">kill -l</code> 命令查看所有信号</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3479ebe3-d43f-4f5b-bef9-6e311180c212"><img width="936" height="401" alt="Image" src="https://github.com/user-attachments/assets/3479ebe3-d43f-4f5b-bef9-6e311180c212" style="max-width: 100%; height: auto; max-height: 401px;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3479ebe3-d43f-4f5b-bef9-6e311180c212"><img width="936" height="401" alt="Image" src="https://github.com/user-attachments/assets/3479ebe3-d43f-4f5b-bef9-6e311180c212" style="max-width: 100%; height: auto; max-height: 401px;; aspect-ratio: 936 / 401; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <blockquote>
 <p>为什么没有32, 33号信号？貌似是因为某些历史遗留原因</p>
 </blockquote>
@@ -253,7 +253,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     }
     <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a"><img width="1174" height="357" alt="Image" src="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a" style="max-width: 100%; height: auto; max-height: 357px;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a"><img width="1174" height="357" alt="Image" src="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a" style="max-width: 100%; height: auto; max-height: 357px;; aspect-ratio: 1174 / 357; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p><code class="notranslate">SIGINT</code>信号被阻塞之后就算不捕捉它，也无法到达信号递达的状态，也就退出不了进程了</p>
 <p>捕捉信号也可以用一组<code class="notranslate">oop</code>一些的接口：</p>
 <div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;iostream&gt;</span>
@@ -296,7 +296,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <blockquote>
 <p>具体的四次特权级切换和栈帧构造见后文「信号处理详解」一节</p>
 </blockquote>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5"><img width="649" height="221" alt="Image" src="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5" style="max-width: 100%; height: auto; max-height: 221px;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5"><img width="649" height="221" alt="Image" src="https://github.com/user-attachments/assets/9dfbd060-3bb8-4210-beb9-516a41369ae5" style="max-width: 100%; height: auto; max-height: 221px;; aspect-ratio: 649 / 221; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p>这就是一个无限形的流程，节点在<strong>内核态</strong></p>
 <hr>
 <h2>中断---操作系统到底是怎么运行的</h2>
