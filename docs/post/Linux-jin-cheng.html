@@ -257,7 +257,7 @@ cat /proc/3939/status</pre></div>
 子进程的<code class="notranslate">cwd</code>默认继承父进程，而由命令行工具bash所创建的进程的父进程全都是<code class="notranslate">bash</code>自己。<br>
 所以， 进程的<code class="notranslate">cwd</code>默认是使用<code class="notranslate">bash</code>的目录<br>
 在程序中使用<code class="notranslate">chdir(const char *path)</code>系统接口可以改变当前进程的工作目录</p>
-<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>所以我以前在写在本目录打开一个文件的时候，如果不是绝对路径，相对路径的话就会在前面贴上cwd</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>所以我以前在写在本目录打开一个文件的时候，如果不是绝对路径，相对路径的话就会在前面贴上cwd</p>
 </div>
 <h2>进程状态</h2>
 <p>Linux中进程有如下几个状态, 以下状态在kernel源码中被定义：</p>
@@ -325,11 +325,11 @@ cat /proc/3939/status</pre></div>
 </tr>
 </tbody>
 </table></markdown-accessiblity-table>
-<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>当父进程早于子进程退出时, 子进程会被 <code class="notranslate">init </code>进程<code class="notranslate">(pid=1)</code> 领养, 成为孤儿进程, 孤儿进程可以是任何状态, 属于正常现象<br>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>当父进程早于子进程退出时, 子进程会被 <code class="notranslate">init </code>进程<code class="notranslate">(pid=1)</code> 领养, 成为孤儿进程, 孤儿进程可以是任何状态, 属于正常现象<br>
 僵死进程会以终⽌状态保持在进程表中，并且会⼀直在等待⽗进程读取退出状态代码。<br>
 直到父进程退出，僵尸进程会被 <code class="notranslate">init</code> 进程领养。<code class="notranslate">init</code> 进程会立即执行回收操作，将该僵尸进程彻底释放。</p>
 </div>
-<div class="markdown-alert markdown-alert-warning"><p class="markdown-alert-title"><svg class="octicon octicon-alert mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p><p>僵死进程会挤占内存的PCB资源, 包括<code class="notranslate">task_struct</code>和进程号,会导致内存的浪费和进程号的挤兑，导致创建不出新的进程 注意父&gt; 进程一定要使用wait相关系统接口</p>
+<div class="markdown-alert markdown-alert-warning"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-alert mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p><p>僵死进程会挤占内存的PCB资源, 包括<code class="notranslate">task_struct</code>和进程号,会导致内存的浪费和进程号的挤兑，导致创建不出新的进程 注意父&gt; 进程一定要使用wait相关系统接口</p>
 </div>
 <p>上文提到过，Linux采取管理 task_struct 的方式来组织管理与之对应的进程<br>
 每一个 CPU 都配备一个运行队列 struct rq。 进程的 task_struct 通过内部的节点（链表节点或红黑树节点），把自己挂载到 CPU 的 runqueue 中。</p>
@@ -355,7 +355,7 @@ os会把这个进程弹出运行队列，塞进对应硬件设备的阻塞队列
 </blockquote>
 <p>在Linux落地时，发现如果进程正在处于挂起状态时 os 可能因为自保删掉正在挂起的进程PCB，内存泄露，各种麻烦事就来了<br>
 所以，Linux中禁止 os 更改正在挂起的进程</p>
-<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg class="octicon octicon-report mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p><p><strong>关于挂起与 D 状态的误区</strong><br>
+<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-report mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p><p><strong>关于挂起与 D 状态的误区</strong><br>
 操作系统理论中提到的“挂起状态”，在 Linux 状态机中并没有直接对应的单一状态。<br>
 <strong>D 状态 (Disk Sleep)</strong> 的真正含义是 <strong>不可中断的硬件等待</strong>。它是为了保证在关键 I/O 操作期间（如磁盘读写），进程不会被信号打断，从而避免硬件数据损坏。它与内存是否 swap 无绝对关联。</p>
 </div>
@@ -379,7 +379,7 @@ PRI 为默认的一个定值, NI 的 取值范围是 -20 &lt;= NI &lt;= 19<br>
 所以进程被切换走时必须要保留自己的这些家当，腾空给其他进程使用寄存器，这就是进程切换时对自己硬件上下文的保存<br>
 在Linux中硬件上下文保存在 tss_struct 中，同样能在task_struct 中找到，它负责硬件上下文的保存与恢复</p>
 <h3>进程调度</h3>
-<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>Linux中的运行队列就是就绪队列，调度队列为一个抽象概念无直接对应结构体</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>Linux中的运行队列就是就绪队列，调度队列为一个抽象概念无直接对应结构体</p>
 </div>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/8f5e5bf5-8a2a-4c3c-815a-7baa23d6617f"><img width="760" height="651" alt="Image" src="https://github.com/user-attachments/assets/8f5e5bf5-8a2a-4c3c-815a-7baa23d6617f" style="max-width: 100%; height: auto; max-height: 651px;; aspect-ratio: 760 / 651; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p>上图中可以看到，一个 rq 结构体里存在着两套队列，一套活跃队列，一套过期队列<br>
