@@ -19,7 +19,7 @@
 <meta property="og:url" content="https://mikuchan39399.github.io/post/Linux-xin-hao-yu-zhong-duan.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
 <title>Linux信号与中断</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -88,9 +88,10 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="markdown-body" id="postBody"><h2>Ctrl + C 干了什么</h2>
 <p>平时我们运行一些死循环程序时，可以在命令行终端上用<code class="notranslate">Ctrl + C</code> 快捷键结束进程。<br>
 实际上，这个快捷键让键盘外设控制 CPU 让操作系统往目标进程发送<code class="notranslate">SIGINT</code><strong>信号</strong>以杀死进程，这里有一个 API 能让我们验证一下...</p>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
-<span class="pl-k">typedef</span> <span class="pl-smi">void</span> (<span class="pl-c1">*</span><span class="pl-smi">sighandler_t</span>)(<span class="pl-smi">int</span>);
-<span class="pl-smi">sighandler_t</span> <span class="pl-en">signal</span>(<span class="pl-smi">int</span> <span class="pl-s1">signum</span>, <span class="pl-smi">sighandler_t</span> <span class="pl-s1">handler</span>);</pre></div>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;signal.h&gt;
+typedef void (*sighandler_t)(int);
+sighandler_t signal(int signum, sighandler_t handler);
+</code></pre>
 <ul>
 <li>作用：修改目标信号的处理回调函数</li>
 <li>参数
@@ -101,18 +102,19 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 <li>返回值 修改之前的旧信号处理函数的函数指针</li>
 </ul>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>csignal<span class="pl-pds">&gt;</span></span>
-<span class="pl-k">void</span> <span class="pl-en">handler</span>(<span class="pl-k">int</span> signo)
+<pre lang="cpp" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;csignal&gt;
+void handler(int signo)
 {
-    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>捕捉到<span class="pl-pds">"</span></span> &lt;&lt; signo &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>号信号<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; 
+    std::cout &lt;&lt; "捕捉到" &lt;&lt; signo &lt;&lt; "号信号\n"; 
 }
-<span class="pl-k">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-c1">signal</span>(SIGINT, handler);
-    <span class="pl-k">while</span>(<span class="pl-c1">1</span>);    
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    signal(SIGINT, handler);
+    while(1);    
+    return 0;
+}
+</code></pre>
 <p>我用这个接口捕捉了<code class="notranslate">SIGINT</code>信号，让我们看看现在用<code class="notranslate">Ctrl + C</code>还能不能杀掉这个进程</p>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a"><img width="1092" height="260" alt="Image" src="https://github.com/user-attachments/assets/817ccb36-d25c-4e67-95f5-763f32b2682a" style="max-width: 100%; height: auto; max-height: 260px;; aspect-ratio: 1092 / 260; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <p>当使用<code class="notranslate">Ctrl + C</code>杀不掉某个进程的时候，一种可能是程序捕捉了<code class="notranslate">SIGINT</code>，还有可能是这个进程不是<strong>前台进程</strong>，而前台进程只有一个，键盘只能给前台进程发信号，⼀个命令后⾯加个&amp;可以放到后台运⾏,这样 Shell 不必等待进程结束就可以接受新的命令启动新的进程。</p>
@@ -140,21 +142,23 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>命令行工具：<code class="notranslate">kill -信号名 pid</code> 可以往指定进程发送对应信号</li>
 <li>程序内函数：</li>
 </ol>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
-<span class="pl-smi">int</span> <span class="pl-en">kill</span>(<span class="pl-smi">pid_t</span> <span class="pl-s1">pid</span>, <span class="pl-smi">int</span> <span class="pl-s1">sig</span>); <span class="pl-c">// 往指定进程发送信号</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;sys/types.h&gt;
+#include &lt;signal.h&gt;
+int kill(pid_t pid, int sig); // 往指定进程发送信号
 
-<span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
-<span class="pl-smi">int</span> <span class="pl-en">raise</span>(<span class="pl-smi">int</span> <span class="pl-s1">sig</span>); <span class="pl-c">// 往当前进程发送信号</span>
+#include &lt;signal.h&gt;
+int raise(int sig); // 往当前进程发送信号
 
-<span class="pl-k">#include</span> <span class="pl-s">&lt;stdlib.h&gt;</span>
-<span class="pl-smi">void</span> <span class="pl-en">abort</span>(<span class="pl-smi">void</span>); <span class="pl-c">// 让当前进程接受信号而 &lt;异常&gt; 终止</span>
-<span class="pl-c">// 就像exit函数⼀样,abort函数总是会成功的,所以没有返回值。</span></pre></div>
+#include &lt;stdlib.h&gt;
+void abort(void); // 让当前进程接受信号而 &lt;异常&gt; 终止
+// 就像exit函数⼀样,abort函数总是会成功的,所以没有返回值。
+</code></pre>
 <ol start="4">
 <li>软件产生信号</li>
 </ol>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
-<span class="pl-smi">unsigned <span class="pl-smi">int</span></span> <span class="pl-en">alarm</span>(<span class="pl-smi">unsigned <span class="pl-smi">int</span></span> <span class="pl-s1">seconds</span>);</pre></div>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;unistd.h&gt;
+unsigned int alarm(unsigned int seconds);
+</code></pre>
 <ul>
 <li>作用：设定一个闹钟，让内核在 <code class="notranslate">seconds</code> 秒后给当前进程发送 <code class="notranslate">SIGALRM</code>1</li>
 <li>返回值：
@@ -188,16 +192,18 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 这两个信号集用于标识进程中每个信号的状态<br>
 有一些可以操纵信号集的函数：</li>
 </ul>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigemptyset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>); <span class="pl-c">//清空信号集为全0</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigfillset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>);  <span class="pl-c">// 填满信号集为全1</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigaddset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">int</span> <span class="pl-s1">signo</span>); <span class="pl-c">//将信号集的目标信号编号标志位置为1</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigdelset</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">int</span> <span class="pl-s1">signo</span>); <span class="pl-c">// 将信号集的目标信号编号标志位置为0</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigismember</span>(<span class="pl-k">const</span> <span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">int</span> <span class="pl-s1">signo</span>); <span class="pl-c">// 判断目标信号标志位在信号集是否为1</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigpending</span>(<span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>); <span class="pl-c">// 读取当前未决信号集，通过set输出型参数传出</span></pre></div>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;signal.h&gt;
+int sigemptyset(sigset_t *set); //清空信号集为全0
+int sigfillset(sigset_t *set);  // 填满信号集为全1
+int sigaddset(sigset_t *set, int signo); //将信号集的目标信号编号标志位置为1
+int sigdelset(sigset_t *set, int signo); // 将信号集的目标信号编号标志位置为0
+int sigismember(const sigset_t *set, int signo); // 判断目标信号标志位在信号集是否为1
+int sigpending(sigset_t *set); // 读取当前未决信号集，通过set输出型参数传出
+</code></pre>
 <p>比较重要的一个：</p>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
-<span class="pl-smi">int</span> <span class="pl-en">sigprocmask</span>(<span class="pl-smi">int</span> <span class="pl-s1">how</span>, <span class="pl-k">const</span> <span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">set</span>, <span class="pl-smi">sigset_t</span> <span class="pl-c1">*</span><span class="pl-s1">oset</span>);</pre></div>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;signal.h&gt;
+int sigprocmask(int how, const sigset_t *set, sigset_t *oset);
+</code></pre>
 <p>作用：读取或更改进程的信号屏蔽字/阻塞信号集<br>
 参数：</p>
 <ul>
@@ -212,72 +218,74 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 </ul>
 <p>以下代码演示了阻塞的信号只能待在未决信号集里吃灰</p>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;iostream&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;csignal&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;functional&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/wait.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;vector&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;csignal&gt;
+#include &lt;unistd.h&gt;
+#include &lt;functional&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;vector&gt;
+#include &lt;sys/types.h&gt;
 
-<span class="pl-smi">void</span> <span class="pl-en">PrintPending</span>(<span class="pl-smi">sigset_t</span><span class="pl-c1">&amp;</span> <span class="pl-s1">pending</span>)
+void PrintPending(sigset_t&amp; pending)
 {
-    <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"\n[ sigpending list: "</span>;
-    <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">31</span>; <span class="pl-s1">i</span>; <span class="pl-s1">i</span><span class="pl-c1">--</span>)
+    std::cout &lt;&lt; "\n[ sigpending list: ";
+    for(int i = 31; i; i--)
     {
-        <span class="pl-k">if</span>(<span class="pl-en">sigismember</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">pending</span>, <span class="pl-s1">i</span>))
+        if(sigismember(&amp;pending, i))
         {
-            <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"1"</span>;
+            std::cout &lt;&lt; "1";
         }
-        <span class="pl-k">else</span>
+        else
         {
-            <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"0"</span>;
+            std::cout &lt;&lt; "0";
         }
     }
-    <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">" ]"</span> &lt;&lt; <span class="pl-s">"\r"</span>;
+    std::cout &lt;&lt; " ]" &lt;&lt; "\r";
 }
 
-<span class="pl-smi">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-smi">sigset_t</span> <span class="pl-s1">block</span>, <span class="pl-s1">old_block</span>;
-    <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">block</span>); <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">old_block</span>);
-    <span class="pl-en">sigaddset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">block</span>, <span class="pl-c1">SIGINT</span>);
-    <span class="pl-en">sigprocmask</span>(<span class="pl-c1">SIG_SETMASK</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">block</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">old_block</span>);
-    <span class="pl-k">while</span>(true)
+    sigset_t block, old_block;
+    sigemptyset(&amp;block); sigemptyset(&amp;old_block);
+    sigaddset(&amp;block, SIGINT);
+    sigprocmask(SIG_SETMASK, &amp;block, &amp;old_block);
+    while(true)
     {
-        <span class="pl-smi">sigset_t</span> <span class="pl-s1">pending</span>;
-        <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">pending</span>);
-        <span class="pl-en">sigpending</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">pending</span>);
-        <span class="pl-en">PrintPending</span>(<span class="pl-s1">pending</span>);
-        <span class="pl-en">sleep</span>(<span class="pl-c1">1</span>);
+        sigset_t pending;
+        sigemptyset(&amp;pending);
+        sigpending(&amp;pending);
+        PrintPending(pending);
+        sleep(1);
     }
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    return 0;
+}
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a"><img width="1174" height="357" alt="Image" src="https://github.com/user-attachments/assets/1f23710e-b26a-48b1-8885-8f588e0d973a" style="max-width: 100%; height: auto; max-height: 357px;; aspect-ratio: 1174 / 357; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <p><code class="notranslate">SIGINT</code>信号被阻塞之后就算不捕捉它，也无法到达信号递达的状态，也就退出不了进程了</p>
 <p>捕捉信号也可以用一组<code class="notranslate">oop</code>一些的接口：</p>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;iostream&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;signal.h&gt;</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;iostream&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
 
-<span class="pl-smi">void</span> <span class="pl-en">handler</span>(<span class="pl-smi">int</span> <span class="pl-s1">signo</span>)
+void handler(int signo)
 {
-    <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"获取到一个信号: "</span> &lt;&lt; <span class="pl-s1">signo</span> &lt;&lt; <span class="pl-s1">std</span>::<span class="pl-s1">endl</span>;
+    std::cout &lt;&lt; "获取到一个信号: " &lt;&lt; signo &lt;&lt; std::endl;
 }
 
-<span class="pl-smi">int</span> <span class="pl-en">main</span>()
+int main()
 {
-    <span class="pl-k">struct</span> <span class="pl-smi">sigaction</span> <span class="pl-s1">act</span>, <span class="pl-s1">old_act</span>;
-    <span class="pl-s1">act</span>.<span class="pl-c1">sa_handler</span> <span class="pl-c1">=</span> <span class="pl-s1">handler</span>;
-    <span class="pl-s1">act</span>.<span class="pl-c1">sa_flags</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-en">sigemptyset</span>(<span class="pl-c1">&amp;</span>(<span class="pl-s1">act</span>.<span class="pl-c1">sa_mask</span>));
-    <span class="pl-en">sigaction</span>(<span class="pl-c1">SIGTERM</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">act</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">old_act</span>);
-    <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
+    struct sigaction act, old_act;
+    act.sa_handler = handler;
+    act.sa_flags = 0;
+    sigemptyset(&amp;(act.sa_mask));
+    sigaction(SIGTERM, &amp;act, &amp;old_act);
+    while(1)
     {
-        <span class="pl-ent">std</span>::<span class="pl-s1">cout</span> &lt;&lt; <span class="pl-s">"我是一个进程: "</span> &lt;&lt; <span class="pl-en">getpid</span>() &lt;&lt; <span class="pl-s1">std</span>::<span class="pl-s1">endl</span>;
-        <span class="pl-en">sleep</span>(<span class="pl-c1">1</span>);
+        std::cout &lt;&lt; "我是一个进程: " &lt;&lt; getpid() &lt;&lt; std::endl;
+        sleep(1);
     }
-}</pre></div>
+}
+</code></pre>
 <p>这个<code class="notranslate">sa_mask</code>成员比较有意思<br>
 这个信号集让<code class="notranslate">handler</code>执行期间，当前信号本身会自动加入阻塞集对应置1信号被处理时自动变为阻塞状态，防止信号被递归处理</p>
 <h3>信号处理</h3>
@@ -337,19 +345,20 @@ CPU 内部集成了一个名叫 锁相环<code class="notranslate">PLL</code>的
 硬件定时器就像维持系统生命特征的“心跳”，每隔一段固定时间就强制触发一次中断。这迫使 CPU 暂停当前正在执行的用户程序，自动陷入内核态。<br>
 随后，CPU 去中断向量表中寻找时钟中断对应的<code class="notranslate">ISR</code>并执行。这段内核代码承载了操作系统最基础的生命活动：它不仅会顺手检查并处理当前进程的未决信号，还会<strong>更新系统时间、扣减当前进程的时间片，并在时间片耗尽时触发进程调度。没有时钟中断，整个操作系统的运转就会陷入停滞</strong>。</p>
 </div>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-smi">void</span> <span class="pl-en">main</span>(<span class="pl-smi">void</span>) <span class="pl-c">/* 这⾥确实是void，并没错。 */</span>
-{ <span class="pl-c">/* 在startup 程序(head.s)中就是这样假设的。 */</span>
+<pre lang="c" class="notranslate"><code class="notranslate">void main(void) /* 这⾥确实是void，并没错。 */
+{ /* 在startup 程序(head.s)中就是这样假设的。 */
 ...
-<span class="pl-c">/*</span>
-<span class="pl-c">* 注意!! 对于任何其它的任务，'pause()'将意味着我们必须等待收到⼀个信号才会返</span>
-<span class="pl-c">* 回就绪运⾏态，但任务0（task0）是唯⼀的意外情况（参⻅'schedule()'），因为任</span>
-<span class="pl-c">* 务0 在任何空闲时间⾥都会被激活（当没有其它任务在运⾏时），</span>
-<span class="pl-c">* 因此对于任务0'pause()'仅意味着我们返回来查看是否有其它任务可以运⾏，如果没</span>
-<span class="pl-c">* 有的话我们就回到这⾥，⼀直循环执⾏'pause()'。</span>
-<span class="pl-c">*/</span>
-    <span class="pl-k">for</span> (;;) 
-    <span class="pl-en">pause</span>();
-} <span class="pl-c">// end main</span></pre></div>
+/*
+* 注意!! 对于任何其它的任务，'pause()'将意味着我们必须等待收到⼀个信号才会返
+* 回就绪运⾏态，但任务0（task0）是唯⼀的意外情况（参⻅'schedule()'），因为任
+* 务0 在任何空闲时间⾥都会被激活（当没有其它任务在运⾏时），
+* 因此对于任务0'pause()'仅意味着我们返回来查看是否有其它任务可以运⾏，如果没
+* 有的话我们就回到这⾥，⼀直循环执⾏'pause()'。
+*/
+    for (;;) 
+    pause();
+} // end main
+</code></pre>
 <h3>CS寄存器</h3>
 <p>CPU 通过 <strong>CS 寄存器</strong>（代码段寄存器），来得知自己目前处于内核态还是用户态<br>
 CS 寄存器是一个 <code class="notranslate">16bit</code> 寄存器，最低的两位被称为<code class="notranslate">CPL</code>，<strong>当前特权级</strong></p>
