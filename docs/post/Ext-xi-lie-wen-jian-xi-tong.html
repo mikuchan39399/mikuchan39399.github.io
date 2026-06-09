@@ -202,7 +202,7 @@ Linux中的 文件数据与文件属性分开存储，存储文件属性的被�
             __le32  m_i_reserved1;
         } masix1;
     } osd1;                         <span class="pl-c"><span class="pl-c">/*</span> OS dependent 1 <span class="pl-c">*/</span></span>
-    __le32  i_block[EXT2_N_BLOCKS]; <span class="pl-c"><span class="pl-c">/*</span> Pointers to blocks <span class="pl-c">*/</span></span>
+    __le32  i_block[<span class="pl-c1">EXT2_N_BLOCKS</span>]; <span class="pl-c"><span class="pl-c">/*</span> Pointers to blocks <span class="pl-c">*/</span></span>
     __le32  i_generation;           <span class="pl-c"><span class="pl-c">/*</span> File version (for NFS) <span class="pl-c">*/</span></span>
     __le32  i_file_acl;             <span class="pl-c"><span class="pl-c">/*</span> File ACL <span class="pl-c">*/</span></span>
     __le32  i_dir_acl;              <span class="pl-c"><span class="pl-c">/*</span> Directory ACL <span class="pl-c">*/</span></span>
@@ -237,10 +237,10 @@ Linux中的 文件数据与文件属性分开存储，存储文件属性的被�
 <span class="pl-c"> * Constants relative to the data blocks</span>
 <span class="pl-c"> <span class="pl-c">*/</span></span>
 #<span class="pl-k">define</span> <span class="pl-en">EXT2_NDIR_BLOCKS</span>                <span class="pl-c1">12</span>
-#<span class="pl-k">define</span> <span class="pl-en">EXT2_IND_BLOCK</span>                  EXT2_NDIR_BLOCKS
-#<span class="pl-k">define</span> <span class="pl-en">EXT2_DIND_BLOCK</span>                 (EXT2_IND_BLOCK + <span class="pl-c1">1</span>)
-#<span class="pl-k">define</span> <span class="pl-en">EXT2_TIND_BLOCK</span>                 (EXT2_DIND_BLOCK + <span class="pl-c1">1</span>)
-#<span class="pl-k">define</span> <span class="pl-en">EXT2_N_BLOCKS</span>                   (EXT2_TIND_BLOCK + <span class="pl-c1">1</span>)
+#<span class="pl-k">define</span> <span class="pl-en">EXT2_IND_BLOCK</span>                  <span class="pl-c1">EXT2_NDIR_BLOCKS</span>
+#<span class="pl-k">define</span> <span class="pl-en">EXT2_DIND_BLOCK</span>                 (<span class="pl-c1">EXT2_IND_BLOCK</span> + <span class="pl-c1">1</span>)
+#<span class="pl-k">define</span> <span class="pl-en">EXT2_TIND_BLOCK</span>                 (<span class="pl-c1">EXT2_DIND_BLOCK</span> + <span class="pl-c1">1</span>)
+#<span class="pl-k">define</span> <span class="pl-en">EXT2_N_BLOCKS</span>                   (<span class="pl-c1">EXT2_TIND_BLOCK</span> + <span class="pl-c1">1</span>)
 
 <span class="pl-c"><span class="pl-c">/*</span> 备注：EXT2_N_BLOCKS = 15 <span class="pl-c">*/</span></span></pre></div>
 <p>这里特别提一嘴，目录在Linux中也是文件，如果要在某个目录创建文件则需要目标目录的写权限<br>

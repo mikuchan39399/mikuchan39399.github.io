@@ -348,10 +348,10 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-c1">18</span>       <span class="pl-k">struct</span> <span class="pl-en">file</span> * vm_file;      <span class="pl-c"><span class="pl-c">//</span>映射的文件</span>
 <span class="pl-c1">19</span>       <span class="pl-k">void</span> * vm_private_data;     <span class="pl-c"><span class="pl-c">//</span>私有数据</span>
 <span class="pl-c1">20</span>       <span class="pl-c1">atomic_long_t</span> swap_readahead_info;
-<span class="pl-c1">21</span>   #ifndef CONFIG_MMU
+<span class="pl-c1">21</span>   #ifndef <span class="pl-c1">CONFIG_MMU</span>
 <span class="pl-c1">22</span>       <span class="pl-k">struct</span> <span class="pl-en">vm_region</span> *vm_region;        <span class="pl-c"><span class="pl-c">/*</span> NOMMU mapping region <span class="pl-c">*/</span></span>
 <span class="pl-c1">23</span>   #endif
-<span class="pl-c1">24</span>   #ifdef CONFIG_NUMA
+<span class="pl-c1">24</span>   #ifdef <span class="pl-c1">CONFIG_NUMA</span>
 <span class="pl-c1">25</span>       <span class="pl-k">struct</span> <span class="pl-en">mempolicy</span> *vm_policy;        <span class="pl-c"><span class="pl-c">/*</span> NUMA policy</span></pre></div>
 <p>这里讲几个比较核心的~</p>
 <ul>
