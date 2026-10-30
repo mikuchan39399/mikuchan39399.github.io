@@ -845,12 +845,12 @@ private:
     <span class="pl-s1">SharedMemory</span>(<span class="pl-smi">int</span> <span class="pl-s1">size</span> <span class="pl-c1">=</span> <span class="pl-s1">g_default_size</span>)
     : <span class="pl-en">_size</span>(<span class="pl-s1">size</span>)
     , <span class="pl-en">_key</span>(<span class="pl-c1">0</span>)
-    , <span class="pl-en">_shmid</span>(<span class="pl-c1">-</span><span class="pl-c1">1</span>) 
-    , <span class="pl-en">_start_addr</span>(<span class="pl-smi">nullptr</span>)
-    , <span class="pl-en">_is_creator</span>(<span class="pl-smi">false</span>)
+    , <span class="pl-en">_shmid</span>(<span class="pl-c1">-1</span>) 
+    , <span class="pl-en">_start_addr</span>(<span class="pl-c1">nullptr</span>)
+    , <span class="pl-en">_is_creator</span>(false)
     {}
 
-    <span class="pl-en">SharedMemory</span>(<span class="pl-k">const</span> <span class="pl-smi">SharedMemory</span><span class="pl-c1">&amp;</span>) <span class="pl-c1">=</span> <span class="pl-s1">delete</span>;
+    <span class="pl-s1">SharedMemory</span>(<span class="pl-k">const</span> <span class="pl-smi">SharedMemory</span><span class="pl-c1">&amp;</span>) <span class="pl-c1">=</span> <span class="pl-s1">delete</span>;
     <span class="pl-s1">SharedMemory</span><span class="pl-c1">&amp;</span> <span class="pl-s1">operator</span><span class="pl-c1">=</span>(<span class="pl-k">const</span> <span class="pl-smi">SharedMemory</span><span class="pl-c1">&amp;</span>) <span class="pl-c1">=</span> <span class="pl-s1">delete</span>;
     <span class="pl-smi">bool</span> <span class="pl-en">InitKey</span>()
     {
